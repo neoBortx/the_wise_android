@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/The_Wise.iml" filepath="$PROJECT_DIR$/.idea/modules/The_Wise.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/The_Wise.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/The_Wise.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Infraestructure/The_Wise.app.Infraestructure.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Infraestructure/The_Wise.app.Infraestructure.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/application/The_Wise.app.application.iml" filepath="$PROJECT_DIR$/.idea/modules/app/application/The_Wise.app.application.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/mylibrary/The_Wise.app.domain.iml" filepath="$PROJECT_DIR$/.idea/modules/app/mylibrary/The_Wise.app.domain.iml" />
+    </modules>
+  </component>
+</project>
