@@ -9,42 +9,40 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bortxapps.thewise.R
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NoEmptyTextField(label: String, textValue: String, callbackMethod: (text: String) -> Unit) {
-    //var value by remember { mutableStateOf(textValue) }
     var value = textValue
     var isEmpty by remember { mutableStateOf(false) }
     val errorMessage = stringResource(id = R.string.cant_be_empty)
-    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
-
-    Column {
+    Column(modifier = Modifier.padding(0.dp)) {
         TextField(
             colors = TextFieldDefaults.textFieldColors(
                 focusedLabelColor = colorResource(id = R.color.yellow_800),
                 unfocusedLabelColor = colorResource(id = R.color.yellow_800),
-                focusedIndicatorColor = colorResource(id = R.color.yellow_800),
-                unfocusedIndicatorColor = colorResource(id = R.color.yellow_800),
-                backgroundColor = colorResource(id = R.color.white)
+                focusedIndicatorColor = colorResource(id = R.color.dark_text),
+                unfocusedIndicatorColor = colorResource(id = R.color.dark_text),
+                backgroundColor = colorResource(id = R.color.white),
             ),
             value = value,
             modifier = Modifier
-                .padding(10.dp)
+                .padding(horizontal = 20.dp, vertical = 10.dp)
                 .fillMaxWidth(),
             label = { Text(text = label) },
             isError = isEmpty,
@@ -55,39 +53,37 @@ fun NoEmptyTextField(label: String, textValue: String, callbackMethod: (text: St
             },
             maxLines = 1,
             singleLine = true,
-            keyboardActions = KeyboardActions(
-                onDone = { keyboardController?.hide() }
-            ),
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
         )
         if (isEmpty) {
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colors.error,
                 style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(start = 26.dp)
+                modifier = Modifier.padding(start = 30.dp)
             )
         }
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RegularTextField(label: String, defaultValue: String, callbackMethod: (text: String) -> Unit) {
     var value = defaultValue
-    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     Column {
         TextField(
             colors = TextFieldDefaults.textFieldColors(
                 focusedLabelColor = colorResource(id = R.color.yellow_800),
                 unfocusedLabelColor = colorResource(id = R.color.yellow_800),
-                focusedIndicatorColor = colorResource(id = R.color.yellow_800),
-                unfocusedIndicatorColor = colorResource(id = R.color.yellow_800),
+                focusedIndicatorColor = colorResource(id = R.color.dark_text),
+                unfocusedIndicatorColor = colorResource(id = R.color.dark_text),
                 backgroundColor = colorResource(id = R.color.white)
             ),
             value = value,
             modifier = Modifier
-                .padding(10.dp)
+                .padding(horizontal = 20.dp, vertical = 10.dp)
                 .fillMaxWidth(),
             label = { Text(text = label) },
             onValueChange = { newValue ->
@@ -96,9 +92,8 @@ fun RegularTextField(label: String, defaultValue: String, callbackMethod: (text:
             },
             maxLines = 1,
             singleLine = true,
-            keyboardActions = KeyboardActions(
-                onDone = { keyboardController?.hide() }
-            ),
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
         )
     }
 }
@@ -123,13 +118,13 @@ fun ImagePickerTextField(label: String, defaultValue: String, callbackMethod: (t
             colors = TextFieldDefaults.textFieldColors(
                 focusedLabelColor = colorResource(id = R.color.yellow_800),
                 unfocusedLabelColor = colorResource(id = R.color.yellow_800),
-                focusedIndicatorColor = colorResource(id = R.color.yellow_800),
-                unfocusedIndicatorColor = colorResource(id = R.color.yellow_800),
+                focusedIndicatorColor = colorResource(id = R.color.dark_text),
+                unfocusedIndicatorColor = colorResource(id = R.color.dark_text),
                 backgroundColor = colorResource(id = R.color.white)
             ),
             value = value,
             modifier = Modifier
-                .padding(10.dp)
+                .padding(horizontal = 20.dp, vertical = 10.dp)
                 .fillMaxWidth(),
             label = { Text(text = label) },
             onValueChange = { newValue ->
@@ -147,11 +142,23 @@ fun ImagePickerTextField(label: String, defaultValue: String, callbackMethod: (t
 }
 
 fun emptyCallBack(text: String) {
-
+    println(text)
 }
 
-@Preview()
+@Preview
 @Composable
 fun PreviewNoEmptyTextField() {
     NoEmptyTextField("AAAAA", "BBBBBB", ::emptyCallBack)
+}
+
+@Preview
+@Composable
+fun PreviewRegularTextField() {
+    RegularTextField("AAAAA", "BBBBBB", ::emptyCallBack)
+}
+
+@Preview
+@Composable
+fun PreviewImagePickerTextField() {
+    ImagePickerTextField("AAAAA", "BBBBBB", ::emptyCallBack)
 }

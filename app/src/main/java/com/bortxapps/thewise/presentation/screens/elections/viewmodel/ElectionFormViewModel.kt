@@ -16,18 +16,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ElectionFormViewModel @Inject constructor(private val electionsService: IElectionsDomainService) :
-    ViewModel() {
+    IElectionFormViewModel, ViewModel() {
 
-    var isButtonEnabled by mutableStateOf(false)
-        private set
-    var electionName by mutableStateOf("")
-        private set
-    var electionDescription by mutableStateOf("")
-        private set
+    override var isButtonEnabled by mutableStateOf(false)
+
+    override var electionName by mutableStateOf("")
+
+    override var electionDescription by mutableStateOf("")
 
     private var electionId: Long = 0
 
-    fun configureElection(election: Election?) {
+    override fun configureElection(election: Election?) {
         election?.let {
             electionName = it.name
             electionDescription = it.description
@@ -35,22 +34,22 @@ class ElectionFormViewModel @Inject constructor(private val electionsService: IE
         }
     }
 
-    fun clearElection() {
+    override fun clearElection() {
         electionName = ""
         electionDescription = ""
         electionId = 0
     }
 
-    fun setName(name: String) {
+    override fun setName(name: String) {
         this.electionName = name
         isButtonEnabled = electionName.isNotBlank()
     }
 
-    fun setDescription(description: String) {
+    override fun setDescription(description: String) {
         electionDescription = description
     }
 
-    fun createNewElection() {
+    override fun createNewElection() {
         Log.i("Election", "Creating a new election $electionName")
         viewModelScope.launch {
             electionsService.addElection(
@@ -63,12 +62,12 @@ class ElectionFormViewModel @Inject constructor(private val electionsService: IE
         }
     }
 
-    fun deleteElection(election: Election) {
+    override fun deleteElection(election: Election) {
         Log.i("Election", "Deleting election ${election.id}-${election.name}")
         viewModelScope.launch { electionsService.deleteElection(ElectionTranslator.toEntity(election)) }
     }
 
-    fun editElection(election: Election) {
+    override fun editElection(election: Election) {
         Log.i("Election", "Editing election ${election.id}-${election.name}")
         viewModelScope.launch { electionsService.updateElection(ElectionTranslator.toEntity(election)) }
     }

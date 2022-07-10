@@ -1,7 +1,6 @@
 package com.bortxapps.thewise
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.ExperimentalMaterialApi
@@ -21,7 +20,6 @@ class MainActivity : ComponentActivity()
         super.onCreate(savedInstanceState)
         setContent {
             TheWiseTheme {
-                Log.d("The wise", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                 navController = rememberNavController()
                 SetSplashNavGraph(navController = navController)
             }

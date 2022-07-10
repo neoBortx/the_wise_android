@@ -67,8 +67,8 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
                     }
                     image?.let { img ->
                         Palette.from(img).generate { result ->
-                            result?.let { palete ->
-                                palete.vibrantSwatch?.let {
+                            result?.let { palette ->
+                                palette.vibrantSwatch?.let {
                                     colorTextBackground = Color(
                                         Color(it.bodyTextColor).red,
                                         Color(it.bodyTextColor).green,
@@ -83,7 +83,7 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
                     }
                 }
             } catch (e: IOException) {
-                System.out.println(e)
+                println(e)
             }
         }
     }
@@ -207,5 +207,4 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
             }
         }
     }
-}
 }

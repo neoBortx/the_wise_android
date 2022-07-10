@@ -35,7 +35,8 @@ fun SetSplashNavGraph(navController: NavHostController) {
             ElectionInfoScreen(navHostController = navController, electionId = id)
         }
         composable(route = Screen.OptionsList.getFullRoute(),
-                arguments = listOf(navArgument(ELECTION_SCREEN_ARGUMENT_ID) { type = NavType.LongType }))
+            arguments = listOf(navArgument(ELECTION_SCREEN_ARGUMENT_ID) { type = NavType.LongType })
+        )
         {
             val id: Long = it.arguments?.getLong(ELECTION_SCREEN_ARGUMENT_ID) ?: 0
             OptionsListScreen(navHostController = navController, electionId = id)

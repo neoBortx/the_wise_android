@@ -17,15 +17,14 @@ object TextHeader {
     fun GetTextHeader(tittle: String) {
         Text(
             text = tittle,
-            color = colorResource(id = R.color.yellow_800),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            color = colorResource(id = R.color.dark_text),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Left,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top= 15.dp, bottom = 20.dp)
+                .padding(top = 15.dp)
                 .padding(horizontal = 15.dp),
-
-            )
+        )
     }
 }

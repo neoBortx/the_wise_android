@@ -12,11 +12,9 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,7 +45,6 @@ enum class OptionState {
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @ExperimentalMaterialApi
 @Composable
@@ -60,11 +57,11 @@ fun OptionsListScreen(
 
     val scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed)
     var gesturesState by remember { mutableStateOf(true) }
-    var fabButtonExpandedState by remember { mutableStateOf(MultiFabState.COLLAPSED) }
+    val fabButtonExpandedState by remember { mutableStateOf(MultiFabState.COLLAPSED) }
     var fabButtonWindowState by remember { mutableStateOf(OptionState.LIST) }
     var showOptionConditionLinker by remember { mutableStateOf(false) }
-    var optionToEdit by remember { mutableStateOf(Option.getEmpty())}
-    val keyboardController = LocalSoftwareKeyboardController.current
+    var optionToEdit by remember { mutableStateOf(Option.getEmpty()) }
+    val focusManager = LocalFocusManager.current
 
    if (!scaffoldState.isRevealed) {
        fabButtonWindowState = OptionState.FORM
@@ -103,7 +100,7 @@ fun OptionsListScreen(
     suspend fun closeOptionForm() {
         fabButtonWindowState = OptionState.LIST
         gesturesState = true
-        keyboardController?.hide()
+        focusManager.clearFocus()
         scaffoldState.reveal()
     }
 

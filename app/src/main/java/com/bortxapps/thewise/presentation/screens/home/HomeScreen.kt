@@ -11,9 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -31,26 +30,28 @@ import com.bortxapps.thewise.presentation.componentes.MainColumn
 import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.screens.elections.ElectionFormScreen
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
+import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModelPreview
+import com.bortxapps.thewise.presentation.screens.elections.viewmodel.IElectionFormViewModel
 import com.bortxapps.thewise.presentation.screens.home.viewmodel.HomeViewModel
+import com.bortxapps.thewise.presentation.screens.home.viewmodel.HomeViewModelPreview
+import com.bortxapps.thewise.presentation.screens.home.viewmodel.IHomeViewModel
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalComposeUiApi::class)
-@SuppressLint("CoroutineCreationDuringComposition")
 @ExperimentalMaterialApi
 @Composable
 fun HomeScreen(
     navHostController: NavHostController,
-    homeViewModel: HomeViewModel = hiltViewModel(),
-    electionFormViewModel: ElectionFormViewModel = hiltViewModel()
+    homeViewModel: IHomeViewModel = hiltViewModel<HomeViewModel>(),
+    electionFormViewModel: IElectionFormViewModel = hiltViewModel<ElectionFormViewModel>()
 ) {
     val scaffoldState = rememberBackdropScaffoldState(
-        BackdropValue.Concealed
+        BackdropValue.Revealed
     )
 
     var gesturesState by remember { mutableStateOf(false) }
-    val elections by homeViewModel.questions.collectAsState(initial = listOf())
-    val keyboardController = LocalSoftwareKeyboardController.current
+    val questions by homeViewModel.questions.collectAsState(initial = listOf())
+    val focusManager = LocalFocusManager.current
 
     val scope = rememberCoroutineScope()
 
@@ -68,7 +69,7 @@ fun HomeScreen(
     suspend fun closeElectionForm() {
         Log.d("Elections", "Click in new election button")
         gesturesState = true
-        keyboardController?.hide()
+        focusManager.clearFocus()
         scaffoldState.reveal()
     }
 
@@ -154,25 +155,29 @@ fun HomeScreen(
     }
 
     Log.d("Elections", "Showing election list")
-    scope.launch { scaffoldState.reveal() }
+
     BackdropScaffold(
         scaffoldState = scaffoldState,
         gesturesEnabled = gesturesState,
-        peekHeight = 60.dp,
+        peekHeight = 45.dp,
         headerHeight = 0.dp,
         backLayerBackgroundColor = colorResource(id = R.color.white),
         appBar = { GetTopAppBar(false, stringResource(R.string.app_name)) { navigateBack() } },
-        backLayerContent = { DrawFrontLayer(elections) },
+        backLayerContent = { DrawFrontLayer(questions) },
         frontLayerContent = { ElectionFormScreen { scope.launch { closeElectionForm() } } }
     ) {
     }
 }
 
 @ExperimentalMaterialApi
+@Preview(showSystemUi = true, showBackground = true)
 @Composable
-@Preview
-fun HomeScreenPreview(homeViewModel: HomeViewModel = hiltViewModel()) {
-    HomeScreen(navHostController = rememberNavController(), homeViewModel = homeViewModel)
+fun HomeScreenPreview() {
+    HomeScreen(
+        navHostController = rememberNavController(),
+        homeViewModel = HomeViewModelPreview(),
+        electionFormViewModel = ElectionFormViewModelPreview()
+    )
 }
 
 

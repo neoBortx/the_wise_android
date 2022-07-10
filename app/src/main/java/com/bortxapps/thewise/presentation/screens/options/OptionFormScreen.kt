@@ -1,7 +1,6 @@
 package com.bortxapps.thewise.presentation.screens.options
 
 import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,7 +22,6 @@ import com.bortxapps.thewise.presentation.viewmodels.ConditionViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-@ExperimentalMaterialApi
 @Composable
 fun OptionFormScreen(
     formViewModel: OptionFormViewModel = hiltViewModel(),
@@ -50,7 +48,7 @@ fun OptionFormScreen(
         formCompletedCallback.invoke()
     }
 
-    Scaffold(backgroundColor = colorResource(id = R.color.beige)) {
+    Scaffold(backgroundColor = colorResource(id = R.color.white)) {
         GetMainColumn {
             if (!isLinkingOptionsAndConnection) {
                 if (isEditingExistingOption) {
@@ -59,9 +57,15 @@ fun OptionFormScreen(
                     GetTextHeader(stringResource(R.string.create_option))
                 }
                 NoEmptyTextField(nameLabel, formViewModel.optionName) { formViewModel.setName(it) }
-                NoEmptyTextField(descLabel, formViewModel.optionDescription) { formViewModel.setDescription(it) }
+                NoEmptyTextField(
+                    descLabel,
+                    formViewModel.optionDescription
+                ) { formViewModel.setDescription(it) }
                 RegularTextField(urlLabel, formViewModel.optionUrl) { formViewModel.setUrl(it) }
-                ImagePickerTextField(imageLabel, formViewModel.optionImageUrl) { formViewModel.setImage(it) }
+                ImagePickerTextField(
+                    imageLabel,
+                    formViewModel.optionImageUrl
+                ) { formViewModel.setImage(it) }
                 GetBottomButton(
                     {
                         scope.launch {
