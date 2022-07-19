@@ -14,7 +14,7 @@ import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
 import com.bortxapps.thewise.presentation.componentes.MainColumn.GetMainColumn
 import com.bortxapps.thewise.presentation.componentes.TextHeader.GetTextHeader
-import com.bortxapps.thewise.presentation.componentes.texfield.ImagePickerTextField
+import com.bortxapps.thewise.presentation.componentes.texfield.ImagePickerField
 import com.bortxapps.thewise.presentation.componentes.texfield.NoEmptyTextField
 import com.bortxapps.thewise.presentation.componentes.texfield.RegularTextField
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
@@ -62,10 +62,10 @@ fun OptionFormScreen(
                     formViewModel.optionDescription
                 ) { formViewModel.setDescription(it) }
                 RegularTextField(urlLabel, formViewModel.optionUrl) { formViewModel.setUrl(it) }
-                ImagePickerTextField(
+                ImagePickerField(
                     imageLabel,
-                    formViewModel.optionImageUrl
-                ) { formViewModel.setImage(it) }
+                    "$electionId-test"
+                )
                 GetBottomButton(
                     {
                         scope.launch {

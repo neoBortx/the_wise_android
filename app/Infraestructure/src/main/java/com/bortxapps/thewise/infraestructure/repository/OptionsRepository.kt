@@ -46,7 +46,7 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
         try {
             return optionDao.deleteOption(option)
         } catch (ex: Exception) {
-            Log.e("Conditions", "Error deleting Option ${option.id} because ${ex.message}")
+            Log.e("Conditions", "Error deleting Option ${option.optionId} because ${ex.message}")
             ex.printStackTrace()
             throw ex
         }
@@ -56,7 +56,7 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
         try {
             return optionDao.updateOption(option)
         } catch (ex: Exception) {
-            Log.e("Conditions", "Error updating Option ${option.id} because ${ex.message}")
+            Log.e("Conditions", "Error updating Option ${option.optionId} because ${ex.message}")
             ex.printStackTrace()
             throw ex
         }

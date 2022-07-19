@@ -1,9 +1,9 @@
 package com.bortxapps.thewise.infraestructure.repository
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import com.bortxapps.thewise.domain.contrats.repository.IElectionsRepository
 import com.bortxapps.thewise.domain.model.ElectionEntity
+import com.bortxapps.thewise.domain.model.ElectionWithOptions
 import com.bortxapps.thewise.infraestructure.dao.ElectionDao
 import javax.inject.Inject
 
@@ -12,7 +12,7 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
 
     override val allElections = electionDao.getElections()
 
-    override fun getElection(electionId: Long): ElectionEntity {
+    override fun getElection(electionId: Long): ElectionWithOptions {
         try {
             return electionDao.getElection(electionId)
         } catch (ex: Exception) {
@@ -36,7 +36,10 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
         try {
             return electionDao.deleteElection(election)
         } catch (ex: Exception) {
-            Log.e("Conditions", "Error deleting Election ${election.id} because ${ex.message}")
+            Log.e(
+                "Conditions",
+                "Error deleting Election ${election.electionId} because ${ex.message}"
+            )
             ex.printStackTrace()
             throw ex
         }
@@ -46,7 +49,10 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
         try {
             return electionDao.updateElection(election)
         } catch (ex: Exception) {
-            Log.e("Conditions", "Error updating Election ${election.id} because ${ex.message}")
+            Log.e(
+                "Conditions",
+                "Error updating Election ${election.electionId} because ${ex.message}"
+            )
             ex.printStackTrace()
             throw ex
         }

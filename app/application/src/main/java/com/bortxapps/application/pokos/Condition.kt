@@ -1,7 +1,5 @@
 package com.bortxapps.application.pokos
 
-import com.bortxapps.thewise.domain.model.ConditionEntity
-
 data class Condition(
     val id: Long,
     val electionId: Long,
@@ -15,9 +13,4 @@ data class Condition(
             return Condition(0, 0, 0,"", "", 0)
         }
     }
-}
-
-fun ConditionEntity.toCondition(): Condition
-{
-    return Condition(id,electionId,optionId,name,description,weight)
 }

@@ -17,7 +17,7 @@ interface OptionDao
     @Delete
     suspend fun deleteOption(election: OptionEntity)
 
-    @Query("SELECT * FROM option WHERE id LIKE :optionId")
+    @Query("SELECT * FROM option WHERE optionId LIKE :optionId")
     fun getOption(optionId: Long): OptionEntity?
 
     @Query("SELECT * FROM option WHERE electionId LIKE :electionId")

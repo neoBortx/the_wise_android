@@ -1,13 +1,17 @@
 package com.bortxapps.thewise.presentation.componentes.texfield
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
@@ -16,6 +20,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -23,6 +28,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bortxapps.thewise.R
+import com.skydoves.landscapist.glide.GlideImage
+
 
 @Composable
 fun NoEmptyTextField(label: String, textValue: String, callbackMethod: (text: String) -> Unit) {
@@ -36,8 +43,8 @@ fun NoEmptyTextField(label: String, textValue: String, callbackMethod: (text: St
             colors = TextFieldDefaults.textFieldColors(
                 focusedLabelColor = colorResource(id = R.color.yellow_800),
                 unfocusedLabelColor = colorResource(id = R.color.yellow_800),
-                focusedIndicatorColor = colorResource(id = R.color.dark_text),
-                unfocusedIndicatorColor = colorResource(id = R.color.dark_text),
+                focusedIndicatorColor = colorResource(id = R.color.yellow_800),
+                unfocusedIndicatorColor = colorResource(id = R.color.yellow_800),
                 backgroundColor = colorResource(id = R.color.white),
             ),
             value = value,
@@ -98,42 +105,48 @@ fun RegularTextField(label: String, defaultValue: String, callbackMethod: (text:
     }
 }
 
-@Composable
-fun ImagePickerTextField(label: String, defaultValue: String, callbackMethod: (text: String) -> Unit) {
+fun getBitMap(context: Context, itemId: String): Bitmap? {
+    return try {
+        context.openFileInput(itemId).use {
+            BitmapFactory.decodeStream(it)
+        }
+    } catch (exception: java.lang.Exception) {
+        BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
+    }
 
-    var value = defaultValue
+}
+
+@Composable
+fun ImagePickerField(
+    label: String, itemId: String
+) {
+
+    val context = LocalContext.current
+    var bitmap by remember {
+        mutableStateOf(getBitMap(context, itemId))
+    }
 
     val launcher = rememberLauncherForActivityResult(
-        contract =
-        ActivityResultContracts.GetContent()
+        contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        value = uri!!.toString()
-        callbackMethod(value)
+        bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+        context.openFileOutput(itemId, Context.MODE_PRIVATE).use {
+            bitmap?.compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
     }
 
     val source = remember { MutableInteractionSource() }
 
-    Column {
-        TextField(
-            colors = TextFieldDefaults.textFieldColors(
-                focusedLabelColor = colorResource(id = R.color.yellow_800),
-                unfocusedLabelColor = colorResource(id = R.color.yellow_800),
-                focusedIndicatorColor = colorResource(id = R.color.dark_text),
-                unfocusedIndicatorColor = colorResource(id = R.color.dark_text),
-                backgroundColor = colorResource(id = R.color.white)
-            ),
-            value = value,
-            modifier = Modifier
-                .padding(horizontal = 20.dp, vertical = 10.dp)
-                .fillMaxWidth(),
-            label = { Text(text = label) },
-            onValueChange = { newValue ->
-                value = newValue
-                callbackMethod(value)
-            },
-            interactionSource = source,
-            maxLines = 1
+    Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
+        Text(
+            text = label, color = colorResource(id = R.color.yellow_800)
         )
+        GlideImage(imageModel = bitmap,
+            Modifier
+                .width(150.dp)
+                .height(150.dp)
+                .padding(10.dp)
+                .clickable(interactionSource = source, indication = LocalIndication.current) {})
     }
 
     if (source.collectIsPressedAsState().value) {
@@ -160,5 +173,5 @@ fun PreviewRegularTextField() {
 @Preview
 @Composable
 fun PreviewImagePickerTextField() {
-    ImagePickerTextField("AAAAA", "BBBBBB", ::emptyCallBack)
+    ImagePickerField("AAAAA", "BBBBBB")
 }

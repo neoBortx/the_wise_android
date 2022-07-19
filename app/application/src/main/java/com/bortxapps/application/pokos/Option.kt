@@ -1,7 +1,5 @@
 package com.bortxapps.application.pokos
 
-import com.bortxapps.thewise.domain.model.OptionEntity
-
 data class Option(
     val id: Long,
     val electionId: Long,
@@ -32,8 +30,4 @@ data class Option(
             }
         }
     }
-}
-
-fun OptionEntity.toOption(): Option {
-    return Option(id, electionId, name, description, url, imageUrl)
 }

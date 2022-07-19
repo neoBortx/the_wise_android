@@ -6,17 +6,19 @@ import androidx.room.PrimaryKey
 
 @Entity(
     foreignKeys = [
-        ForeignKey(entity = ElectionEntity::class,
-            parentColumns = ["id"],
+        ForeignKey(
+            entity = ElectionEntity::class,
+            parentColumns = ["electionId"],
             childColumns = ["electionId"],
             onDelete = ForeignKey.CASCADE
-        ) ]
+        )]
     ,tableName = "option")
 data class OptionEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val optionId: Long,
     val electionId: Long,
     val name: String,
     val description: String,
     val url: String,
-    val imageUrl: String)
+    val imageUrl: String
+)

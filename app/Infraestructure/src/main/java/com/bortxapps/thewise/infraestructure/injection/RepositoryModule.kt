@@ -1,10 +1,8 @@
 package com.bortxapps.thewise.infraestructure.injection
 
-import com.bortxapps.thewise.domain.contrats.repository.IConditionInOptionsRepository
 import com.bortxapps.thewise.domain.contrats.repository.IConditionsRepository
 import com.bortxapps.thewise.domain.contrats.repository.IElectionsRepository
 import com.bortxapps.thewise.domain.contrats.repository.IOptionsRepository
-import com.bortxapps.thewise.infraestructure.repository.ConditionInOptionsRepository
 import com.bortxapps.thewise.infraestructure.repository.ConditionsRepository
 import com.bortxapps.thewise.infraestructure.repository.ElectionsRepository
 import com.bortxapps.thewise.infraestructure.repository.OptionsRepository
@@ -25,7 +23,4 @@ interface RepositoryModule
 
     @Binds
     fun provideElectionsRepository(repository: ElectionsRepository): IElectionsRepository
-
-    @Binds
-    fun provideConditionsInOptionRepository(repository: ConditionInOptionsRepository): IConditionInOptionsRepository
 }

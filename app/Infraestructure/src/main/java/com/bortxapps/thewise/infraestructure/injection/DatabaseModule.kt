@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import com.bortxapps.thewise.infraestructure.constants.InfrastructureConstants.DATABASE_NAME
 import com.bortxapps.thewise.infraestructure.dao.ConditionDao
-import com.bortxapps.thewise.infraestructure.dao.ConditionInOptionDao
 import com.bortxapps.thewise.infraestructure.dao.ElectionDao
 import com.bortxapps.thewise.infraestructure.dao.OptionDao
 import com.bortxapps.thewise.infraestructure.database.TheWiseDatabase
@@ -42,10 +41,5 @@ object DatabaseModule
     @Provides
     fun provideOptionDao(appDatabase: TheWiseDatabase): OptionDao {
         return appDatabase.optionDao()
-    }
-
-    @Provides
-    fun provideConditionInOptionDao(appDatabase: TheWiseDatabase): ConditionInOptionDao {
-        return appDatabase.conditionInOptionDao()
     }
 }

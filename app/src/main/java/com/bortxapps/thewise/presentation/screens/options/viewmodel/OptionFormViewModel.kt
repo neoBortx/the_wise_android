@@ -6,9 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bortxapps.application.pokos.Election
 import com.bortxapps.application.pokos.Option
-import com.bortxapps.application.translators.ElectionTranslator
 import com.bortxapps.thewise.domain.contrats.service.IOptionsDomainService
 import com.bortxapps.thewise.domain.model.OptionEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -64,16 +62,12 @@ class OptionFormViewModel @Inject constructor(private val optionsService: IOptio
         optionUrl = url
     }
 
-    fun setImage(url: String) {
-        optionImageUrl = url
-    }
-
     fun createNewOption() {
         Log.i("Option", "Creating a new option $optionName")
         viewModelScope.launch {
             optionsService.addOption(
                 OptionEntity(
-                    id = optionId,
+                    optionId = optionId,
                     electionId = electionId,
                     name = optionName,
                     description = optionDescription,

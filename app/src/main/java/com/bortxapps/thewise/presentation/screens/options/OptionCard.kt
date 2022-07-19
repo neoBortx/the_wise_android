@@ -16,6 +16,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
@@ -190,4 +191,21 @@ fun PaintOptionRow(item: Option, editOptionCallBack: suspend (Option) -> Unit) {
             }
         }
     }
+}
+
+@ExperimentalMaterialApi
+@Preview
+@Composable
+fun PreviewPaintElectionRow() {
+    PaintOptionRow(
+        Option(
+            id = 0,
+            name = "Super election",
+            description = "this is a description",
+            electionId = 0,
+            imageUrl = "",
+            matchingConditions = mutableListOf(),
+            url = "http://www.google.com"
+        )
+    ) { _ -> }
 }

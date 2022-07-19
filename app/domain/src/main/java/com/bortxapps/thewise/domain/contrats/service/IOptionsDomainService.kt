@@ -1,8 +1,5 @@
 package com.bortxapps.thewise.domain.contrats.service
 
-import androidx.lifecycle.LiveData
-import com.bortxapps.thewise.domain.model.ConditionInOptionEntity
-import com.bortxapps.thewise.domain.model.ElectionEntity
 import com.bortxapps.thewise.domain.model.OptionEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -18,8 +15,4 @@ interface IOptionsDomainService {
     suspend fun deleteOption(option: OptionEntity)
 
     suspend fun updateOption(option: OptionEntity)
-
-    suspend fun insertOptionInCondition(optionId: Long, conditionId: Long)
-
-    suspend fun removeOptionToCondition(optionId: Long, conditionId: Long)
 }

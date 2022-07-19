@@ -1,9 +1,9 @@
 package com.bortxapps.thewise.domain.serivces
 
-import androidx.lifecycle.LiveData
 import com.bortxapps.thewise.domain.contrats.repository.IElectionsRepository
 import com.bortxapps.thewise.domain.contrats.service.IElectionsDomainService
 import com.bortxapps.thewise.domain.model.ElectionEntity
+import com.bortxapps.thewise.domain.model.ElectionWithOptions
 import javax.inject.Inject
 
 class ElectionsDomainService @Inject constructor(private val electionsRepository: IElectionsRepository) :
@@ -11,12 +11,12 @@ class ElectionsDomainService @Inject constructor(private val electionsRepository
 
     override val allElections =  electionsRepository.allElections
 
-    override fun getElection(electionId: Long): ElectionEntity {
+    override fun getElection(electionId: Long): ElectionWithOptions {
         return electionsRepository.getElection(electionId)
     }
 
     override suspend fun addElection(election: ElectionEntity) {
-        if (election.id == 0L) {
+        if (election.electionId == 0L) {
             electionsRepository.addElection(election)
         } else {
             electionsRepository.updateElection(election)

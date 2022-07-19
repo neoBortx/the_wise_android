@@ -10,7 +10,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -132,7 +131,7 @@ fun PaintConditionRow(item: Condition, navHostController: NavHostController) {
 
 private fun openConditionForm(navHostController: NavHostController) {
     Log.d("Elections", "Click in new condition button")
-    navHostController.navigate(Screen.ElectionForm.getFullRoute())
+    navHostController.navigate(Screen.ConditionForm.getFullRoute())
 }
 
 private fun openConditionInfo(navHostController: NavHostController) {

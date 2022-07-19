@@ -1,7 +1,5 @@
 package com.bortxapps.application.pokos
 
-import com.bortxapps.application.R
-import com.bortxapps.thewise.domain.model.ElectionEntity
 
 data class Election(
     val id: Long,
@@ -26,8 +24,4 @@ data class Election(
             return Election(0, "", "")
         }
     }
-}
-
-fun ElectionEntity.toElection(): Election {
-    return Election(id, name, description)
 }

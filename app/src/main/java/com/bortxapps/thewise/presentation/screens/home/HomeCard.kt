@@ -1,13 +1,13 @@
 package com.bortxapps.thewise.presentation.screens.home
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,34 +15,31 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import androidx.palette.graphics.Palette
-import coil.compose.AsyncImage
+import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.Election
+import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.navigation.Screen
-import kotlinx.coroutines.Dispatchers
+import com.skydoves.landscapist.glide.GlideImage
+import com.skydoves.landscapist.palette.BitmapPalette
 import kotlinx.coroutines.launch
-import java.io.IOException
-import java.net.URL
 
 @ExperimentalMaterialApi
 @Composable
 fun PaintElectionRow(item: Election, navHostController: NavHostController) {
 
     val colTitle = colorResource(id = R.color.yellow_800)
-    val colSubtitle = colorResource(id = R.color.black)
     val colBack = colorResource(id = R.color.transparent)
 
-    var expanded by remember { mutableStateOf(false) }
-    var image by remember { mutableStateOf<Bitmap?>(null) }
-    var colorTitle by remember { mutableStateOf(colTitle) }
-    var colorSubTitle by remember { mutableStateOf(colSubtitle) }
-    var colorTextBackground by remember { mutableStateOf(colBack) }
-
+    var palette by remember { mutableStateOf<Palette?>(null) }
     val scope = rememberCoroutineScope()
+
 
     fun openElectionInfo(item: Election) {
         Log.d("Elections", "Click in election card")
@@ -51,114 +48,71 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
         )
     }
 
-
-    fun createPalette(url: String) {
-
-        if (!expanded) {
-            colorTextBackground = colBack
-            colorSubTitle = colSubtitle
-            colorTitle = colTitle
-        } else {
-            try {
-                val url = URL(url)
-                scope.launch(Dispatchers.Default) {
-                    if (image == null) {
-                        image = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                    }
-                    image?.let { img ->
-                        Palette.from(img).generate { result ->
-                            result?.let { palette ->
-                                palette.vibrantSwatch?.let {
-                                    colorTextBackground = Color(
-                                        Color(it.bodyTextColor).red,
-                                        Color(it.bodyTextColor).green,
-                                        Color(it.bodyTextColor).blue,
-                                        0.3f
-                                    )
-                                    colorSubTitle = Color(it.rgb)
-                                    colorTitle = Color(it.rgb)
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (e: IOException) {
-                println(e)
-            }
-        }
+    @Composable
+    fun getOptionName(election: Election): String {
+        return election.getWinningOption()?.let {
+            "${stringResource(R.string.winning_option_label)} ${it.name}"
+        } ?: stringResource(R.string.no_options_configured)
     }
 
     Card(
-        onClick = { expanded = !expanded },
-        elevation = 2.dp,
+        elevation = 5.dp,
         shape = RoundedCornerShape(2.dp),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(100.dp, 200.dp),
+        onClick = { scope.launch { openElectionInfo(item) } },
     ) {
         Column {
-            Box {
-                Column(
-                    modifier = Modifier
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+            ) {
+                item.getWinningOption()?.imageUrl?.let {
+                    GlideImage(modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(0.dp, 150.dp)
-                ) {
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(),
-                        model = image,
+                        .fillMaxHeight(),
+                        imageModel = item.getWinningOption()?.imageUrl,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                    )
+                        bitmapPalette = BitmapPalette {
+                            palette = it
+                        })
                 }
-            }
-
-            Column(
-                Modifier
+                Box(modifier = Modifier
                     .fillMaxWidth()
-                    .background(colorTextBackground)
-            ) {
-                Text(
-                    text = item.name.replaceFirstChar { it.uppercase() },
-                    style = MaterialTheme.typography.h5,
-                    textAlign = TextAlign.Left,
-                    modifier = Modifier
-                        .padding(bottom = 0.dp, top = 5.dp)
-                        .padding(horizontal = 10.dp)
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    color = colorTitle,
-                    maxLines = 1
-                )
-
-                item.getWinningOption()?.let {
-                    Text(
-                        text = "${stringResource(R.string.winning_option_label)} ${it.name}",
-                        style = MaterialTheme.typography.body2,
+                    .background(palette?.vibrantSwatch?.bodyTextColor?.let {
+                        Color(it)
+                    } ?: colBack)) {
+                    Text(text = item.name.replaceFirstChar { it.uppercase() },
+                        style = MaterialTheme.typography.h6,
+                        overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Left,
                         modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .padding(bottom = 10.dp, top = 0.dp)
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        color = colorSubTitle,
-                        maxLines = 1
-                    )
-                } ?: Text(
-                    text = stringResource(R.string.no_options_configured),
-                    style = MaterialTheme.typography.body2,
+                            .padding(vertical = 5.dp, horizontal = 10.dp),
+                        color = palette?.vibrantSwatch?.rgb?.let {
+                            Color(it)
+                        } ?: colTitle,
+                        maxLines = 2)
+                }
+            }
+            Column(
+                Modifier.fillMaxWidth()
+            ) {
+                Text(text = getOptionName(item),
+                    style = MaterialTheme.typography.body1,
                     textAlign = TextAlign.Left,
                     modifier = Modifier
                         .padding(horizontal = 20.dp)
-                        .padding(bottom = 10.dp, top = 0.dp)
-                        .fillMaxWidth(),
-                    color = colorResource(id = R.color.black),
-                    maxLines = 1
-                )
-            }
-        }
+                        .padding(bottom = 10.dp, top = 5.dp)
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    color = palette?.vibrantSwatch?.rgb?.let {
+                        Color(it)
+                    } ?: colTitle,
+                    maxLines = 1)
 
-        AnimatedVisibility(visible = expanded) {
-            Column {
                 item.getWinningOption()?.let { option ->
 
                     Text(
@@ -172,39 +126,50 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
                         maxLines = 3
                     )
                 }
-
-                Row {
-                    Button(
-                        onClick = { scope.launch { openElectionInfo(item) } },
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Transparent
-                        ),
-                        elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.edit),
-                            textDecoration = TextDecoration.Underline,
-                            style = MaterialTheme.typography.subtitle1,
-                            color = colorTitle
-                        )
-                    }
-                    Button(
-                        onClick = { scope.launch { } },
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Transparent
-                        ),
-                        elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.delete),
-                            textDecoration = TextDecoration.Underline,
-                            style = MaterialTheme.typography.subtitle1,
-                            color = colorTitle,
-                            textAlign = TextAlign.End
-                        )
-                    }
-                }
             }
         }
     }
+}
+
+@ExperimentalMaterialApi
+@Preview
+@Composable
+fun PreviewPaintElectionRow() {
+    PaintElectionRow(
+        Election(id = 0,
+            name = "Super election",
+            description = "this is a description",
+            options = mutableListOf<Option>().apply {
+                add(
+                    Option(id = 0,
+                        electionId = 0,
+                        name = "option 1",
+                        description = "description1",
+                        url = "www.google.com,",
+                        imageUrl = "",
+                        matchingConditions = mutableListOf<Condition>().apply {
+                            add(
+                                Condition(
+                                    id = 0,
+                                    electionId = 0,
+                                    optionId = 0,
+                                    "Condition 1",
+                                    description = "Decription condition 1",
+                                    weight = 5
+                                )
+                            )
+                            add(
+                                Condition(
+                                    id = 1,
+                                    electionId = 0,
+                                    optionId = 0,
+                                    "Condition 2",
+                                    description = "Decription condition 2",
+                                    weight = 5
+                                )
+                            )
+                        })
+                )
+            }), rememberNavController()
+    )
 }

@@ -9,7 +9,7 @@ class ConditionTranslator {
         fun fromEntity(entity: ConditionEntity?): Condition {
             return entity?.let {
                 Condition(
-                    it.id,
+                    it.conditionId,
                     it.electionId,
                     it.optionId,
                     it.name,

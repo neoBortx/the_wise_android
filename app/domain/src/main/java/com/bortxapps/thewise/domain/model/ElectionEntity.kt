@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
     tableName = "election")
 data class ElectionEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val electionId: Long,
     val name: String,
-    val description: String)
+    val description: String
+)

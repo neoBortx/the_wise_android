@@ -6,22 +6,26 @@ import androidx.room.PrimaryKey
 
 @Entity(
     foreignKeys = [
-        ForeignKey(entity = ElectionEntity::class,
-            parentColumns = ["id"],
+        ForeignKey(
+            entity = ElectionEntity::class,
+            parentColumns = ["electionId"],
             childColumns = ["electionId"],
             onDelete = ForeignKey.CASCADE
         ),
-        ForeignKey(entity = OptionEntity::class,
-            parentColumns = ["id"],
+        ForeignKey(
+            entity = OptionEntity::class,
+            parentColumns = ["optionId"],
             childColumns = ["optionId"],
             onDelete = ForeignKey.CASCADE
-        ),         ]
+        ),
+    ]
     ,tableName = "condition")
 data class ConditionEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val conditionId: Long,
     val electionId: Long,
     val optionId: Long,
     val name: String,
     val description: String,
-    val weight: Int)
+    val weight: Int
+)

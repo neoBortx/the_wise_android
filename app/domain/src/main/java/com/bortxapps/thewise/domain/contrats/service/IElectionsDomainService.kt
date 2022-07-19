@@ -1,13 +1,14 @@
 package com.bortxapps.thewise.domain.contrats.service
 
 import com.bortxapps.thewise.domain.model.ElectionEntity
+import com.bortxapps.thewise.domain.model.ElectionWithOptions
 import kotlinx.coroutines.flow.Flow
 
 interface IElectionsDomainService {
 
-    val allElections: Flow<List<ElectionEntity>>
+    val allElections: Flow<List<ElectionWithOptions>>
 
-    fun getElection(electionId: Long): ElectionEntity
+    fun getElection(electionId: Long): ElectionWithOptions
 
     suspend fun addElection(election: ElectionEntity)
 
