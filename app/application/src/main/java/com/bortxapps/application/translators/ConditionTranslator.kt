@@ -1,6 +1,7 @@
 package com.bortxapps.application.translators
 
 import com.bortxapps.application.pokos.Condition
+import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.thewise.domain.model.ConditionEntity
 
 class ConditionTranslator {
@@ -14,7 +15,7 @@ class ConditionTranslator {
                     it.optionId,
                     it.name,
                     it.description,
-                    it.weight
+                    ConditionWeight.fromInt(it.weight)
                 )
             } ?: Condition.getEmpty()
         }
@@ -26,7 +27,7 @@ class ConditionTranslator {
                 poko.optionId,
                 poko.name,
                 poko.description,
-                poko.weight
+                poko.weight.numericalWeight
             )
         }
     }

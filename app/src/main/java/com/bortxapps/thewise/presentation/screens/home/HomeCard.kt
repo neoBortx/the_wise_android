@@ -3,6 +3,8 @@ package com.bortxapps.thewise.presentation.screens.home
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
@@ -12,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -23,10 +24,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.palette.graphics.Palette
 import com.bortxapps.application.pokos.Condition
+import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.navigation.Screen
+import com.bortxapps.thewise.presentation.componentes.texfield.ConditionBadge
+import com.bortxapps.thewise.presentation.screens.utils.getImagePath
 import com.skydoves.landscapist.glide.GlideImage
 import com.skydoves.landscapist.palette.BitmapPalette
 import kotlinx.coroutines.launch
@@ -54,11 +58,6 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
         return election.getWinningOption()?.let {
             "${stringResource(R.string.winning_option_label)} ${it.name}"
         } ?: stringResource(R.string.no_options_configured)
-    }
-
-    @Composable
-    fun getImagePath(imageName: String): String {
-        return LocalContext.current.filesDir.absolutePath + "/" + imageName
     }
 
     Card(
@@ -95,8 +94,7 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
                         style = MaterialTheme.typography.h6,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .padding(vertical = 5.dp, horizontal = 10.dp),
+                        modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
                         color = palette?.vibrantSwatch?.rgb?.let {
                             Color(it)
                         } ?: colTitle,
@@ -122,7 +120,7 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
                 item.getWinningOption()?.let { option ->
 
                     Text(
-                        text = "${stringResource(R.string.matching_conditions_label)} ${option.getMatchingConditions()}",
+                        text = stringResource(R.string.matching_conditions_label),
                         style = MaterialTheme.typography.body2,
                         textAlign = TextAlign.Start,
                         modifier = Modifier
@@ -131,6 +129,18 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
                             .padding(horizontal = 20.dp),
                         maxLines = 3
                     )
+                    LazyRow(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .fillMaxWidth(),
+                        contentPadding = PaddingValues(bottom = 5.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(option.matchingConditions) { condition ->
+                            ConditionBadge(condition.name, condition.weight)
+                        }
+                    }
+
                 }
             }
         }
@@ -161,7 +171,7 @@ fun PreviewPaintElectionRow() {
                                     optionId = 0,
                                     "Condition 1",
                                     description = "Decription condition 1",
-                                    weight = 5
+                                    weight = ConditionWeight.MUST
                                 )
                             )
                             add(
@@ -171,7 +181,7 @@ fun PreviewPaintElectionRow() {
                                     optionId = 0,
                                     "Condition 2",
                                     description = "Decription condition 2",
-                                    weight = 5
+                                    weight = ConditionWeight.HIGH
                                 )
                             )
                         })

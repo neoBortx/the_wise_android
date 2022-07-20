@@ -19,8 +19,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
 import com.bortxapps.application.pokos.Condition
+import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
+import com.bortxapps.thewise.presentation.screens.utils.getImagePath
 import com.skydoves.landscapist.glide.GlideImage
 import com.skydoves.landscapist.palette.BitmapPalette
 
@@ -49,7 +51,7 @@ fun PaintWinningOptionCard(option: Option) {
                 GlideImage(modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
-                    imageModel = option.imageUrl,
+                    imageModel = getImagePath(imageName = option.imageUrl),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     bitmapPalette = BitmapPalette {
@@ -105,7 +107,7 @@ fun PreviewPaintElectionRow() {
                         optionId = 0,
                         "Condition 1",
                         description = "Decription condition 1",
-                        weight = 5
+                        weight = ConditionWeight.HIGH
                     )
                 )
                 add(
@@ -115,7 +117,7 @@ fun PreviewPaintElectionRow() {
                         optionId = 0,
                         "Condition 2",
                         description = "Decription condition 2",
-                        weight = 5
+                        weight = ConditionWeight.MUST
                     )
                 )
             })

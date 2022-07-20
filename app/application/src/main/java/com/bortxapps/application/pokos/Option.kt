@@ -10,7 +10,7 @@ data class Option(
     val matchingConditions: MutableList<Condition> = mutableListOf()
 ) {
     fun getPunctuation(): Int {
-        return matchingConditions.sumOf { it.weight }
+        return matchingConditions.sumOf { it.weight.numericalWeight }
     }
 
     fun getMatchingConditions(): String {
@@ -20,14 +20,6 @@ data class Option(
     companion object {
         fun getEmpty(): Option {
             return Option(0, 0, "", "", "", "")
-        }
-    }
-
-    fun addConditions(newConditions: List<Condition>) {
-        newConditions.forEach {
-            if (!matchingConditions.contains(it)) {
-                matchingConditions.add(it)
-            }
         }
     }
 }
