@@ -1,9 +1,13 @@
 package com.bortxapps.thewise.domain.model
 
 import androidx.room.Entity
+import androidx.room.Index
 
-@Entity(primaryKeys = ["optionId", "conditionId"])
+@Entity(
+    indices = [Index("optId"), Index("condId")],
+    primaryKeys = ["optId", "condId"]
+)
 data class ConditionInOptionCrossRef(
-    val optionId: Long,
-    val conditionId: Long
+    val optId: Long,
+    val condId: Long
 )

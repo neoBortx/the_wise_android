@@ -10,7 +10,7 @@ class OptionTranslator {
         fun fromEntity(entity: OptionEntity?): Option {
             return entity?.let {
                 Option(
-                    it.optionId,
+                    it.optId,
                     it.electionId,
                     it.name,
                     it.description,
@@ -23,7 +23,7 @@ class OptionTranslator {
         fun fromEntity(entity: OptionWithConditionsEntity?): Option {
             return entity?.let { it ->
                 Option(
-                    it.option.optionId,
+                    it.option.optId,
                     it.option.electionId,
                     it.option.name,
                     it.option.description,

@@ -60,7 +60,6 @@ fun OptionsListScreen(
     val fabButtonExpandedState by remember { mutableStateOf(MultiFabState.COLLAPSED) }
     var fabButtonWindowState by remember { mutableStateOf(OptionState.LIST) }
     var showOptionConditionLinker by remember { mutableStateOf(false) }
-    var optionToEdit by remember { mutableStateOf(Option.getEmpty()) }
     val focusManager = LocalFocusManager.current
 
    if (!scaffoldState.isRevealed) {
@@ -74,14 +73,13 @@ fun OptionsListScreen(
 
     @SuppressLint("CoroutineCreationDuringComposition")
     @ExperimentalMaterialApi
-    suspend fun openOptionForm(option: Option) {
+    suspend fun openOptionForm(option: Option?) {
         Log.d("Options", "Click in new option button")
         optionFormViewModel.clearOption()
-        optionFormViewModel.configureOption(option,electionId = electionId)
+        optionFormViewModel.configureOption(option, electionId = electionId)
         fabButtonWindowState = OptionState.FORM
         showOptionConditionLinker = false
         gesturesState = true
-        optionToEdit = option
         scaffoldState.conceal()
     }
 
@@ -148,7 +146,7 @@ fun OptionsListScreen(
     @Composable
     fun ListFloatingActionButton() {
         FloatingActionButton(
-            onClick = { scope.launch { openOptionForm(Option.getEmpty()) } },
+            onClick = { scope.launch { openOptionForm(null) } },
             backgroundColor = colorResource(id = R.color.yellow_800)
         ) {
             Icon(
@@ -237,7 +235,6 @@ fun OptionsListScreen(
             frontLayerContent = {
                 OptionFormScreen(
                     electionId = electionId,
-                    option = optionToEdit,
                     isEditingExistingOption = false,
                     isLinkingOptionsAndConnection = showOptionConditionLinker,
                 ) { scope.launch { closeOptionForm() } }

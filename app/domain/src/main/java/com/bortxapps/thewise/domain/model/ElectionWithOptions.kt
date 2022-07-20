@@ -7,8 +7,8 @@ data class ElectionWithOptions(
     @Embedded val election: ElectionEntity,
     @Relation(
         entity = OptionEntity::class,
-        parentColumn = "electionId",
-        entityColumn = "optionId"
+        parentColumn = "electId",
+        entityColumn = "optId"
     )
     val options: List<OptionWithConditionsEntity>
 )

@@ -3,6 +3,7 @@ package com.bortxapps.thewise.infraestructure.repository
 import android.util.Log
 import com.bortxapps.thewise.domain.contrats.repository.IOptionsRepository
 import com.bortxapps.thewise.domain.model.OptionEntity
+import com.bortxapps.thewise.domain.model.OptionWithConditionsEntity
 import com.bortxapps.thewise.infraestructure.dao.OptionDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -12,7 +13,7 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
 
     override val allOptions = optionDao.getOptions()
 
-    override fun getOptionsFromElection(electionId: Long): Flow<List<OptionEntity>> {
+    override fun getOptionsFromElection(electionId: Long): Flow<List<OptionWithConditionsEntity>> {
         try {
             return optionDao.getOptionsFromElection(electionId)
         } catch (ex: Exception) {
@@ -32,7 +33,7 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
         }
     }
 
-    override suspend fun getOption(optionId: Long): OptionEntity? {
+    override suspend fun getOption(optionId: Long): OptionWithConditionsEntity? {
         try {
             return optionDao.getOption(optionId)
         } catch (ex: Exception) {
@@ -46,7 +47,7 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
         try {
             return optionDao.deleteOption(option)
         } catch (ex: Exception) {
-            Log.e("Conditions", "Error deleting Option ${option.optionId} because ${ex.message}")
+            Log.e("Conditions", "Error deleting Option ${option.optId} because ${ex.message}")
             ex.printStackTrace()
             throw ex
         }
@@ -56,7 +57,7 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
         try {
             return optionDao.updateOption(option)
         } catch (ex: Exception) {
-            Log.e("Conditions", "Error updating Option ${option.optionId} because ${ex.message}")
+            Log.e("Conditions", "Error updating Option ${option.optId} because ${ex.message}")
             ex.printStackTrace()
             throw ex
         }

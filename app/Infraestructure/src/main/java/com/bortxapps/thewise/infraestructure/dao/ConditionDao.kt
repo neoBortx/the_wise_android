@@ -17,7 +17,7 @@ interface ConditionDao
     @Delete
     suspend fun deleteCondition(condition: ConditionEntity)
 
-    @Query("SELECT * FROM condition WHERE conditionId LIKE :conditionId")
+    @Query("SELECT * FROM condition WHERE condId LIKE :conditionId")
     suspend fun getCondition(conditionId: Long): ConditionEntity?
 
     @Query("SELECT * FROM condition WHERE electionId LIKE :electionId")

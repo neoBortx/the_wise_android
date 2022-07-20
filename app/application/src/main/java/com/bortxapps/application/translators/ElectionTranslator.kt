@@ -9,14 +9,14 @@ class ElectionTranslator {
     companion object {
         fun fromEntity(entity: ElectionEntity?): Election? {
             return entity?.let {
-                Election(entity.electionId, entity.name, entity.description)
+                Election(entity.electId, entity.name, entity.description)
             }
         }
 
         fun fromEntity(entity: ElectionWithOptions?): Election? {
             return entity?.let {
                 Election(
-                    entity.election.electionId,
+                    entity.election.electId,
                     entity.election.name,
                     entity.election.description
                 ).apply {

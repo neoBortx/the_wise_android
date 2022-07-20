@@ -16,7 +16,7 @@ class ElectionsDomainService @Inject constructor(private val electionsRepository
     }
 
     override suspend fun addElection(election: ElectionEntity) {
-        if (election.electionId == 0L) {
+        if (election.electId == 0L) {
             electionsRepository.addElection(election)
         } else {
             electionsRepository.updateElection(election)

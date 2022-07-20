@@ -11,6 +11,7 @@ import com.bortxapps.thewise.domain.contrats.service.IOptionsDomainService
 import com.bortxapps.thewise.domain.model.OptionEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,12 +33,14 @@ class OptionFormViewModel @Inject constructor(private val optionsService: IOptio
     private var optionId: Long = 0
 
     fun configureOption(option: Option?, electionId: Long) {
-        option?.let {
-            optionName = it.name
-            optionDescription = it.description
-            optionUrl = it.url
-            optionImageUrl = it.imageUrl
-            optionId = it.id
+        if (option != null) {
+            optionName = option.name
+            optionDescription = option.description
+            optionUrl = option.url
+            optionImageUrl = option.imageUrl
+            optionId = option.id
+        } else {
+            optionImageUrl = "image-${UUID.randomUUID().mostSignificantBits}"
         }
 
         this.electionId = electionId
@@ -62,12 +65,16 @@ class OptionFormViewModel @Inject constructor(private val optionsService: IOptio
         optionUrl = url
     }
 
+    fun getImage(): String {
+        return optionImageUrl
+    }
+
     fun createNewOption() {
         Log.i("Option", "Creating a new option $optionName")
         viewModelScope.launch {
             optionsService.addOption(
                 OptionEntity(
-                    optionId = optionId,
+                    optId = optionId,
                     electionId = electionId,
                     name = optionName,
                     description = optionDescription,

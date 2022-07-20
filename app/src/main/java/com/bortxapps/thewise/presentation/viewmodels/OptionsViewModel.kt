@@ -26,7 +26,7 @@ class OptionsViewModel @Inject constructor(private val optionService: IOptionsDo
     private var electionId: Long = 0
 
     val options: Flow<List<Option>> = optionService.allOptions.map { list ->
-        list.filter { it.electionId == electionId }
+        list.filter { it.option.electionId == electionId }
             .map { OptionTranslator.fromEntity(it) }
     }
 

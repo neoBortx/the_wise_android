@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -18,20 +17,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.Election
-import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.navigation.Screen
 import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
 import com.bortxapps.thewise.presentation.componentes.BottomNavigation.GetBottomNavigation
 import com.bortxapps.thewise.presentation.componentes.MainColumn
 import com.bortxapps.thewise.presentation.componentes.TextDescription.GetTextDescription
-import com.bortxapps.thewise.presentation.componentes.TextHeader.GetTextHeader
 import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.viewmodels.ElectionViewModel
-import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @Composable
@@ -47,18 +42,16 @@ fun ElectionInfoScreen(
 @ExperimentalMaterialApi
 @Composable
 fun BuildInfoView(
-    electionViewModel: ElectionViewModel,
-    election: Election,
-    navHostController: NavHostController
+    electionViewModel: ElectionViewModel, election: Election, navHostController: NavHostController
 ) {
 
-    Scaffold(
-        topBar = { GetTopAppBar(true, election.name) { navHostController.navigateUp() } },
+    Scaffold(topBar = { GetTopAppBar(true, election.name) { navHostController.navigateUp() } },
         bottomBar = { GetBottomNavigation(navHostController, election) }) {
         MainColumn.GetMainColumn {
-            GetTextHeader(election.name)
-            GetTextDescription(election.description)
-            election.getWinningOption()?.let { paintWinningOption(it) } ?: paintNoOption()
+            if (election.description.isNotBlank()) {
+                GetTextDescription(election.description)
+            }
+            election.getWinningOption()?.let { PaintWinningOptionCard(it) } ?: PaintNoOption()
 
             GetBottomButton(
                 { deleteElection(electionViewModel, navHostController, election) },
@@ -74,36 +67,8 @@ fun BuildInfoView(
     }
 }
 
-@ExperimentalMaterialApi
 @Composable
-fun paintWinningOption(option: Option) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(colorResource(id = R.color.card_background))
-    ) {
-        AsyncImage(
-            model = option.imageUrl,
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds
-        )
-        Column(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxHeight()
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(text = option.name)
-            Text(text = option.description)
-            Text(text = option.url)
-            paintMatchingConditions(option.matchingConditions)
-        }
-    }
-}
-
-@Composable
-fun paintNoOption() {
+fun PaintNoOption() {
     Column(
         modifier = Modifier
             .padding(10.dp)
@@ -120,14 +85,9 @@ fun paintNoOption() {
 fun paintMatchingConditions(conditions: List<Condition>) {
     LazyColumn(
         contentPadding = PaddingValues(
-            start = 12.dp,
-            top = 16.dp,
-            end = 12.dp,
-            bottom = 16.dp
-        ),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    )
-    {
+            start = 12.dp, top = 16.dp, end = 12.dp, bottom = 16.dp
+        ), verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         items(conditions) { item -> paintOptionRow(item) }
     }
 }
@@ -172,9 +132,7 @@ fun paintOptionRow(item: Condition) {
 }
 
 private fun deleteElection(
-    electionViewModel: ElectionViewModel,
-    navHostController: NavHostController,
-    election: Election
+    electionViewModel: ElectionViewModel, navHostController: NavHostController, election: Election
 ) {
     electionViewModel.deleteElection(election)
     navHostController.navigate(Screen.Home.getFullRoute()) {
@@ -183,9 +141,7 @@ private fun deleteElection(
 }
 
 private fun editElection(
-    electionViewModel: ElectionViewModel,
-    navHostController: NavHostController,
-    election: Election
+    electionViewModel: ElectionViewModel, navHostController: NavHostController, election: Election
 ) {
     electionViewModel.editElection(election)
     navHostController.navigate(Screen.ElectionForm.getRouteWithId(election.id.toString())) {
@@ -203,8 +159,6 @@ private fun openOptionInfo(navHostController: NavHostController) {
 @Composable
 fun DefaultPreview() {
     BuildInfoView(
-        hiltViewModel(),
-        Election(5, "Name", "Description"),
-        rememberNavController()
+        hiltViewModel(), Election(5, "Name", "Description"), rememberNavController()
     )
 }

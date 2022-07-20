@@ -9,12 +9,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
 import com.bortxapps.thewise.presentation.componentes.MainColumn.GetMainColumn
+import com.bortxapps.thewise.presentation.componentes.OptionFilePicker.ImagePickerField
 import com.bortxapps.thewise.presentation.componentes.TextHeader.GetTextHeader
-import com.bortxapps.thewise.presentation.componentes.texfield.ImagePickerField
 import com.bortxapps.thewise.presentation.componentes.texfield.NoEmptyTextField
 import com.bortxapps.thewise.presentation.componentes.texfield.RegularTextField
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
@@ -26,7 +25,6 @@ import kotlinx.coroutines.launch
 fun OptionFormScreen(
     formViewModel: OptionFormViewModel = hiltViewModel(),
     conditionalViewModel: ConditionViewModel = hiltViewModel(),
-    option: Option,
     electionId: Long,
     isEditingExistingOption: Boolean,
     isLinkingOptionsAndConnection: Boolean,
@@ -64,7 +62,7 @@ fun OptionFormScreen(
                 RegularTextField(urlLabel, formViewModel.optionUrl) { formViewModel.setUrl(it) }
                 ImagePickerField(
                     imageLabel,
-                    "$electionId-test"
+                    formViewModel.getImage()
                 )
                 GetBottomButton(
                     {

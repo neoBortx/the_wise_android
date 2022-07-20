@@ -68,7 +68,7 @@ class ConditionsRepository @Inject constructor(private val conditionDao: Conditi
         {
             Log.e(
                 "Conditions",
-                "Error deleting Condition ${condition.conditionId} because ${ex.message}"
+                "Error deleting Condition ${condition.condId} because ${ex.message}"
             )
             ex.printStackTrace()
             throw ex
@@ -82,7 +82,7 @@ class ConditionsRepository @Inject constructor(private val conditionDao: Conditi
         catch(ex: Exception) {
             Log.e(
                 "Conditions",
-                "Error updating Condition ${condition.conditionId} because ${ex.message}"
+                "Error updating Condition ${condition.condId} because ${ex.message}"
             )
             ex.printStackTrace()
             throw ex

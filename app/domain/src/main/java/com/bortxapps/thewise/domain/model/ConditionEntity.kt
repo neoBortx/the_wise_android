@@ -2,27 +2,29 @@ package com.bortxapps.thewise.domain.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
+    indices = [Index("condId"), Index("electionId"), Index("optionId")],
     foreignKeys = [
         ForeignKey(
             entity = ElectionEntity::class,
-            parentColumns = ["electionId"],
+            parentColumns = ["electId"],
             childColumns = ["electionId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = OptionEntity::class,
-            parentColumns = ["optionId"],
+            parentColumns = ["optId"],
             childColumns = ["optionId"],
             onDelete = ForeignKey.CASCADE
         ),
-    ]
-    ,tableName = "condition")
+    ],
+    tableName = "condition"
+)
 data class ConditionEntity(
-    @PrimaryKey(autoGenerate = true)
-    val conditionId: Long,
+    @PrimaryKey(autoGenerate = true) val condId: Long,
     val electionId: Long,
     val optionId: Long,
     val name: String,

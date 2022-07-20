@@ -7,10 +7,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ElectionDao {
+    @Transaction
     @Query("SELECT * FROM election")
     fun getElections(): Flow<List<ElectionWithOptions>>
 
-    @Query("SELECT * FROM election WHERE electionId like :electionId")
+    @Transaction
+    @Query("SELECT * FROM election WHERE electId like :electionId")
     fun getElection(electionId: Long): ElectionWithOptions
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
