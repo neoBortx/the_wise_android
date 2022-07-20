@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -55,6 +56,11 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
         } ?: stringResource(R.string.no_options_configured)
     }
 
+    @Composable
+    fun getImagePath(imageName: String): String {
+        return LocalContext.current.filesDir.absolutePath + "/" + imageName
+    }
+
     Card(
         elevation = 5.dp,
         shape = RoundedCornerShape(2.dp),
@@ -69,11 +75,11 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
                     .fillMaxWidth()
                     .height(100.dp)
             ) {
-                item.getWinningOption()?.imageUrl?.let {
+                item.getWinningOption()?.imageUrl?.let { image ->
                     GlideImage(modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(),
-                        imageModel = item.getWinningOption()?.imageUrl,
+                        imageModel = getImagePath(imageName = image),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         bitmapPalette = BitmapPalette {
