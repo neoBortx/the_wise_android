@@ -48,18 +48,6 @@ class ConditionsRepository @Inject constructor(private val conditionDao: Conditi
         }
     }
 
-    override fun getConditionsFromOption(optionId: Long): Flow<List<ConditionEntity>> {
-        try {
-            return conditionDao.getConditionsFromOption(optionId)
-        }
-        catch(ex: Exception)
-        {
-            Log.e("Conditions", "Error getting Conditions from option $optionId because ${ex.message}")
-            ex.printStackTrace()
-            throw ex
-        }
-    }
-
     override suspend fun deleteCondition(condition: ConditionEntity) {
         try {
             return conditionDao.deleteCondition(condition)

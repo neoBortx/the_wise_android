@@ -37,5 +37,9 @@
     <string name="no_question_label">The wise is waiting for your questions, don\'t keep him waiting</string>
     <string name="no_options_label">The wise need options to choose the best of the them for your question</string>
     <string name="edit">EDIT</string>
-    <string name="insert_conditions">Insert conditions</string>
+    <string name="insert_conditions">Insert requisite</string>
+    <string name="requisite_name">Name</string>
+    <string name="meh">Meh</string>
+    <string name="wish">Wish</string>
+    <string name="must">Must</string>
 </resources>

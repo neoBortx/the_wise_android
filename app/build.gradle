@@ -111,7 +111,7 @@ dependencies {
     //Glide
     implementation "com.github.skydoves:landscapist-glide:1.5.3"
 
-    //Horization
+    implementation 'com.google.accompanist:accompanist-flowlayout:0.24.13-rc'
 
     //Swipe to refresh
 

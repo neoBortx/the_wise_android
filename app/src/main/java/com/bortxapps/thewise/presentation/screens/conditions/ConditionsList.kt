@@ -105,7 +105,7 @@ fun PaintConditionRow(item: Condition, navHostController: NavHostController) {
                     color = colorResource(id = R.color.yellow_500)
                 )
             }
-            Text(
+            /*Text(
                 text = item.description,
                 style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Left,
@@ -114,7 +114,7 @@ fun PaintConditionRow(item: Condition, navHostController: NavHostController) {
                     .padding(vertical = 10.dp)
                     .padding(horizontal = 20.dp)
                     .height(60.dp),
-            )
+            )*/
             Text(
                 text = item.weight.toString(),
                 style = MaterialTheme.typography.body1,

@@ -5,9 +5,7 @@ import com.bortxapps.thewise.domain.model.ConditionEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ConditionDao
-{
-
+interface ConditionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addCondition(condition: ConditionEntity)
 
@@ -22,9 +20,6 @@ interface ConditionDao
 
     @Query("SELECT * FROM condition WHERE electionId LIKE :electionId")
     fun getConditionsFromElection(electionId: Long): Flow<List<ConditionEntity>>
-
-    @Query("SELECT * FROM condition WHERE optionId LIKE :optionId")
-    fun getConditionsFromOption(optionId: Long): Flow<List<ConditionEntity>>
 
     @Query("SELECT * FROM condition")
     fun getAllConditions(): Flow<List<ConditionEntity>>

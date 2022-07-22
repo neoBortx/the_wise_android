@@ -104,19 +104,15 @@ fun PreviewPaintElectionRow() {
                     Condition(
                         id = 0,
                         electionId = 0,
-                        optionId = 0,
                         "Condition 1",
-                        description = "Decription condition 1",
-                        weight = ConditionWeight.HIGH
+                        weight = ConditionWeight.LOW
                     )
                 )
                 add(
                     Condition(
                         id = 1,
                         electionId = 0,
-                        optionId = 0,
                         "Condition 2",
-                        description = "Decription condition 2",
                         weight = ConditionWeight.MUST
                     )
                 )

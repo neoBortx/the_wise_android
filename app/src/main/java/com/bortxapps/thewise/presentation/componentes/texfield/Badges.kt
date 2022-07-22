@@ -1,11 +1,11 @@
 package com.bortxapps.thewise.presentation.componentes.texfield
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.Badge
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -22,13 +22,12 @@ private fun getColor(weight: ConditionWeight): Color {
     return when (weight) {
         ConditionWeight.LOW -> colorResource(id = R.color.badge_low)
         ConditionWeight.MEDIUM -> colorResource(id = R.color.badge_medium)
-        ConditionWeight.HIGH -> colorResource(id = R.color.badge_high)
         ConditionWeight.MUST -> colorResource(id = R.color.badge_must)
     }
 }
 
 @Composable
-fun ConditionBadge(label: String, weight: ConditionWeight) {
+fun ConditionBadge(label: String, weight: ConditionWeight, deleteCallback: (() -> Unit)? = null) {
 
     Badge(
         modifier = Modifier
@@ -36,14 +35,39 @@ fun ConditionBadge(label: String, weight: ConditionWeight) {
             .wrapContentWidth(),
         backgroundColor = getColor(weight)
     ) {
-        Text(
+
+        Row(
             modifier = Modifier.padding(5.dp),
-            text = label, maxLines = 1,
-            color = colorResource(id = R.color.black),
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Normal,
-            textAlign = TextAlign.Center,
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = label, maxLines = 1,
+                color = colorResource(id = R.color.black),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.Center,
+            )
+
+            if (deleteCallback != null) {
+                Button(
+                    onClick = { deleteCallback.invoke() },
+                    modifier = Modifier
+                        .size(20.dp)
+                        .padding(start = 5.dp),
+                    border = null,
+                    elevation = null,
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Transparent,
+                        disabledBackgroundColor = Color.Transparent,
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close, "", modifier = Modifier.size(15.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -57,12 +81,6 @@ fun PrintBadgePreviewLow() {
 @Composable
 fun PrintBadgePreviewMedium() {
     ConditionBadge("Piscina climatizada", ConditionWeight.MEDIUM)
-}
-
-@Preview
-@Composable
-fun PrintBadgePreviewHigh() {
-    ConditionBadge("Piscina climatizada", ConditionWeight.HIGH)
 }
 
 @Preview

@@ -12,9 +12,7 @@ class ConditionTranslator {
                 Condition(
                     it.condId,
                     it.electionId,
-                    it.optionId,
                     it.name,
-                    it.description,
                     ConditionWeight.fromInt(it.weight)
                 )
             } ?: Condition.getEmpty()
@@ -24,9 +22,7 @@ class ConditionTranslator {
             return ConditionEntity(
                 poko.id,
                 poko.electionId,
-                poko.optionId,
                 poko.name,
-                poko.description,
                 poko.weight.numericalWeight
             )
         }

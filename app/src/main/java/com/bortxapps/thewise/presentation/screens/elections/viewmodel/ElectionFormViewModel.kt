@@ -6,17 +6,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bortxapps.application.pokos.Condition
+import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.application.pokos.Election
+import com.bortxapps.application.translators.ConditionTranslator
 import com.bortxapps.application.translators.ElectionTranslator
+import com.bortxapps.thewise.domain.contrats.service.IConditionsDomainService
 import com.bortxapps.thewise.domain.contrats.service.IElectionsDomainService
 import com.bortxapps.thewise.domain.model.ElectionEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class ElectionFormViewModel @Inject constructor(private val electionsService: IElectionsDomainService) :
-    IElectionFormViewModel, ViewModel() {
+class ElectionFormViewModel @Inject constructor(
+    private val electionsService: IElectionsDomainService,
+    private val conditionsService: IConditionsDomainService
+) : IElectionFormViewModel, ViewModel() {
 
     override var isButtonEnabled by mutableStateOf(false)
 
@@ -24,14 +32,58 @@ class ElectionFormViewModel @Inject constructor(private val electionsService: IE
 
     override var electionDescription by mutableStateOf("")
 
+    override var conditions by mutableStateOf(listOf<Condition>())
+
+    var oldConditions = listOf<Condition>()
+
     private var electionId: Long = 0
 
     override fun configureElection(election: Election?) {
-        election?.let {
-            electionName = it.name
-            electionDescription = it.description
-            electionId = it.id
+        if (election != null) {
+            electionName = election.name
+            electionDescription = election.description
+            electionId = election.id
+            getConditions(election.id)
+        } else {
+            electionId = UUID.randomUUID().mostSignificantBits
         }
+    }
+
+    private fun getConditions(electionId: Long) {
+
+        viewModelScope.launch {
+            conditionsService.getConditionsFromElection(electionId = electionId).map {
+                it.map { conditionEntity -> ConditionTranslator.fromEntity(conditionEntity) }
+            }.collect {
+                conditions = it
+                oldConditions = it
+            }
+        }
+    }
+
+    override fun addCondition(conditionName: String, weight: ConditionWeight) {
+        conditions = conditions + Condition(
+            UUID.randomUUID().mostSignificantBits, electionId, conditionName, weight
+        )
+    }
+
+    private fun updateConditionInDatabase() {
+        viewModelScope.launch {
+            val toAdd = conditions.filterNot { oldConditions.contains(it) }
+            val toDelete = oldConditions.filterNot { conditions.contains(it) }
+
+            toAdd.forEach {
+                conditionsService.addCondition(ConditionTranslator.toEntity(it))
+            }
+
+            toDelete.forEach {
+                conditionsService.deleteCondition(ConditionTranslator.toEntity(it))
+            }
+        }
+    }
+
+    override fun deleteCondition(conditionId: Long) {
+        conditions = conditions.filter { condition -> condition.id != conditionId }
     }
 
     override fun clearElection() {
@@ -54,11 +106,11 @@ class ElectionFormViewModel @Inject constructor(private val electionsService: IE
         viewModelScope.launch {
             electionsService.addElection(
                 ElectionEntity(
-                    electionId,
-                    electionName,
-                    electionDescription
+                    electionId, electionName, electionDescription
                 )
             )
+
+            updateConditionInDatabase()
         }
     }
 
@@ -69,6 +121,9 @@ class ElectionFormViewModel @Inject constructor(private val electionsService: IE
 
     override fun editElection(election: Election) {
         Log.i("Election", "Editing election ${election.id}-${election.name}")
-        viewModelScope.launch { electionsService.updateElection(ElectionTranslator.toEntity(election)) }
+        viewModelScope.launch {
+            electionsService.updateElection(ElectionTranslator.toEntity(election))
+            updateConditionInDatabase()
+        }
     }
 }

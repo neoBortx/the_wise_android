@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
+import com.bortxapps.thewise.presentation.componentes.GetConditionsControl
 import com.bortxapps.thewise.presentation.componentes.MainColumn.GetMainColumn
 import com.bortxapps.thewise.presentation.componentes.TextHeader.GetTextHeader
 import com.bortxapps.thewise.presentation.componentes.texfield.NoEmptyTextField
@@ -32,7 +33,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 @Composable
 fun ElectionFormScreen(
     electionFormViewModel: IElectionFormViewModel = hiltViewModel<ElectionFormViewModel>(),
-    election: Election? = null,
+    election: Election,
     formCompletedCallback: () -> Job
 ) {
 
@@ -61,10 +62,14 @@ fun ElectionFormScreen(
             NoEmptyTextField(nameLabel, electionFormViewModel.electionName) {
                 electionFormViewModel.setName(it)
             }
+
             /*RegularTextField(descLabel, electionFormViewModel.electionDescription) {
                 electionFormViewModel.setDescription(it)
             }*/
+
             GetTextHeader(stringResource(R.string.insert_conditions))
+
+            GetConditionsControl(electionFormViewModel)
 
             GetBottomButton(
                 {
@@ -72,9 +77,7 @@ fun ElectionFormScreen(
                     scope.launch {
                         onButtonFormClick()
                     }
-                },
-                R.string.save_election,
-                electionFormViewModel.isButtonEnabled
+                }, R.string.save_election, electionFormViewModel.isButtonEnabled
             )
         }
     }

@@ -13,8 +13,6 @@ interface IConditionsDomainService {
 
     fun getConditionsFromElection(electionId: Long): Flow<List<ConditionEntity>>
 
-    fun getConditionsFromOption(optionId: Long): Flow<List<ConditionEntity>>
-
     suspend fun deleteCondition(condition: ConditionEntity)
 
     suspend fun updateCondition(condition: ConditionEntity)

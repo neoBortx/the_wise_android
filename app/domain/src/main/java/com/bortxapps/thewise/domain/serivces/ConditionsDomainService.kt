@@ -24,11 +24,6 @@ class ConditionsDomainService @Inject constructor(private val conditionsReposito
         return conditionsRepository.getConditionsFromElection(electionId)
     }
 
-    override fun getConditionsFromOption(optionId: Long): Flow<List<ConditionEntity>>
-    {
-        return conditionsRepository.getConditionsFromOption(optionId)
-    }
-
     override suspend fun deleteCondition(condition: ConditionEntity)
     {
         conditionsRepository.deleteCondition(condition)
