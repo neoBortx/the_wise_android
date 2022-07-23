@@ -14,7 +14,7 @@ class ConditionsRepository @Inject constructor(private val conditionDao: Conditi
 
     override suspend fun addCondition(condition: ConditionEntity) {
         try {
-            return conditionDao.addCondition(condition)
+            conditionDao.addCondition(condition)
         }
         catch(ex: Exception)
         {

@@ -63,21 +63,44 @@ class ElectionFormViewModel @Inject constructor(
 
     override fun addCondition(conditionName: String, weight: ConditionWeight) {
         conditions = conditions + Condition(
-            UUID.randomUUID().mostSignificantBits, electionId, conditionName, weight
+            id = UUID.randomUUID().mostSignificantBits,
+            electionId = electionId,
+            name = conditionName,
+            weight = weight
         )
+
+        isButtonEnabled = electionName.isNotBlank() && conditions.count() >= 2
     }
 
-    private fun updateConditionInDatabase() {
+    private fun updateConditionInDatabase(electionId: Long) {
         viewModelScope.launch {
             val toAdd = conditions.filterNot { oldConditions.contains(it) }
             val toDelete = oldConditions.filterNot { conditions.contains(it) }
 
             toAdd.forEach {
-                conditionsService.addCondition(ConditionTranslator.toEntity(it))
+                conditionsService.addCondition(
+                    ConditionTranslator.toEntity(
+                        Condition(
+                            it.id,
+                            electionId,
+                            it.name,
+                            it.weight
+                        )
+                    )
+                )
             }
 
             toDelete.forEach {
-                conditionsService.deleteCondition(ConditionTranslator.toEntity(it))
+                conditionsService.deleteCondition(
+                    ConditionTranslator.toEntity(
+                        Condition(
+                            it.id,
+                            electionId,
+                            it.name,
+                            it.weight
+                        )
+                    )
+                )
             }
         }
     }
@@ -94,7 +117,7 @@ class ElectionFormViewModel @Inject constructor(
 
     override fun setName(name: String) {
         this.electionName = name
-        isButtonEnabled = electionName.isNotBlank()
+        isButtonEnabled = electionName.isNotBlank() && conditions.count() >= 2
     }
 
     override fun setDescription(description: String) {
@@ -104,13 +127,12 @@ class ElectionFormViewModel @Inject constructor(
     override fun createNewElection() {
         Log.i("Election", "Creating a new election $electionName")
         viewModelScope.launch {
-            electionsService.addElection(
+            val electionId = electionsService.addElection(
                 ElectionEntity(
                     electionId, electionName, electionDescription
                 )
             )
-
-            updateConditionInDatabase()
+            updateConditionInDatabase(electionId)
         }
     }
 
@@ -123,7 +145,7 @@ class ElectionFormViewModel @Inject constructor(
         Log.i("Election", "Editing election ${election.id}-${election.name}")
         viewModelScope.launch {
             electionsService.updateElection(ElectionTranslator.toEntity(election))
-            updateConditionInDatabase()
+            updateConditionInDatabase(election.id)
         }
     }
 }

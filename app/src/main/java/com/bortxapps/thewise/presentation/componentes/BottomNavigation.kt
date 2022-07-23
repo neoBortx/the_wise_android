@@ -10,7 +10,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
@@ -21,8 +20,7 @@ object BottomNavigation {
     fun GetBottomNavigation(navController: NavController, election: Election) {
         val items = listOf(
             Screen.InfoElection,
-            Screen.OptionsList,
-            Screen.ConditionsList
+            Screen.OptionsList
         )
         BottomNavigation(backgroundColor = colorResource(id = R.color.yellow_800)) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()

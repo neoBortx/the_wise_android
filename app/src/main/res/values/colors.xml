@@ -15,6 +15,7 @@
     <color name="badge_must_border">#986110</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="error">#AF0000</color>
     <color name="beige">#CCECEAEA</color>
     <color name="back_background">#ECEAEA</color>
     <color name="card_background">#61000000</color>

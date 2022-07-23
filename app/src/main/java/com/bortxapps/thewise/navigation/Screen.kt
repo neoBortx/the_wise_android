@@ -1,8 +1,6 @@
 package com.bortxapps.thewise.navigation
 
-import androidx.compose.material.icons.Icons
 import com.bortxapps.thewise.R
-import com.bortxapps.thewise.navigation.NavigationConstants.CONDITIONS_SCREEN_ARGUMENT_ID
 import com.bortxapps.thewise.navigation.NavigationConstants.ELECTION_SCREEN_ARGUMENT_ID
 import com.bortxapps.thewise.navigation.NavigationConstants.OPTIONS_SCREEN_ARGUMENT_ID
 
@@ -13,8 +11,6 @@ sealed class Screen(
     //Just for tab navigation
     val iconId: Int = 0
 ) {
-    val MyAppIcons = Icons.Rounded
-
     abstract fun getFullRoute(): String
 
     fun getRouteWithId(electionId: String): String {
@@ -64,37 +60,10 @@ sealed class Screen(
         }
     }
 
-    object OptionForm : Screen("option_form_screen") {
-        override fun getFullRoute(): String {
-            return "$routeSourcePath/{$OPTIONS_SCREEN_ARGUMENT_ID}"
-        }
-    }
-
     object InfoOption : Screen("info_option_screen") {
         override fun getFullRoute(): String {
             return "$routeSourcePath/{$OPTIONS_SCREEN_ARGUMENT_ID}"
         }
     }
     //endregion
-
-    //region conditions
-    object ConditionsList :
-        Screen("conditions_list_screen", R.string.conditions, R.drawable.round_fact_check_20) {
-        override fun getFullRoute(): String {
-            return "$routeSourcePath/{$ELECTION_SCREEN_ARGUMENT_ID}"
-        }
-    }
-
-    object InfoCondition :
-        Screen("info_conditions_screen") {
-        override fun getFullRoute(): String {
-            return "$routeSourcePath/{$CONDITIONS_SCREEN_ARGUMENT_ID}"
-        }
-    }
-
-    object ConditionForm : Screen("condition_form_screen") {
-        override fun getFullRoute(): String {
-            return "$routeSourcePath/{$CONDITIONS_SCREEN_ARGUMENT_ID}"
-        }
-    }
 }

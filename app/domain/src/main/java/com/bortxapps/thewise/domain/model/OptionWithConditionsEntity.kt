@@ -11,5 +11,5 @@ data class OptionWithConditionsEntity(
         entityColumn = "condId",
         associateBy = Junction(ConditionInOptionCrossRef::class)
     )
-    val songs: List<ConditionEntity>
+    val conditions: List<ConditionEntity>
 )

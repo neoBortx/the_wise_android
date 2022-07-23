@@ -22,7 +22,7 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
         }
     }
 
-    override suspend fun addElection(election: ElectionEntity) {
+    override suspend fun addElection(election: ElectionEntity): Long {
         try {
             return electionDao.addElection(election)
         } catch (ex: Exception) {

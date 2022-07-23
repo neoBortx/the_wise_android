@@ -13,8 +13,6 @@ class OptionTranslator {
                     it.optId,
                     it.electionId,
                     it.name,
-                    it.description,
-                    it.url,
                     it.imageUrl
                 )
             } ?: Option.getEmpty()
@@ -26,25 +24,32 @@ class OptionTranslator {
                     it.option.optId,
                     it.option.electionId,
                     it.option.name,
-                    it.option.description,
-                    it.option.url,
                     it.option.imageUrl
                 ).apply {
-                    it.songs.forEach { condition ->
+                    it.conditions.forEach { condition ->
                         this.matchingConditions.add(ConditionTranslator.fromEntity(condition))
                     }
                 }
             } ?: Option.getEmpty()
         }
 
-        fun toEntity(poko: Option): OptionEntity {
+        fun toSimpleEntity(poko: Option): OptionEntity {
             return OptionEntity(
                 poko.id,
                 poko.electionId,
                 poko.name,
-                poko.description,
-                poko.url,
                 poko.imageUrl
+            )
+        }
+
+        fun toEntity(poko: Option): OptionWithConditionsEntity {
+            return OptionWithConditionsEntity(
+                OptionEntity(
+                    poko.id,
+                    poko.electionId,
+                    poko.name,
+                    poko.imageUrl
+                ), poko.matchingConditions.map { ConditionTranslator.toEntity(it) }
             )
         }
     }

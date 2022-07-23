@@ -17,7 +17,5 @@ data class OptionEntity(
     @PrimaryKey(autoGenerate = true) val optId: Long,
     val electionId: Long,
     val name: String,
-    val description: String,
-    val url: String,
     val imageUrl: String
 )

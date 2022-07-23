@@ -32,11 +32,10 @@ object OptionFilePicker {
     fun ImagePickerField(
         label: String, itemId: String
     ) {
-
         val context = LocalContext.current
-        var bitmap by remember {
-            mutableStateOf(getBitMap(context, itemId))
-        }
+        val initialBitMap = getBitMap(context, itemId)
+        var bitmap by remember { mutableStateOf(initialBitMap) }
+
 
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent()
@@ -49,7 +48,7 @@ object OptionFilePicker {
 
         val source = remember { MutableInteractionSource() }
 
-        Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)) {
             Text(
                 text = label, color = colorResource(id = R.color.yellow_800)
             )

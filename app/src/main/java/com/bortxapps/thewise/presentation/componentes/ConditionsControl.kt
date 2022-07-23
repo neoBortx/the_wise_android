@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.thewise.R
-import com.bortxapps.thewise.presentation.componentes.texfield.ConditionBadge
+import com.bortxapps.thewise.presentation.componentes.texfield.RemovableConditionBadge
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModelPreview
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.IElectionFormViewModel
 import com.google.accompanist.flowlayout.FlowRow
@@ -166,7 +166,7 @@ fun GetConditionsControl(electionFormViewModel: IElectionFormViewModel) {
                 mainAxisSpacing = 8.dp
             ) {
                 conditions.forEach { condition ->
-                    ConditionBadge(condition.name, condition.weight) {
+                    RemovableConditionBadge(condition.name, condition.weight) {
                         electionFormViewModel.deleteCondition(conditionId = condition.id)
                     }
                 }

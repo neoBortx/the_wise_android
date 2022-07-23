@@ -4,8 +4,6 @@ data class Option(
     val id: Long,
     val electionId: Long,
     val name: String,
-    val description: String,
-    val url: String,
     val imageUrl: String,
     val matchingConditions: MutableList<Condition> = mutableListOf()
 ) {
@@ -19,7 +17,7 @@ data class Option(
 
     companion object {
         fun getEmpty(): Option {
-            return Option(0, 0, "", "", "", "")
+            return Option(0, 0, "", "")
         }
     }
 }

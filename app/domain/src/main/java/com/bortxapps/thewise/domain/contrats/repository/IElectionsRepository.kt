@@ -10,7 +10,7 @@ interface IElectionsRepository {
 
     fun getElection(electionId: Long): ElectionWithOptions
 
-    suspend fun addElection(election: ElectionEntity)
+    suspend fun addElection(election: ElectionEntity): Long
 
     suspend fun deleteElection(election: ElectionEntity)
 

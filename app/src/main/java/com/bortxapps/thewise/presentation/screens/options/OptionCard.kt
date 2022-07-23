@@ -1,9 +1,5 @@
 package com.bortxapps.thewise.presentation.screens.options
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,178 +12,121 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
-import coil.compose.AsyncImage
+import com.bortxapps.application.pokos.Condition
+import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
-import kotlinx.coroutines.Dispatchers
+import com.bortxapps.thewise.presentation.componentes.texfield.SimpleConditionBadge
+import com.bortxapps.thewise.presentation.screens.utils.getImagePath
+import com.google.accompanist.flowlayout.FlowRow
+import com.google.accompanist.flowlayout.MainAxisAlignment
+import com.google.accompanist.flowlayout.SizeMode
+import com.skydoves.landscapist.glide.GlideImage
+import com.skydoves.landscapist.palette.BitmapPalette
 import kotlinx.coroutines.launch
-import java.net.URL
 
 @ExperimentalMaterialApi
 @Composable
-fun PaintOptionRow(item: Option, editOptionCallBack: suspend (Option) -> Unit) {
+fun PaintOptionRow(option: Option, clickCallback: () -> Unit, deleteCallBack: () -> Unit) {
 
     val colTitle = colorResource(id = R.color.yellow_800)
-    val colSubtitle = colorResource(id = R.color.black)
     val colBack = colorResource(id = R.color.transparent)
 
-    var expanded by remember { mutableStateOf(false) }
-    var image by remember { mutableStateOf<Bitmap?>(null) }
-    var colorTitle by remember { mutableStateOf(colTitle) }
-    var colorSubTitle by remember { mutableStateOf(colSubtitle) }
-    var colorTextBackground by remember { mutableStateOf(colBack) }
-
+    var palette by remember { mutableStateOf<Palette?>(null) }
     val scope = rememberCoroutineScope()
 
-    fun openOptionInfo(item: Option) {
-        Log.d("Options", "Click in option card")
-        scope.launch { editOptionCallBack(item) }
-    }
-
-    fun createPalette(url: String) {
-        if (!expanded) {
-            colorTextBackground = colBack
-            colorSubTitle = colSubtitle
-            colorTitle = colTitle
-        } else {
-            scope.launch(Dispatchers.Default) {
-                try {
-                    if (image == null) {
-                        val url = URL(url)
-                        image = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                    }
-                } catch (e: Exception) {
-                    System.out.println(e)
-                }
-                image?.let { img ->
-                    Palette.from(img).generate { result ->
-                        result?.let { palete ->
-                            palete.vibrantSwatch?.let {
-                                colorTextBackground = Color(
-                                    Color(it.bodyTextColor).red,
-                                    Color(it.bodyTextColor).green,
-                                    Color(it.bodyTextColor).blue,
-                                    0.3f
-                                )
-                                colorSubTitle = Color(it.rgb)
-                                colorTitle = Color(it.rgb)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     Card(
-        onClick = { expanded = !expanded },
-        elevation = 2.dp,
+        elevation = 5.dp,
         shape = RoundedCornerShape(2.dp),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(100.dp, 300.dp),
+        onClick = { scope.launch { clickCallback() } },
     ) {
         Column {
-            Box {
-                Column(
-                    modifier = Modifier
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(if (option.imageUrl.isNotBlank()) 100.dp else 50.dp)
+            ) {
+                if (option.imageUrl.isNotBlank()) {
+                    GlideImage(modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(0.dp, 150.dp)
-                ) {
-                    AnimatedVisibility(visible = expanded) {
-                        createPalette(item.imageUrl)
-                        AsyncImage(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            model = image,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                        )
-                    }
+                        .fillMaxHeight(),
+                        imageModel = getImagePath(imageName = option.imageUrl),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        bitmapPalette = BitmapPalette {
+                            palette = it
+                        })
                 }
-
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .background(colorTextBackground)
-                ) {
-                    Text(
-                        text = item.name.replaceFirstChar { it.uppercase() },
-                        style = MaterialTheme.typography.h5,
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .background(palette?.vibrantSwatch?.bodyTextColor?.let {
+                        Color(it)
+                    } ?: colBack)) {
+                    Text(text = option.name.replaceFirstChar { it.uppercase() },
+                        style = MaterialTheme.typography.h6,
+                        overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .padding(bottom = 0.dp, top = 5.dp)
-                            .padding(horizontal = 10.dp)
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        color = colorTitle,
-                        maxLines = 1
-                    )
-
-                    Text(
-                        text = item.description.replaceFirstChar { it.uppercase() },
-                        style = MaterialTheme.typography.body2,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .padding(bottom = 10.dp, top = 0.dp)
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        color = colorSubTitle,
-                        maxLines = 1
-                    )
-
+                        modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
+                        color = palette?.vibrantSwatch?.rgb?.let {
+                            Color(it)
+                        } ?: colTitle,
+                        maxLines = 2)
                 }
             }
 
-            AnimatedVisibility(visible = expanded) {
-                Column {
-
-                    Text(
-                        text = "${stringResource(R.string.matching_conditions_label)} ${item.getMatchingConditions()}",
-                        style = MaterialTheme.typography.body2,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp, bottom = 5.dp)
-                            .padding(horizontal = 20.dp),
-                        maxLines = 3
-                    )
-
-                    Row {
-                        Button(
-                            onClick = { scope.launch { openOptionInfo(item) } },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Transparent
-                            ),
-                            elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp)
-                        ) {
-                            Text(
-                                text = "EDIT",
-                                textDecoration = TextDecoration.Underline,
-                                style = MaterialTheme.typography.subtitle1,
-                                color = colorTitle
-                            )
-                        }
-                        Button(
-                            onClick = { scope.launch { } },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Transparent
-                            ),
-                            elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp)
-                        ) {
-                            Text(
-                                text = "DELETE",
-                                textDecoration = TextDecoration.Underline,
-                                style = MaterialTheme.typography.subtitle1,
-                                color = colorTitle,
-                                textAlign = TextAlign.End
-                            )
-                        }
-                    }
+            Text(
+                text = stringResource(R.string.matching_conditions_label),
+                style = MaterialTheme.typography.body2,
+                textAlign = TextAlign.Start,
+                color = palette?.vibrantSwatch?.rgb?.let {
+                    Color(it)
+                } ?: colTitle,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 7.dp, bottom = 13.dp)
+                    .padding(horizontal = 10.dp),
+                maxLines = 3
+            )
+            FlowRow(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp),
+                mainAxisAlignment = MainAxisAlignment.Start,
+                mainAxisSize = SizeMode.Expand,
+                crossAxisSpacing = 5.dp,
+                mainAxisSpacing = 5.dp
+            ) {
+                option.matchingConditions.forEach { condition ->
+                    SimpleConditionBadge(condition.name, condition.weight)
                 }
+            }
+
+            Button(
+                onClick = { scope.launch { deleteCallBack() } },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Transparent
+                ),
+                elevation = ButtonDefaults.elevation(
+                    defaultElevation = 0.dp,
+                    pressedElevation = 0.dp
+                )
+            ) {
+                Text(
+                    text = "DELETE",
+                    textDecoration = TextDecoration.Underline,
+                    color = palette?.vibrantSwatch?.rgb?.let {
+                        Color(it)
+                    } ?: colTitle,
+                    textAlign = TextAlign.End
+                )
             }
         }
     }
@@ -196,16 +135,32 @@ fun PaintOptionRow(item: Option, editOptionCallBack: suspend (Option) -> Unit) {
 @ExperimentalMaterialApi
 @Preview
 @Composable
-fun PreviewPaintElectionRow() {
+fun PreviewPaintOptionRow() {
     PaintOptionRow(
-        Option(
-            id = 0,
-            name = "Super election",
-            description = "this is a description",
+        Option(id = 0,
             electionId = 0,
+            name = "option 1",
             imageUrl = "",
-            matchingConditions = mutableListOf(),
-            url = "http://www.google.com"
-        )
-    ) { _ -> }
+            matchingConditions = mutableListOf<Condition>().apply {
+                add(
+                    Condition(
+                        id = 0,
+                        electionId = 0,
+                        "Condition 1",
+                        weight = ConditionWeight.MUST
+                    )
+                )
+                add(
+                    Condition(
+                        id = 1,
+                        electionId = 0,
+                        "Condition 2",
+                        weight = ConditionWeight.LOW
+                    )
+                )
+            }), clickCallback = {
+
+        }, deleteCallBack = {
+
+        })
 }

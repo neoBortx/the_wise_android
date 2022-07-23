@@ -9,18 +9,14 @@ import javax.inject.Inject
 class ElectionsDomainService @Inject constructor(private val electionsRepository: IElectionsRepository) :
     IElectionsDomainService {
 
-    override val allElections =  electionsRepository.allElections
+    override val allElections = electionsRepository.allElections
 
     override fun getElection(electionId: Long): ElectionWithOptions {
         return electionsRepository.getElection(electionId)
     }
 
-    override suspend fun addElection(election: ElectionEntity) {
-        if (election.electId == 0L) {
-            electionsRepository.addElection(election)
-        } else {
-            electionsRepository.updateElection(election)
-        }
+    override suspend fun addElection(election: ElectionEntity): Long {
+        return electionsRepository.addElection(election)
     }
 
     override suspend fun deleteElection(election: ElectionEntity) {

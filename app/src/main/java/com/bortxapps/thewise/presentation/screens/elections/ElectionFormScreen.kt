@@ -33,7 +33,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 @Composable
 fun ElectionFormScreen(
     electionFormViewModel: IElectionFormViewModel = hiltViewModel<ElectionFormViewModel>(),
-    election: Election,
+    election: Election?,
     formCompletedCallback: () -> Job
 ) {
 
@@ -62,15 +62,8 @@ fun ElectionFormScreen(
             NoEmptyTextField(nameLabel, electionFormViewModel.electionName) {
                 electionFormViewModel.setName(it)
             }
-
-            /*RegularTextField(descLabel, electionFormViewModel.electionDescription) {
-                electionFormViewModel.setDescription(it)
-            }*/
-
             GetTextHeader(stringResource(R.string.insert_conditions))
-
             GetConditionsControl(electionFormViewModel)
-
             GetBottomButton(
                 {
                     focusManager.clearFocus()

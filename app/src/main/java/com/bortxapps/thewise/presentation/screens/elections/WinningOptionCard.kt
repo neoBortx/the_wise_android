@@ -96,8 +96,6 @@ fun PreviewPaintElectionRow() {
         Option(id = 0,
             electionId = 0,
             name = "option 1",
-            description = "description1",
-            url = "www.google.com,",
             imageUrl = "",
             matchingConditions = mutableListOf<Condition>().apply {
                 add(

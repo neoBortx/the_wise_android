@@ -29,7 +29,7 @@ import com.bortxapps.application.pokos.Election
 import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.navigation.Screen
-import com.bortxapps.thewise.presentation.componentes.texfield.ConditionBadge
+import com.bortxapps.thewise.presentation.componentes.texfield.SimpleConditionBadge
 import com.bortxapps.thewise.presentation.screens.utils.getImagePath
 import com.skydoves.landscapist.glide.GlideImage
 import com.skydoves.landscapist.palette.BitmapPalette
@@ -137,7 +137,7 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(option.matchingConditions) { condition ->
-                            ConditionBadge(condition.name, condition.weight)
+                            SimpleConditionBadge(condition.name, condition.weight)
                         }
                     }
 
@@ -160,8 +160,6 @@ fun PreviewPaintElectionRow() {
                     Option(id = 0,
                         electionId = 0,
                         name = "option 1",
-                        description = "description1",
-                        url = "www.google.com,",
                         imageUrl = "",
                         matchingConditions = mutableListOf<Condition>().apply {
                             add(

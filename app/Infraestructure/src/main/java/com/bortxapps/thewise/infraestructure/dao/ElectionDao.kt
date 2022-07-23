@@ -16,7 +16,7 @@ interface ElectionDao {
     fun getElection(electionId: Long): ElectionWithOptions
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addElection(election: ElectionEntity)
+    suspend fun addElection(election: ElectionEntity): Long
 
     @Update
     suspend fun updateElection(election: ElectionEntity)

@@ -18,7 +18,7 @@ class OptionsDomainService @Inject constructor(private val optionsRepository: IO
         return optionsRepository.getOptionsFromElection(electionId)
     }
 
-    override suspend fun addOption(option: OptionEntity) {
+    override suspend fun addOption(option: OptionWithConditionsEntity) {
         optionsRepository.addOption(option)
     }
 
@@ -34,8 +34,7 @@ class OptionsDomainService @Inject constructor(private val optionsRepository: IO
         optionsRepository.deleteOption(option)
     }
 
-    override suspend fun updateOption(option: OptionEntity)
-    {
+    override suspend fun updateOption(option: OptionWithConditionsEntity) {
         optionsRepository.updateOption(option)
     }
 

@@ -164,7 +164,7 @@ fun HomeScreen(
         backLayerBackgroundColor = colorResource(id = R.color.white),
         appBar = { GetTopAppBar(false, stringResource(R.string.app_name)) { navigateBack() } },
         backLayerContent = { DrawFrontLayer(questions) },
-        frontLayerContent = { ElectionFormScreen(election = Election.getEmpty()) { scope.launch { closeElectionForm() } } }
+        frontLayerContent = { ElectionFormScreen(election = null) { scope.launch { closeElectionForm() } } }
     ) {
     }
 }

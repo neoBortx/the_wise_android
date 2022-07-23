@@ -9,11 +9,11 @@ interface IOptionsDomainService {
 
     fun getOptionsFromElection(electionId: Long) : Flow<List<OptionWithConditionsEntity>>
 
-    suspend fun addOption(option: OptionEntity)
+    suspend fun addOption(option: OptionWithConditionsEntity)
 
     suspend fun getOption(optionId: Long): OptionWithConditionsEntity?
 
     suspend fun deleteOption(option: OptionEntity)
 
-    suspend fun updateOption(option: OptionEntity)
+    suspend fun updateOption(option: OptionWithConditionsEntity)
 }

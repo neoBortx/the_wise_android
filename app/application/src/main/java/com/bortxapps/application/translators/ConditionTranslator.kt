@@ -20,10 +20,10 @@ class ConditionTranslator {
 
         fun toEntity(poko: Condition): ConditionEntity {
             return ConditionEntity(
-                poko.id,
-                poko.electionId,
-                poko.name,
-                poko.weight.numericalWeight
+                condId = poko.id,
+                electionId = poko.electionId,
+                name = poko.name,
+                weight = poko.weight.numericalWeight
             )
         }
     }

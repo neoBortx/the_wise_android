@@ -12,7 +12,7 @@ import com.bortxapps.thewise.infraestructure.dao.OptionDao
 
 @Database(
     entities = [ElectionEntity::class, OptionEntity::class, ConditionEntity::class, ConditionInOptionCrossRef::class],
-    version = 5
+    version = 7
 )
 abstract class TheWiseDatabase : RoomDatabase() {
     abstract fun electionDao(): ElectionDao

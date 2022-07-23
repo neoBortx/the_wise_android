@@ -3,8 +3,6 @@ package com.bortxapps.thewise.presentation.screens.options
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -34,16 +32,8 @@ import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
 import com.bortxapps.thewise.presentation.viewmodels.ElectionViewModel
 import com.bortxapps.thewise.presentation.viewmodels.OptionsViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
-enum class MultiFabState {
-    COLLAPSED, EXPANDED
-}
-
-enum class OptionState {
-    LIST, FORM
-}
-
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @ExperimentalMaterialApi
@@ -57,49 +47,32 @@ fun OptionsListScreen(
 
     val scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed)
     var gesturesState by remember { mutableStateOf(true) }
-    val fabButtonExpandedState by remember { mutableStateOf(MultiFabState.COLLAPSED) }
-    var fabButtonWindowState by remember { mutableStateOf(OptionState.LIST) }
-    var showOptionConditionLinker by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
-
-   if (!scaffoldState.isRevealed) {
-       fabButtonWindowState = OptionState.FORM
-    }
+    val coroutineScope = rememberCoroutineScope()
 
     val scope = rememberCoroutineScope()
 
     optionsViewModel.configure(electionId)
     val options by optionsViewModel.options.collectAsState(initial = listOf())
 
-    @SuppressLint("CoroutineCreationDuringComposition")
     @ExperimentalMaterialApi
-    suspend fun openOptionForm(option: Option?) {
+    fun openOptionForm(option: Option?) {
         Log.d("Options", "Click in new option button")
         optionFormViewModel.clearOption()
         optionFormViewModel.configureOption(option, electionId = electionId)
-        fabButtonWindowState = OptionState.FORM
-        showOptionConditionLinker = false
         gesturesState = true
-        scaffoldState.conceal()
+        coroutineScope.launch(Dispatchers.Main) {
+            scaffoldState.conceal()
+        }
     }
 
-    @SuppressLint("CoroutineCreationDuringComposition")
     @ExperimentalMaterialApi
-    suspend fun openConditionsOfOptionForm(optionId: Long) {
-        Log.d("Options", "Click in assign option button")
-        fabButtonWindowState = OptionState.FORM
-        showOptionConditionLinker = true
-        gesturesState = true
-        scaffoldState.conceal()
-    }
-
-    @SuppressLint("CoroutineCreationDuringComposition")
-    @ExperimentalMaterialApi
-    suspend fun closeOptionForm() {
-        fabButtonWindowState = OptionState.LIST
+    fun closeOptionForm() {
         gesturesState = true
         focusManager.clearFocus()
-        scaffoldState.reveal()
+        coroutineScope.launch(Dispatchers.Main) {
+            scaffoldState.reveal()
+        }
     }
 
 
@@ -117,30 +90,12 @@ fun OptionsListScreen(
         )
         {
             items(options) { item ->
-                PaintOptionRow(item, ::openOptionForm)
+                PaintOptionRow(
+                    option = item,
+                    clickCallback = { openOptionForm(item) },
+                    deleteCallBack = { optionsViewModel.deleteOption(item) })
             }
         }
-    }
-
-    @Composable
-    fun FormOptionsFloatingActionButton(multiFabState: MultiFabState) {
-        val transition = updateTransition(targetState = multiFabState, label = "")
-
-        val rotation: Float by transition.animateFloat(label = "") { state ->
-            if (state == MultiFabState.EXPANDED) 45f else 0f
-        }
-
-        ExtendedFloatingActionButton(
-            onClick = { scope.launch { openConditionsOfOptionForm(0) } },
-            backgroundColor = colorResource(id = R.color.yellow_800),
-            icon = {
-                Icon(
-                    painter  = painterResource(R.drawable.compare_arrows),
-                    ""
-                )
-            },
-            text = { Text(stringResource(R.string.assign_conditions)) }
-        )
     }
 
     @Composable
@@ -153,16 +108,6 @@ fun OptionsListScreen(
                 imageVector = Icons.Default.Add,
                 ""
             )
-        }
-    }
-
-    @Composable
-    fun OptionsFloatingActionButton(multiFabState: MultiFabState, optionState: OptionState) {
-
-        if (optionState == OptionState.LIST) {
-            ListFloatingActionButton()
-        } else {
-            FormOptionsFloatingActionButton(multiFabState)
         }
     }
 
@@ -219,7 +164,7 @@ fun OptionsListScreen(
     }
 
     Scaffold(
-        floatingActionButton = { OptionsFloatingActionButton(fabButtonExpandedState, fabButtonWindowState) },
+        floatingActionButton = { ListFloatingActionButton() },
         bottomBar = { GetBottomNavigation(navHostController, Election.getEmpty()) })
     {
         BackdropScaffold(
@@ -228,15 +173,18 @@ fun OptionsListScreen(
             peekHeight = 50.dp,
             headerHeight = 0.dp,
             backLayerBackgroundColor = colorResource(id = R.color.white),
-            appBar = { GetTopAppBar(true, /*electionViewModel.election?.name ?:*/ "") { navigateBack() } },
+            appBar = {
+                GetTopAppBar(
+                    true, /*electionViewModel.election?.name ?:*/
+                    ""
+                ) { navigateBack() }
+            },
             backLayerContent = {
                 DrawFrontLayer(options)
             },
             frontLayerContent = {
                 OptionFormScreen(
-                    electionId = electionId,
-                    isEditingExistingOption = false,
-                    isLinkingOptionsAndConnection = showOptionConditionLinker,
+                    electionId = electionId
                 ) { scope.launch { closeOptionForm() } }
             }
         ) {
