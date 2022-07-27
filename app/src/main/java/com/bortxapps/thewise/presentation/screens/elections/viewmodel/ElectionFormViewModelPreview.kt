@@ -52,8 +52,4 @@ class ElectionFormViewModelPreview : IElectionFormViewModel {
     override fun deleteElection(election: Election) {
         //Do nothing
     }
-
-    override fun editElection(election: Election) {
-        //Do nothing
-    }
 }

@@ -15,7 +15,7 @@
     <string name="save_election">Save question</string>
     <string name="save_option">Save option</string>
     <string name="save_condition">Save condition</string>
-    <string name="delete_election">Delete election</string>
+    <string name="delete_election">Remove question</string>
     <string name="cant_be_empty">the wise need a question</string>
     <string name="delete">Delete</string>
     <string name="add_condition">Add new condition</string>
@@ -43,4 +43,7 @@
     <string name="meh">Meh</string>
     <string name="wish">Wish</string>
     <string name="must">Must</string>
+    <string name="delete_disclaimer">The wise is going to forget all options and requisites of the question</string>
+    <string name="keep">Keep</string>
+    <string name="forget">Forget</string>
 </resources>

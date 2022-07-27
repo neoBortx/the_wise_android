@@ -47,7 +47,6 @@ fun ElectionFormScreen(
     fun onButtonFormClick() {
         Log.d("Elections", "Click in create election button")
         electionFormViewModel.createNewElection()
-        electionFormViewModel.clearElection()
         formCompletedCallback.invoke()
     }
 

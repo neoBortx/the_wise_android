@@ -13,7 +13,7 @@ interface ElectionDao {
 
     @Transaction
     @Query("SELECT * FROM election WHERE electId like :electionId")
-    fun getElection(electionId: Long): ElectionWithOptions
+    fun getElection(electionId: Long): Flow<ElectionWithOptions>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addElection(election: ElectionEntity): Long

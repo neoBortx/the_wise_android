@@ -18,7 +18,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,7 +29,6 @@ import com.bortxapps.thewise.presentation.componentes.BottomNavigation.GetBottom
 import com.bortxapps.thewise.presentation.componentes.MainColumn
 import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
-import com.bortxapps.thewise.presentation.viewmodels.ElectionViewModel
 import com.bortxapps.thewise.presentation.viewmodels.OptionsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,7 +51,10 @@ fun OptionsListScreen(
     val scope = rememberCoroutineScope()
 
     optionsViewModel.configure(electionId)
+
     val options by optionsViewModel.options.collectAsState(initial = listOf())
+    val election by optionsViewModel.election.collectAsState(initial = Election.getEmpty())
+
 
     @ExperimentalMaterialApi
     fun openOptionForm(option: Option?) {
@@ -99,7 +100,7 @@ fun OptionsListScreen(
     }
 
     @Composable
-    fun ListFloatingActionButton() {
+    fun GetFloatingActionButton() {
         FloatingActionButton(
             onClick = { scope.launch { openOptionForm(null) } },
             backgroundColor = colorResource(id = R.color.yellow_800)
@@ -124,7 +125,7 @@ fun OptionsListScreen(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(horizontal = 10.dp)
-                    .padding(top = 50.dp, bottom = 75.dp),
+                    .padding(top = 50.dp, bottom = 50.dp),
                 fontSize = 23.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -163,38 +164,32 @@ fun OptionsListScreen(
         navigateBack()
     }
 
-    Scaffold(
-        floatingActionButton = { ListFloatingActionButton() },
-        bottomBar = { GetBottomNavigation(navHostController, Election.getEmpty()) })
-    {
-        BackdropScaffold(
-            scaffoldState = scaffoldState,
-            gesturesEnabled = gesturesState,
-            peekHeight = 50.dp,
-            headerHeight = 0.dp,
-            backLayerBackgroundColor = colorResource(id = R.color.white),
-            appBar = {
-                GetTopAppBar(
-                    true, /*electionViewModel.election?.name ?:*/
-                    ""
-                ) { navigateBack() }
-            },
-            backLayerContent = {
+    BackdropScaffold(
+        scaffoldState = scaffoldState,
+        gesturesEnabled = gesturesState,
+        peekHeight = 50.dp,
+        headerHeight = 0.dp,
+        backLayerBackgroundColor = colorResource(id = R.color.white),
+        appBar = {
+            GetTopAppBar(
+                title = election.name.replaceFirstChar { it.uppercase() },
+                showIcon = false,
+                backCallback = { navigateBack() }
+            )
+        },
+        backLayerContent = {
+            Scaffold(
+                floatingActionButton = { GetFloatingActionButton() },
+                bottomBar = { GetBottomNavigation(navHostController, election) })
+            {
                 DrawFrontLayer(options)
-            },
-            frontLayerContent = {
-                OptionFormScreen(
-                    electionId = electionId
-                ) { scope.launch { closeOptionForm() } }
             }
-        ) {
+        },
+        frontLayerContent = {
+            OptionFormScreen(
+                electionId = election.id
+            ) { scope.launch { closeOptionForm() } }
         }
+    ) {
     }
-}
-
-@ExperimentalMaterialApi
-@Composable
-@Preview
-fun HomeScreenPreview(electionViewModel: ElectionViewModel = hiltViewModel()) {
-
 }

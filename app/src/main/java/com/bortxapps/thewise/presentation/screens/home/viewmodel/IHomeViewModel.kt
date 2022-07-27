@@ -5,11 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface IHomeViewModel {
 
-    var election: Election?
-
     val questions: Flow<List<Election>>
-
-    fun getElection(electionId: Long)
 
     fun createNewElection(election: Election)
 

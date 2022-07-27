@@ -162,7 +162,12 @@ fun HomeScreen(
         peekHeight = 45.dp,
         headerHeight = 0.dp,
         backLayerBackgroundColor = colorResource(id = R.color.white),
-        appBar = { GetTopAppBar(false, stringResource(R.string.app_name)) { navigateBack() } },
+        appBar = {
+            GetTopAppBar(
+                title = stringResource(R.string.app_name),
+                showIcon = true
+            )
+        },
         backLayerContent = { DrawFrontLayer(questions) },
         frontLayerContent = { ElectionFormScreen(election = null) { scope.launch { closeElectionForm() } } }
     ) {

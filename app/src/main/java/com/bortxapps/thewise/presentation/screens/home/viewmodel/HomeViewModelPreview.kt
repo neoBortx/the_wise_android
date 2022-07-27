@@ -9,8 +9,6 @@ class HomeViewModelPreview : IHomeViewModel {
     private fun getFakeElection(id: Long): Election =
         Election(id, "name $id", description = "description $id", options = mutableListOf())
 
-    override var election: Election? = getFakeElection(1L)
-
     override val questions: Flow<List<Election>> = flow {
         val list = mutableListOf<Election>()
 
@@ -21,10 +19,6 @@ class HomeViewModelPreview : IHomeViewModel {
         list.add(getFakeElection(9L))
 
         emit(list.toList())
-    }
-
-    override fun getElection(electionId: Long) {
-        //Do nothing
     }
 
     override fun createNewElection(election: Election) {

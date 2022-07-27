@@ -8,7 +8,7 @@ data class ElectionWithOptions(
     @Relation(
         entity = OptionEntity::class,
         parentColumn = "electId",
-        entityColumn = "optId"
+        entityColumn = "electionId"
     )
     val options: List<OptionWithConditionsEntity>
 )

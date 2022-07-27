@@ -2,6 +2,7 @@ package com.bortxapps.thewise.presentation.screens.options
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
@@ -53,9 +54,16 @@ fun OptionFormScreen(
             Divider(
                 color = colorResource(R.color.dark_text),
                 thickness = 1.dp,
-                modifier = Modifier.padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 0.dp)
+                modifier = Modifier
+                    .padding(start = 0.dp, top = 5.dp, end = 0.dp, bottom = 0.dp)
+                    .width(50.dp)
             )
             GetTextHeader(stringResource(R.string.create_option))
+            Divider(
+                color = colorResource(R.color.divider),
+                thickness = 1.dp,
+                modifier = Modifier.padding(start = 0.dp, top = 10.dp, end = 0.dp, bottom = 0.dp)
+            )
             NoEmptyTextField(nameLabel, formViewModel.optionName) { formViewModel.setName(it) }
             ImagePickerField(
                 imageLabel,

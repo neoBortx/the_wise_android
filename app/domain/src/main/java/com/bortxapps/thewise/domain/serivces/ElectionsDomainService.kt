@@ -4,6 +4,7 @@ import com.bortxapps.thewise.domain.contrats.repository.IElectionsRepository
 import com.bortxapps.thewise.domain.contrats.service.IElectionsDomainService
 import com.bortxapps.thewise.domain.model.ElectionEntity
 import com.bortxapps.thewise.domain.model.ElectionWithOptions
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ElectionsDomainService @Inject constructor(private val electionsRepository: IElectionsRepository) :
@@ -11,7 +12,7 @@ class ElectionsDomainService @Inject constructor(private val electionsRepository
 
     override val allElections = electionsRepository.allElections
 
-    override fun getElection(electionId: Long): ElectionWithOptions {
+    override fun getElection(electionId: Long): Flow<ElectionWithOptions> {
         return electionsRepository.getElection(electionId)
     }
 

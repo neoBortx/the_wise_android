@@ -13,7 +13,6 @@ import com.bortxapps.application.translators.ConditionTranslator
 import com.bortxapps.application.translators.ElectionTranslator
 import com.bortxapps.thewise.domain.contrats.service.IConditionsDomainService
 import com.bortxapps.thewise.domain.contrats.service.IElectionsDomainService
-import com.bortxapps.thewise.domain.model.ElectionEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -38,14 +37,18 @@ class ElectionFormViewModel @Inject constructor(
 
     private var electionId: Long = 0
 
+    private var updateExistingElection = false
+
     override fun configureElection(election: Election?) {
         if (election != null) {
             electionName = election.name
             electionDescription = election.description
             electionId = election.id
             getConditions(election.id)
+            updateExistingElection = true
         } else {
             electionId = UUID.randomUUID().mostSignificantBits
+            updateExistingElection = false
         }
     }
 
@@ -125,27 +128,26 @@ class ElectionFormViewModel @Inject constructor(
     }
 
     override fun createNewElection() {
-        Log.i("Election", "Creating a new election $electionName")
         viewModelScope.launch {
-            val electionId = electionsService.addElection(
-                ElectionEntity(
-                    electionId, electionName, electionDescription
-                )
-            )
+            val election =
+                ElectionTranslator.toEntity(Election(electionId, electionName, electionDescription))
+
+            if (updateExistingElection) {
+                Log.i("Election", "Updating election $electionName - $electionId")
+                electionsService.updateElection(election)
+            } else {
+
+                Log.i("Election", "Creating a new election $electionName - $electionId")
+                electionsService.addElection(election)
+            }
+
             updateConditionInDatabase(electionId)
+            clearElection()
         }
     }
 
     override fun deleteElection(election: Election) {
         Log.i("Election", "Deleting election ${election.id}-${election.name}")
         viewModelScope.launch { electionsService.deleteElection(ElectionTranslator.toEntity(election)) }
-    }
-
-    override fun editElection(election: Election) {
-        Log.i("Election", "Editing election ${election.id}-${election.name}")
-        viewModelScope.launch {
-            electionsService.updateElection(ElectionTranslator.toEntity(election))
-            updateConditionInDatabase(election.id)
-        }
     }
 }

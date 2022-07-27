@@ -29,6 +29,4 @@ interface IElectionFormViewModel {
     fun createNewElection()
 
     fun deleteElection(election: Election)
-
-    fun editElection(election: Election)
 }

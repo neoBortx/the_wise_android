@@ -8,7 +8,7 @@ interface IElectionsDomainService {
 
     val allElections: Flow<List<ElectionWithOptions>>
 
-    fun getElection(electionId: Long): ElectionWithOptions
+    fun getElection(electionId: Long): Flow<ElectionWithOptions>
 
     suspend fun addElection(election: ElectionEntity): Long
 

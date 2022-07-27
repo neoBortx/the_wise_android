@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,7 +30,11 @@ import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @Composable
-fun PaintOptionRow(option: Option, clickCallback: () -> Unit, deleteCallBack: () -> Unit) {
+fun PaintOptionRow(
+    option: Option,
+    clickCallback: () -> Unit,
+    deleteCallBack: (() -> Unit)?
+) {
 
     val colTitle = colorResource(id = R.color.yellow_800)
     val colBack = colorResource(id = R.color.transparent)
@@ -41,11 +44,16 @@ fun PaintOptionRow(option: Option, clickCallback: () -> Unit, deleteCallBack: ()
 
     Card(
         elevation = 5.dp,
-        shape = RoundedCornerShape(2.dp),
+        shape = RoundedCornerShape(3.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(100.dp, 300.dp),
-        onClick = { scope.launch { clickCallback() } },
+            .heightIn(100.dp, 300.dp)
+            .padding(start = 0.dp),
+        onClick = {
+            scope.launch {
+                clickCallback()
+            }
+        },
     ) {
         Column {
             Box(
@@ -80,53 +88,47 @@ fun PaintOptionRow(option: Option, clickCallback: () -> Unit, deleteCallBack: ()
                         maxLines = 2)
                 }
             }
-
-            Text(
-                text = stringResource(R.string.matching_conditions_label),
-                style = MaterialTheme.typography.body2,
-                textAlign = TextAlign.Start,
-                color = palette?.vibrantSwatch?.rgb?.let {
-                    Color(it)
-                } ?: colTitle,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 7.dp, bottom = 13.dp)
-                    .padding(horizontal = 10.dp),
-                maxLines = 3
-            )
             FlowRow(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
+                    .padding(
+                        top = 10.dp,
+                        start = 10.dp,
+                        end = 10.dp,
+                        bottom = if (deleteCallBack != null) 0.dp else 10.dp
+                    ),
                 mainAxisAlignment = MainAxisAlignment.Start,
                 mainAxisSize = SizeMode.Expand,
                 crossAxisSpacing = 5.dp,
                 mainAxisSpacing = 5.dp
             ) {
-                option.matchingConditions.forEach { condition ->
-                    SimpleConditionBadge(condition.name, condition.weight)
-                }
+                option.matchingConditions.sortedByDescending { condition -> condition.weight }
+                    .forEach { condition ->
+                        SimpleConditionBadge(condition.name, condition.weight)
+                    }
             }
 
-            Button(
-                onClick = { scope.launch { deleteCallBack() } },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent
-                ),
-                elevation = ButtonDefaults.elevation(
-                    defaultElevation = 0.dp,
-                    pressedElevation = 0.dp
-                )
-            ) {
-                Text(
-                    text = "DELETE",
-                    textDecoration = TextDecoration.Underline,
-                    color = palette?.vibrantSwatch?.rgb?.let {
-                        Color(it)
-                    } ?: colTitle,
-                    textAlign = TextAlign.End
-                )
+            deleteCallBack?.let {
+                Button(
+                    onClick = { scope.launch { deleteCallBack() } },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Transparent
+                    ),
+                    elevation = ButtonDefaults.elevation(
+                        defaultElevation = 0.dp,
+                        pressedElevation = 0.dp
+                    )
+                ) {
+                    Text(
+                        text = "DELETE",
+                        textDecoration = TextDecoration.Underline,
+                        color = palette?.vibrantSwatch?.rgb?.let {
+                            Color(it)
+                        } ?: colTitle,
+                        textAlign = TextAlign.End
+                    )
+                }
             }
         }
     }
@@ -162,5 +164,6 @@ fun PreviewPaintOptionRow() {
 
         }, deleteCallBack = {
 
-        })
+        }
+    )
 }

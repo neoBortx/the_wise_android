@@ -1,74 +1,244 @@
 package com.bortxapps.thewise.presentation.screens.elections
 
 import android.util.Log
-import androidx.compose.foundation.background
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.navigation.Screen
-import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
 import com.bortxapps.thewise.presentation.componentes.BottomNavigation.GetBottomNavigation
 import com.bortxapps.thewise.presentation.componentes.MainColumn
-import com.bortxapps.thewise.presentation.componentes.TextDescription.GetTextDescription
+import com.bortxapps.thewise.presentation.componentes.MenuAction
+import com.bortxapps.thewise.presentation.componentes.TextHeader
 import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
-import com.bortxapps.thewise.presentation.viewmodels.ElectionViewModel
+import com.bortxapps.thewise.presentation.componentes.texfield.SimpleConditionBadge
+import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
+import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionInfoViewModel
+import com.bortxapps.thewise.presentation.screens.options.PaintOptionRow
+import com.google.accompanist.flowlayout.FlowRow
+import com.google.accompanist.flowlayout.MainAxisAlignment
+import com.google.accompanist.flowlayout.SizeMode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @Composable
 fun ElectionInfoScreen(
     navHostController: NavHostController,
-    electionViewModel: ElectionViewModel = hiltViewModel(),
+    electionInfoViewModel: ElectionInfoViewModel = hiltViewModel(),
+    electionFormViewModel: ElectionFormViewModel = hiltViewModel(),
     electionId: Long
 ) {
-    electionViewModel.getElection(electionId)
-    electionViewModel.election?.let { BuildInfoView(electionViewModel, it, navHostController) }
-}
+    electionInfoViewModel.configureElection(electionId)
 
-@ExperimentalMaterialApi
-@Composable
-fun BuildInfoView(
-    electionViewModel: ElectionViewModel, election: Election, navHostController: NavHostController
-) {
+    val scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed)
+    var gesturesState by remember { mutableStateOf(true) }
+    val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(topBar = { GetTopAppBar(true, election.name) { navHostController.navigateUp() } },
-        bottomBar = { GetBottomNavigation(navHostController, election) }) {
-        MainColumn.GetMainColumn {
-            if (election.description.isNotBlank()) {
-                GetTextDescription(election.description)
-            }
-            election.getWinningOption()?.let { PaintWinningOptionCard(it) } ?: PaintNoOption()
+    val scope = rememberCoroutineScope()
 
-            GetBottomButton(
-                { deleteElection(electionViewModel, navHostController, election) },
-                R.string.delete_election,
-                true
-            )
-            GetBottomButton(
-                { editElection(electionViewModel, navHostController, election) },
-                R.string.edit_election,
-                true
-            )
+    val conditions by electionInfoViewModel.conditions.collectAsState(initial = listOf())
+    val election by electionInfoViewModel.election.collectAsState(initial = Election.getEmpty())
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+    var showTheWiseElection by remember {
+        mutableStateOf(false)
+    }
+
+
+    fun openOptionForm() {
+        Log.d("Options", "Click in new option button")
+        electionFormViewModel.clearElection()
+        electionFormViewModel.configureElection(election = election)
+        gesturesState = true
+        coroutineScope.launch(Dispatchers.Main) {
+            scaffoldState.conceal()
         }
     }
+
+    @ExperimentalMaterialApi
+    fun closeElectionForm() {
+        gesturesState = true
+        focusManager.clearFocus()
+        coroutineScope.launch(Dispatchers.Main) {
+            scaffoldState.reveal()
+        }
+    }
+
+    fun navigateBack() {
+        if (!scaffoldState.isRevealed) {
+            scope.launch { closeElectionForm() }
+        } else {
+            navHostController.navigateUp()
+        }
+    }
+
+    val actions = mutableListOf<MenuAction>().apply {
+        add(
+            MenuAction(
+                Icons.Default.Edit
+            ) {
+                coroutineScope.launch { openOptionForm() }
+            }
+        )
+
+        add(
+            MenuAction(
+                Icons.Default.Delete
+            ) {
+                showDialog = true
+            }
+        )
+    }
+
+    @Composable
+    fun DrawFrontLayer() {
+        MainColumn.GetMainColumn {
+            MainColumn.GetMainColumn {
+                TextHeader.GetTextHeader(stringResource(R.string.matching_conditions_label))
+                FlowRow(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = 20.dp),
+                    mainAxisAlignment = MainAxisAlignment.Start,
+                    mainAxisSize = SizeMode.Expand,
+                    crossAxisSpacing = 10.dp,
+                    mainAxisSpacing = 5.dp
+                ) {
+                    conditions.forEach { condition ->
+                        SimpleConditionBadge(label = condition.name, weight = condition.weight)
+                    }
+                }
+
+                election.getWinningOption()?.let {
+
+                    if (!showTheWiseElection) {
+                        Log.e("BBBBBBBBBBBBB", "BBBBBBBBBBBBBBB $showTheWiseElection")
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .padding(horizontal = 15.dp)
+                                .clickable {
+                                    showTheWiseElection = true
+                                },
+                            elevation = 5.dp
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = "Touch here to reveal the wise's answer",
+                                    modifier = Modifier.padding(10.dp)
+                                )
+                                Icon(
+                                    modifier = Modifier
+                                        .size(170.dp)
+                                        .padding(bottom = 10.dp),
+                                    painter = painterResource(id = R.drawable.ic_thinking),
+                                    contentDescription = "Waiting"
+                                )
+                            }
+                        }
+                    }
+
+                    AnimatedVisibility(visible = showTheWiseElection) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .padding(horizontal = 15.dp)
+                        ) {
+                            PaintOptionRow(
+                                option = it,
+                                clickCallback = { },
+                                deleteCallBack = null,
+                            )
+                        }
+                    }
+                } ?: PaintNoOption()
+
+
+                if (showDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog = false },
+                        title = { Text(stringResource(id = R.string.delete_election)) },
+                        text = { Text(stringResource(R.string.delete_disclaimer)) },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    showDialog = false
+                                    deleteElection(
+                                        election = election,
+                                        electionInfoViewModel = electionInfoViewModel,
+                                        navHostController = navHostController
+                                    )
+                                }) {
+                                Text(stringResource(R.string.forget))
+                            }
+                        },
+                        dismissButton = {
+                            Button(onClick = { showDialog = false }) {
+                                Text(stringResource(R.string.keep))
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    BackHandler {
+        navigateBack()
+    }
+
+    BackdropScaffold(
+        scaffoldState = scaffoldState,
+        gesturesEnabled = gesturesState,
+        peekHeight = 50.dp,
+        headerHeight = 0.dp,
+        backLayerBackgroundColor = colorResource(id = R.color.white),
+        appBar = {
+            GetTopAppBar(
+                title = election.name.replaceFirstChar { it.uppercase() },
+                menuActions = actions,
+                showIcon = false,
+                backCallback = { navigateBack() }
+            )
+        },
+        backLayerContent = {
+            Scaffold(
+                bottomBar = { GetBottomNavigation(navHostController, election) })
+            {
+                DrawFrontLayer()
+            }
+        },
+        frontLayerContent = {
+            ElectionFormScreen(election = election) { scope.launch { closeElectionForm() } }
+        }
+    ) {
+    }
+
 }
 
 @Composable
-fun PaintNoOption() {
+private fun PaintNoOption() {
     Column(
         modifier = Modifier
             .padding(10.dp)
@@ -80,85 +250,13 @@ fun PaintNoOption() {
     }
 }
 
-@ExperimentalMaterialApi
-@Composable
-fun paintMatchingConditions(conditions: List<Condition>) {
-    LazyColumn(
-        contentPadding = PaddingValues(
-            start = 12.dp, top = 16.dp, end = 12.dp, bottom = 16.dp
-        ), verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        items(conditions) { item -> paintOptionRow(item) }
-    }
-}
-
-@ExperimentalMaterialApi
-@Composable
-fun paintOptionRow(item: Condition) {
-    Card(
-        elevation = 8.dp,
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(colorResource(id = R.color.card_background))
-            ) {
-                Row() {
-                    Text(
-                        text = item.name,
-                        style = MaterialTheme.typography.h6,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .padding(vertical = 5.dp)
-                            .padding(horizontal = 10.dp),
-                        color = colorResource(id = R.color.yellow_500)
-                    )
-                    Text(
-                        text = item.weight.toString(),
-                        style = MaterialTheme.typography.h5,
-                        textAlign = TextAlign.Right,
-                        modifier = Modifier
-                            .padding(vertical = 5.dp)
-                            .padding(horizontal = 10.dp),
-                        color = colorResource(id = R.color.yellow_500)
-                    )
-                }
-            }
-        }
-    }
-}
-
 private fun deleteElection(
-    electionViewModel: ElectionViewModel, navHostController: NavHostController, election: Election
+    electionInfoViewModel: ElectionInfoViewModel,
+    navHostController: NavHostController,
+    election: Election
 ) {
-    electionViewModel.deleteElection(election)
+    electionInfoViewModel.deleteElection(election)
     navHostController.navigate(Screen.Home.getFullRoute()) {
         popUpTo(Screen.Home.getFullRoute())
     }
-}
-
-private fun editElection(
-    electionViewModel: ElectionViewModel, navHostController: NavHostController, election: Election
-) {
-    electionViewModel.editElection(election)
-    navHostController.navigate(Screen.ElectionForm.getRouteWithId(election.id.toString())) {
-        popUpTo(Screen.Home.getFullRoute())
-    }
-}
-
-private fun openOptionInfo(navHostController: NavHostController) {
-    Log.d("Option", "Click in option card")
-    navHostController.navigate(Screen.InfoOption.getFullRoute())
-}
-
-@ExperimentalMaterialApi
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    BuildInfoView(
-        hiltViewModel(), Election(5, "Name", "Description"), rememberNavController()
-    )
 }

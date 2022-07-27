@@ -3,8 +3,6 @@ package com.bortxapps.thewise.presentation.screens.home
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
@@ -31,6 +29,9 @@ import com.bortxapps.thewise.R
 import com.bortxapps.thewise.navigation.Screen
 import com.bortxapps.thewise.presentation.componentes.texfield.SimpleConditionBadge
 import com.bortxapps.thewise.presentation.screens.utils.getImagePath
+import com.google.accompanist.flowlayout.FlowRow
+import com.google.accompanist.flowlayout.MainAxisAlignment
+import com.google.accompanist.flowlayout.SizeMode
 import com.skydoves.landscapist.glide.GlideImage
 import com.skydoves.landscapist.palette.BitmapPalette
 import kotlinx.coroutines.launch
@@ -47,7 +48,7 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
 
 
     fun openElectionInfo(item: Election) {
-        Log.d("Elections", "Click in election card")
+        Log.d("Elections", "Click in election card ${item.name}-${item.id}")
         navHostController.navigate(
             Screen.InfoElection.getRouteWithId(item.id.toString())
         )
@@ -65,7 +66,7 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
         shape = RoundedCornerShape(2.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(100.dp, 200.dp),
+            .wrapContentHeight(),
         onClick = { scope.launch { openElectionInfo(item) } },
     ) {
         Column {
@@ -108,37 +109,32 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
                     style = MaterialTheme.typography.body1,
                     textAlign = TextAlign.Left,
                     modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .padding(bottom = 10.dp, top = 5.dp)
+                        .padding(horizontal = 15.dp)
+                        .padding(bottom = 5.dp, top = 5.dp)
                         .fillMaxWidth()
                         .wrapContentHeight(),
                     color = palette?.vibrantSwatch?.rgb?.let {
                         Color(it)
                     } ?: colTitle,
-                    maxLines = 1)
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 3)
 
                 item.getWinningOption()?.let { option ->
-
-                    Text(
-                        text = stringResource(R.string.matching_conditions_label),
-                        style = MaterialTheme.typography.body2,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp, bottom = 5.dp)
-                            .padding(horizontal = 20.dp),
-                        maxLines = 3
-                    )
-                    LazyRow(
+                    FlowRow(
                         modifier = Modifier
                             .wrapContentHeight()
-                            .fillMaxWidth(),
-                        contentPadding = PaddingValues(bottom = 5.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp)
+                            .padding(bottom = 10.dp),
+                        mainAxisAlignment = MainAxisAlignment.Start,
+                        mainAxisSize = SizeMode.Expand,
+                        crossAxisSpacing = 5.dp,
+                        mainAxisSpacing = 5.dp,
                     ) {
-                        items(option.matchingConditions) { condition ->
-                            SimpleConditionBadge(condition.name, condition.weight)
-                        }
+                        option.matchingConditions.sortedByDescending { condition -> condition.weight }
+                            .forEach { condition ->
+                                SimpleConditionBadge(condition.name, condition.weight)
+                            }
                     }
 
                 }

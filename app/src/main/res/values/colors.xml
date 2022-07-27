@@ -20,6 +20,7 @@
     <color name="back_background">#ECEAEA</color>
     <color name="card_background">#61000000</color>
     <color name="dark_text">#292828</color>
+    <color name="divider">#474545</color>
     <color name="transparent">#00000000</color>
     <color name="text_over_image_background">#05FFFFFF</color>
 </resources>
