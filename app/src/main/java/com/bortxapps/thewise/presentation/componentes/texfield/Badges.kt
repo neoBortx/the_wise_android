@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -84,16 +85,15 @@ fun RemovableConditionBadge(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center,
+                modifier = Modifier.padding(end = 5.dp)
             )
 
             Button(
                 onClick = { deleteCallback.invoke() },
-                contentPadding = PaddingValues(
-                    start = 5.dp, top = 5.dp, end = 5.dp, bottom = 5.dp
-                ),
+                contentPadding = PaddingValues(0.dp),
                 modifier = Modifier
-                    .height(20.dp)
-                    .width(20.dp),
+                    .height(15.dp)
+                    .width(15.dp),
                 border = null,
                 elevation = null,
                 colors = ButtonDefaults.buttonColors(
@@ -101,7 +101,7 @@ fun RemovableConditionBadge(
                     disabledBackgroundColor = Color.Transparent,
                 )
             ) {
-                Icon(imageVector = Icons.Default.Close, "", Modifier.size(10.dp))
+                Icon(imageVector = Icons.Default.Close, "", Modifier.size(40.dp))
             }
         }
     }
@@ -131,6 +131,16 @@ fun SelectableConditionBadge(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
+            if (isSelected) {
+                Icon(
+                    Icons.Default.Check,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .padding(end = 5.dp)
+                        .width(15.dp)
+                        .height(15.dp)
+                )
+            }
             Text(
                 text = label, maxLines = 1,
                 color = colorResource(id = R.color.black),
@@ -161,7 +171,7 @@ fun PrintBadgePreviewMedium() {
 @Preview
 @Composable
 fun PrintBadgePreviewMust() {
-    SelectableConditionBadge("Piscina climatizada", ConditionWeight.MEDIUM, true) {
+    SelectableConditionBadge("Piscina climatizada", ConditionWeight.MUST, true) {
 
     }
 }

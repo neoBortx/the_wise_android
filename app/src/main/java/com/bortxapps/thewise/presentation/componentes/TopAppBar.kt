@@ -1,8 +1,8 @@
 package com.bortxapps.thewise.presentation.componentes
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -14,9 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
 
@@ -26,13 +27,13 @@ data class MenuAction(val imageVector: ImageVector, val actionCallBack: () -> Un
 object TopAppBar {
 
     @Composable
-    fun DrawIcon(backCallback: (() -> Unit)?) {
-        if (backCallback != null) {
-            IconButton(onClick = {
-                backCallback()
-            }) {
-                Icon(Icons.Rounded.ArrowBack, "")
-            }
+    fun DrawIcon(backCallback: (() -> Unit)) {
+        IconButton(onClick = { backCallback() }) {
+            Icon(
+                Icons.Rounded.ArrowBack,
+                "",
+                tint = colorResource(id = R.color.dark_text)
+            )
         }
     }
 
@@ -42,7 +43,8 @@ object TopAppBar {
             IconButton(onClick = it.actionCallBack) {
                 Icon(
                     it.imageVector,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.dark_text)
                 )
             }
         }
@@ -52,39 +54,59 @@ object TopAppBar {
     fun GetTopAppBar(
         title: String,
         menuActions: List<MenuAction> = listOf(),
-        backCallback: (() -> Unit)? = null,
-        showIcon: Boolean
+        backCallback: (() -> Unit)? = null
     ) {
-        TopAppBar(
-            title = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (showIcon) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_the_wise_logo),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .size(35.dp)
-                                .padding(end = 10.dp)
+        if (backCallback != null) {
+            TopAppBar(
+                title = {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Text(
+                            title,
+                            color = colorResource(id = R.color.dark_text)
                         )
                     }
-                    Text(title)
-                }
-            },
-            navigationIcon = { DrawIcon(backCallback) },
-            actions = { DrawMenu(menuActions) },
-            backgroundColor = colorResource(id = R.color.yellow_800)
-        )
+                },
+                navigationIcon = { DrawIcon(backCallback) },
+                actions = { DrawMenu(menuActions) },
+                backgroundColor = colorResource(id = R.color.yellow_800)
+            )
+        } else {
+            TopAppBar(
+                title = {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Text(
+                            title,
+                            color = colorResource(id = R.color.dark_text),
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily(Font(R.font.washington_text))
+                        )
+                    }
+                },
+                navigationIcon = null,
+                actions = { DrawMenu(menuActions) },
+                backgroundColor = colorResource(id = R.color.yellow_800)
+            )
+        }
+
     }
 }
 
 @Composable
 @Preview
 fun ShowPreview() {
-    GetTopAppBar("The wise", showIcon = false, backCallback = { })
+    GetTopAppBar("The wise", backCallback = { })
 }
 
 @Composable
 @Preview
 fun ShowPreviewIcon() {
-    GetTopAppBar("The wise", showIcon = true)
+    GetTopAppBar("The wise")
 }

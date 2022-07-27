@@ -218,7 +218,6 @@ fun ElectionInfoScreen(
             GetTopAppBar(
                 title = election.name.replaceFirstChar { it.uppercase() },
                 menuActions = actions,
-                showIcon = false,
                 backCallback = { navigateBack() }
             )
         },

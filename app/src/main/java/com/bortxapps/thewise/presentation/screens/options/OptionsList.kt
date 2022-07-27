@@ -107,7 +107,8 @@ fun OptionsListScreen(
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                ""
+                "",
+                tint = colorResource(id = R.color.dark_text)
             )
         }
     }
@@ -173,7 +174,6 @@ fun OptionsListScreen(
         appBar = {
             GetTopAppBar(
                 title = election.name.replaceFirstChar { it.uppercase() },
-                showIcon = false,
                 backCallback = { navigateBack() }
             )
         },

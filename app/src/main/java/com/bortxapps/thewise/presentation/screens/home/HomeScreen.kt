@@ -139,7 +139,8 @@ fun HomeScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        ""
+                        "",
+                        tint = colorResource(id = R.color.dark_text)
                     )
                 }
             })
@@ -164,8 +165,7 @@ fun HomeScreen(
         backLayerBackgroundColor = colorResource(id = R.color.white),
         appBar = {
             GetTopAppBar(
-                title = stringResource(R.string.app_name),
-                showIcon = true
+                title = stringResource(R.string.app_name)
             )
         },
         backLayerContent = { DrawFrontLayer(questions) },

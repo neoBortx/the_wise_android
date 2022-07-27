@@ -27,10 +27,20 @@ object BottomNavigation {
             val currentRoute = navBackStackEntry?.destination?.route
             items.forEach { item ->
                 BottomNavigationItem(
-                    icon = { Icon( painter = painterResource(item.iconId), contentDescription = null) },
-                    label = { Text(stringResource(id = item.label)) },
-                    selectedContentColor = colorResource(id = R.color.white),
-                    unselectedContentColor = colorResource(id = R.color.yellow_200),
+                    icon = {
+                        Icon(
+                            painter = painterResource(item.iconId),
+                            contentDescription = null
+                        )
+                    },
+                    label = {
+                        Text(
+                            stringResource(id = item.label),
+                            color = colorResource(id = R.color.dark_text)
+                        )
+                    },
+                    selectedContentColor = colorResource(id = R.color.dark_text),
+                    unselectedContentColor = colorResource(id = R.color.light_text),
                     alwaysShowLabel = true,
                     selected = currentRoute == item.getFullRoute(),
                     onClick = {
