@@ -48,4 +48,10 @@ class OptionsViewModel @Inject constructor(
         Log.i("Option", "Deleting option ${option.id}-${option.name}")
         viewModelScope.launch { optionsService.deleteOption(OptionTranslator.toSimpleEntity(option)) }
     }
+
+    fun deleteElection(election: Election) {
+        viewModelScope.launch {
+            electionsService.deleteElection(ElectionTranslator.toEntity(election))
+        }
+    }
 }

@@ -24,7 +24,7 @@ object TextHeader {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 15.dp)
-                .padding(horizontal = 15.dp),
+                .padding(horizontal = 5.dp),
         )
     }
 }

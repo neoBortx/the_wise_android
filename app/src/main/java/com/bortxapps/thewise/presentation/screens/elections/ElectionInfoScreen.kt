@@ -23,6 +23,7 @@ import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.navigation.Screen
 import com.bortxapps.thewise.presentation.componentes.BottomNavigation.GetBottomNavigation
+import com.bortxapps.thewise.presentation.componentes.DeleteAlertDialog
 import com.bortxapps.thewise.presentation.componentes.MainColumn
 import com.bortxapps.thewise.presentation.componentes.MenuAction
 import com.bortxapps.thewise.presentation.componentes.TextHeader
@@ -64,7 +65,7 @@ fun ElectionInfoScreen(
     }
 
 
-    fun openOptionForm() {
+    fun openElectionForm() {
         Log.d("Options", "Click in new option button")
         electionFormViewModel.clearElection()
         electionFormViewModel.configureElection(election = election)
@@ -96,7 +97,7 @@ fun ElectionInfoScreen(
             MenuAction(
                 Icons.Default.Edit
             ) {
-                coroutineScope.launch { openOptionForm() }
+                coroutineScope.launch { openElectionForm() }
             }
         )
 
@@ -112,94 +113,76 @@ fun ElectionInfoScreen(
     @Composable
     fun DrawFrontLayer() {
         MainColumn.GetMainColumn {
-            MainColumn.GetMainColumn {
-                TextHeader.GetTextHeader(stringResource(R.string.matching_conditions_label))
-                FlowRow(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .fillMaxWidth()
-                        .padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = 20.dp),
-                    mainAxisAlignment = MainAxisAlignment.Start,
-                    mainAxisSize = SizeMode.Expand,
-                    crossAxisSpacing = 10.dp,
-                    mainAxisSpacing = 5.dp
-                ) {
-                    conditions.forEach { condition ->
-                        SimpleConditionBadge(label = condition.name, weight = condition.weight)
-                    }
+            TextHeader.GetTextHeader(stringResource(R.string.matching_conditions_label))
+            FlowRow(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 20.dp),
+                mainAxisAlignment = MainAxisAlignment.Start,
+                mainAxisSize = SizeMode.Expand,
+                crossAxisSpacing = 10.dp,
+                mainAxisSpacing = 5.dp
+            ) {
+                conditions.forEach { condition ->
+                    SimpleConditionBadge(label = condition.name, weight = condition.weight)
                 }
+            }
 
-                election.getWinningOption()?.let {
+            election.getWinningOption()?.let {
 
-                    if (!showTheWiseElection) {
-                        Log.e("BBBBBBBBBBBBB", "BBBBBBBBBBBBBBB $showTheWiseElection")
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                                .padding(horizontal = 15.dp)
-                                .clickable {
-                                    showTheWiseElection = true
-                                },
-                            elevation = 5.dp
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    text = "Touch here to reveal the wise's answer",
-                                    modifier = Modifier.padding(10.dp)
-                                )
-                                Icon(
-                                    modifier = Modifier
-                                        .size(170.dp)
-                                        .padding(bottom = 10.dp),
-                                    painter = painterResource(id = R.drawable.ic_thinking),
-                                    contentDescription = "Waiting"
-                                )
-                            }
-                        }
-                    }
-
-                    AnimatedVisibility(visible = showTheWiseElection) {
-                        Box(
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .padding(horizontal = 15.dp)
-                        ) {
-                            PaintOptionRow(
-                                option = it,
-                                clickCallback = { },
-                                deleteCallBack = null,
+                if (!showTheWiseElection) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .padding(horizontal = 5.dp)
+                            .clickable {
+                                showTheWiseElection = true
+                            },
+                        elevation = 5.dp
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "Touch here to reveal the wise's answer",
+                                modifier = Modifier.padding(10.dp)
+                            )
+                            Icon(
+                                modifier = Modifier
+                                    .size(250.dp)
+                                    .padding(bottom = 10.dp),
+                                painter = painterResource(id = R.drawable.the_wise_sleeping),
+                                contentDescription = "Waiting"
                             )
                         }
                     }
-                } ?: PaintNoOption()
-
-
-                if (showDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showDialog = false },
-                        title = { Text(stringResource(id = R.string.delete_election)) },
-                        text = { Text(stringResource(R.string.delete_disclaimer)) },
-                        confirmButton = {
-                            Button(
-                                onClick = {
-                                    showDialog = false
-                                    deleteElection(
-                                        election = election,
-                                        electionInfoViewModel = electionInfoViewModel,
-                                        navHostController = navHostController
-                                    )
-                                }) {
-                                Text(stringResource(R.string.forget))
-                            }
-                        },
-                        dismissButton = {
-                            Button(onClick = { showDialog = false }) {
-                                Text(stringResource(R.string.keep))
-                            }
-                        }
-                    )
                 }
+
+                AnimatedVisibility(visible = showTheWiseElection) {
+                    Box(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .padding(horizontal = 5.dp)
+                    ) {
+                        PaintOptionRow(
+                            option = it,
+                            clickCallback = { },
+                            deleteCallBack = null,
+                        )
+                    }
+                }
+            } ?: PaintNoOption()
+
+            if (showDialog) {
+                DeleteAlertDialog(closeCallBack = {
+                    showDialog = false
+                }, acceptCallBack = {
+                    deleteElection(
+                        election = election,
+                        electionInfoViewModel = electionInfoViewModel,
+                        navHostController = navHostController
+                    )
+                })
             }
         }
     }
@@ -249,7 +232,7 @@ private fun PaintNoOption() {
     }
 }
 
-private fun deleteElection(
+fun deleteElection(
     electionInfoViewModel: ElectionInfoViewModel,
     navHostController: NavHostController,
     election: Election

@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,9 +27,14 @@ import androidx.navigation.NavHostController
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
+import com.bortxapps.thewise.navigation.Screen
 import com.bortxapps.thewise.presentation.componentes.BottomNavigation.GetBottomNavigation
+import com.bortxapps.thewise.presentation.componentes.DeleteAlertDialog
 import com.bortxapps.thewise.presentation.componentes.MainColumn
+import com.bortxapps.thewise.presentation.componentes.MenuAction
 import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
+import com.bortxapps.thewise.presentation.screens.elections.ElectionFormScreen
+import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
 import com.bortxapps.thewise.presentation.viewmodels.OptionsViewModel
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +47,7 @@ fun OptionsListScreen(
     navHostController: NavHostController,
     optionsViewModel: OptionsViewModel = hiltViewModel(),
     optionFormViewModel: OptionFormViewModel = hiltViewModel(),
+    electionFormViewModel: ElectionFormViewModel = hiltViewModel(),
     electionId: Long
 ) {
 
@@ -55,9 +63,17 @@ fun OptionsListScreen(
     val options by optionsViewModel.options.collectAsState(initial = listOf())
     val election by optionsViewModel.election.collectAsState(initial = Election.getEmpty())
 
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+    var editOption by remember {
+        mutableStateOf(false)
+    }
+
 
     @ExperimentalMaterialApi
     fun openOptionForm(option: Option?) {
+        editOption = true
         Log.d("Options", "Click in new option button")
         optionFormViewModel.clearOption()
         optionFormViewModel.configureOption(option, electionId = electionId)
@@ -74,6 +90,44 @@ fun OptionsListScreen(
         coroutineScope.launch(Dispatchers.Main) {
             scaffoldState.reveal()
         }
+    }
+
+    fun openElectionForm() {
+        Log.d("Options", "Click in new option button")
+        editOption = false
+        electionFormViewModel.clearElection()
+        electionFormViewModel.configureElection(election = election)
+        gesturesState = true
+        coroutineScope.launch(Dispatchers.Main) {
+            scaffoldState.conceal()
+        }
+    }
+
+    @ExperimentalMaterialApi
+    fun closeElectionForm() {
+        gesturesState = true
+        focusManager.clearFocus()
+        coroutineScope.launch(Dispatchers.Main) {
+            scaffoldState.reveal()
+        }
+    }
+
+    val actions = mutableListOf<MenuAction>().apply {
+        add(
+            MenuAction(
+                Icons.Default.Edit
+            ) {
+                coroutineScope.launch { openElectionForm() }
+            }
+        )
+
+        add(
+            MenuAction(
+                Icons.Default.Delete
+            ) {
+                showDialog = true
+            }
+        )
     }
 
 
@@ -174,6 +228,7 @@ fun OptionsListScreen(
         appBar = {
             GetTopAppBar(
                 title = election.name.replaceFirstChar { it.uppercase() },
+                menuActions = actions,
                 backCallback = { navigateBack() }
             )
         },
@@ -186,10 +241,25 @@ fun OptionsListScreen(
             }
         },
         frontLayerContent = {
-            OptionFormScreen(
-                electionId = election.id
-            ) { scope.launch { closeOptionForm() } }
+            if (editOption) {
+                OptionFormScreen(
+                    electionId = election.id
+                ) { scope.launch { closeOptionForm() } }
+            } else {
+                ElectionFormScreen(election = election) { scope.launch { closeElectionForm() } }
+            }
         }
     ) {
+    }
+
+    if (showDialog) {
+        DeleteAlertDialog(closeCallBack = {
+            showDialog = false
+        }, acceptCallBack = {
+            optionsViewModel.deleteElection(election)
+            navHostController.navigate(Screen.Home.getFullRoute()) {
+                popUpTo(Screen.Home.getFullRoute())
+            }
+        })
     }
 }
