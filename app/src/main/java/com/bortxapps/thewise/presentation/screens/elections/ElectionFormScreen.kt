@@ -1,12 +1,14 @@
 package com.bortxapps.thewise.presentation.screens.elections
 
 import android.util.Log
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
@@ -18,8 +20,6 @@ import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
 import com.bortxapps.thewise.presentation.componentes.GetConditionsControl
-import com.bortxapps.thewise.presentation.componentes.MainColumn.GetMainColumn
-import com.bortxapps.thewise.presentation.componentes.TextHeader.GetTextHeader
 import com.bortxapps.thewise.presentation.componentes.texfield.NoEmptyTextField
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModelPreview
@@ -51,18 +51,33 @@ fun ElectionFormScreen(
     }
 
     Scaffold(backgroundColor = colorResource(id = R.color.white), drawerElevation = 5.dp) {
-        GetMainColumn {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
             Divider(
                 color = colorResource(R.color.dark_text),
-                thickness = 1.dp,
-                modifier = Modifier.padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 0.dp)
+                thickness = 3.dp,
+                modifier = Modifier
+                    .padding(start = 0.dp, top = 10.dp, end = 0.dp, bottom = 0.dp)
+                    .width(50.dp)
             )
-            GetTextHeader(stringResource(R.string.create_question))
             NoEmptyTextField(nameLabel, electionFormViewModel.electionName) {
                 electionFormViewModel.setName(it)
             }
-            GetTextHeader(stringResource(R.string.insert_conditions))
+            Text(
+                stringResource(R.string.matching_conditions_label),
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 10.dp)
+                    .fillMaxWidth(),
+                color = colorResource(id = R.color.dark_text)
+            )
             GetConditionsControl(electionFormViewModel)
+            Spacer(Modifier.weight(5f, false))
             GetBottomButton(
                 {
                     focusManager.clearFocus()

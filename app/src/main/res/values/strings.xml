@@ -21,12 +21,11 @@
     <string name="add_condition">Add new condition</string>
     <string name="options">Options</string>
     <string name="questions">Questions</string>
-    <string name="conditions">Conditions</string>
 
     <!-- Headers -->
     <string name="create_question">Make a new question to the wise</string>
-    <string name="edit__question">Edit question</string>
-    <string name="create_option">Give an option to the wise</string>
+    <string name="edit_question">Edit question</string>
+    <string name="create_option">Edit option</string>
     <string name="edit_option">Edit option</string>
     <string name="create_condition">Create a new condition</string>
     <string name="edit__condition">Edit condition</string>

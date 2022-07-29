@@ -1,10 +1,14 @@
 package com.bortxapps.thewise.presentation.screens.options
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -37,17 +41,19 @@ fun PaintOptionRow(
 ) {
 
     val colTitle = colorResource(id = R.color.yellow_800)
-    val colBack = colorResource(id = R.color.transparent)
 
     var palette by remember { mutableStateOf<Palette?>(null) }
     val scope = rememberCoroutineScope()
+    var expanded by remember {
+        mutableStateOf(false)
+    }
 
     Card(
         elevation = 5.dp,
         shape = RoundedCornerShape(3.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(100.dp, 300.dp)
+            .wrapContentHeight()
             .padding(start = 0.dp),
         onClick = {
             scope.launch {
@@ -55,79 +61,86 @@ fun PaintOptionRow(
             }
         },
     ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(if (option.imageUrl.isNotBlank()) 100.dp else 50.dp)
-            ) {
-                if (option.imageUrl.isNotBlank()) {
-                    GlideImage(modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
-                        imageModel = getImagePath(imageName = option.imageUrl),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        bitmapPalette = BitmapPalette {
-                            palette = it
-                        })
-                }
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .background(palette?.vibrantSwatch?.bodyTextColor?.let {
+        Column(verticalArrangement = Arrangement.SpaceBetween) {
+            GlideImage(modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(0.dp, 150.dp),
+                imageModel = getImagePath(imageName = option.imageUrl),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                bitmapPalette = BitmapPalette {
+                    palette = it
+                })
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = option.name.replaceFirstChar { it.uppercase() },
+                    style = MaterialTheme.typography.h6,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
+                    color = palette?.vibrantSwatch?.rgb?.let {
                         Color(it)
-                    } ?: colBack)) {
-                    Text(text = option.name.replaceFirstChar { it.uppercase() },
-                        style = MaterialTheme.typography.h6,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
-                        color = palette?.vibrantSwatch?.rgb?.let {
-                            Color(it)
-                        } ?: colTitle,
-                        maxLines = 2)
-                }
-            }
-            FlowRow(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .padding(
-                        top = 10.dp,
-                        start = 10.dp,
-                        end = 10.dp,
-                        bottom = if (deleteCallBack != null) 0.dp else 10.dp
-                    ),
-                mainAxisAlignment = MainAxisAlignment.Start,
-                mainAxisSize = SizeMode.Expand,
-                crossAxisSpacing = 5.dp,
-                mainAxisSpacing = 5.dp
-            ) {
-                option.matchingConditions.sortedByDescending { condition -> condition.weight }
-                    .forEach { condition ->
-                        SimpleConditionBadge(condition.name, condition.weight)
+                    } ?: colTitle,
+                    maxLines = 2)
+
+                Spacer(Modifier.weight(1f))
+
+                IconButton(onClick = { expanded = !expanded }) {
+                    if (!expanded) {
+                        Icon(Icons.Default.ArrowDropDown, "")
+                    } else {
+                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = "")
                     }
+                }
             }
 
-            deleteCallBack?.let {
-                Button(
-                    onClick = { scope.launch { deleteCallBack() } },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Transparent
-                    ),
-                    elevation = ButtonDefaults.elevation(
-                        defaultElevation = 0.dp,
-                        pressedElevation = 0.dp
-                    )
-                ) {
-                    Text(
-                        text = "DELETE",
-                        textDecoration = TextDecoration.Underline,
-                        color = palette?.vibrantSwatch?.rgb?.let {
-                            Color(it)
-                        } ?: colTitle,
-                        textAlign = TextAlign.End
-                    )
+            AnimatedVisibility(visible = expanded) {
+
+                Column {
+                    Divider(modifier = Modifier.padding(vertical = 0.dp, horizontal = 5.dp))
+
+                    FlowRow(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .fillMaxWidth()
+                            .padding(
+                                top = 13.dp,
+                                start = 10.dp,
+                                end = 6.dp,
+                                bottom = if (deleteCallBack != null) 0.dp else 10.dp
+                            ),
+                        mainAxisAlignment = MainAxisAlignment.Start,
+                        mainAxisSize = SizeMode.Expand,
+                        crossAxisSpacing = 5.dp,
+                        mainAxisSpacing = 5.dp,
+                    ) {
+                        option.matchingConditions.sortedByDescending { condition -> condition.weight }
+                            .forEach { condition ->
+                                SimpleConditionBadge(condition.name, condition.weight)
+                            }
+                    }
+
+                    deleteCallBack?.let {
+                        Button(
+                            onClick = { scope.launch { deleteCallBack() } },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.Transparent
+                            ),
+                            elevation = ButtonDefaults.elevation(
+                                defaultElevation = 0.dp,
+                                pressedElevation = 0.dp
+                            )
+                        ) {
+                            Text(
+                                text = "DELETE",
+                                textDecoration = TextDecoration.Underline,
+                                color = palette?.vibrantSwatch?.rgb?.let {
+                                    Color(it)
+                                } ?: colTitle,
+                                textAlign = TextAlign.End
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -131,7 +131,7 @@ fun ElectionInfoScreen(
 
             election.getWinningOption()?.let {
 
-                if (!showTheWiseElection) {
+                AnimatedVisibility(visible = !showTheWiseElection) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -163,6 +163,7 @@ fun ElectionInfoScreen(
                         modifier = Modifier
                             .wrapContentSize()
                             .padding(horizontal = 5.dp)
+                            .defaultMinSize(minHeight = 200.dp)
                     ) {
                         PaintOptionRow(
                             option = it,

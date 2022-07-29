@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +18,16 @@ import androidx.compose.ui.unit.sp
 import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.thewise.R
 
+
+@Composable
+private fun getSelectableColor(weight: ConditionWeight, isSelected: Boolean): Color {
+    return if (!isSelected) {
+        colorResource(id = R.color.badge_no_selected)
+    } else {
+        getColor(weight = weight)
+    }
+}
+
 @Composable
 private fun getColor(weight: ConditionWeight): Color {
     return when (weight) {
@@ -26,12 +35,6 @@ private fun getColor(weight: ConditionWeight): Color {
         ConditionWeight.MEDIUM -> colorResource(id = R.color.badge_medium)
         ConditionWeight.MUST -> colorResource(id = R.color.badge_must)
     }
-}
-
-private fun setAlfa(isSelected: Boolean) = if (isSelected) {
-    1f
-} else {
-    0.2f
 }
 
 @Composable
@@ -119,7 +122,7 @@ fun SelectableConditionBadge(
         modifier = Modifier
             .wrapContentHeight()
             .wrapContentWidth(),
-        backgroundColor = getColor(weight).copy(alpha = setAlfa(isSelected))
+        backgroundColor = getSelectableColor(weight, isSelected)
     ) {
 
         Row(
@@ -131,16 +134,6 @@ fun SelectableConditionBadge(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            if (isSelected) {
-                Icon(
-                    Icons.Default.Check,
-                    contentDescription = "",
-                    modifier = Modifier
-                        .padding(end = 5.dp)
-                        .width(15.dp)
-                        .height(15.dp)
-                )
-            }
             Text(
                 text = label, maxLines = 1,
                 color = colorResource(id = R.color.black),

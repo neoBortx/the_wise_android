@@ -66,14 +66,14 @@ fun OptionsListScreen(
     var showDialog by remember {
         mutableStateOf(false)
     }
-    var editOption by remember {
+    var showOptionForm by remember {
         mutableStateOf(false)
     }
 
 
     @ExperimentalMaterialApi
     fun openOptionForm(option: Option?) {
-        editOption = true
+        showOptionForm = true
         Log.d("Options", "Click in new option button")
         optionFormViewModel.clearOption()
         optionFormViewModel.configureOption(option, electionId = electionId)
@@ -94,7 +94,7 @@ fun OptionsListScreen(
 
     fun openElectionForm() {
         Log.d("Options", "Click in new option button")
-        editOption = false
+        showOptionForm = false
         electionFormViewModel.clearElection()
         electionFormViewModel.configureElection(election = election)
         gesturesState = true
@@ -215,6 +215,19 @@ fun OptionsListScreen(
         }
     }
 
+    @Composable
+    fun GetTopAppTitle(): String {
+        return if (!scaffoldState.isRevealed) {
+            if (showOptionForm) {
+                stringResource(R.string.create_option)
+            } else {
+                stringResource(R.string.edit_question)
+            }
+        } else {
+            election.name.replaceFirstChar { it.uppercase() }
+        }
+    }
+
     BackHandler {
         navigateBack()
     }
@@ -227,7 +240,7 @@ fun OptionsListScreen(
         backLayerBackgroundColor = colorResource(id = R.color.white),
         appBar = {
             GetTopAppBar(
-                title = election.name.replaceFirstChar { it.uppercase() },
+                title = GetTopAppTitle(),
                 menuActions = actions,
                 backCallback = { navigateBack() }
             )
@@ -241,7 +254,7 @@ fun OptionsListScreen(
             }
         },
         frontLayerContent = {
-            if (editOption) {
+            if (showOptionForm) {
                 OptionFormScreen(
                     electionId = election.id
                 ) { scope.launch { closeOptionForm() } }

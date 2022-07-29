@@ -1,13 +1,12 @@
 package com.bortxapps.thewise.presentation.screens.options
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -15,10 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
-import com.bortxapps.thewise.presentation.componentes.MainColumn.GetMainColumn
 import com.bortxapps.thewise.presentation.componentes.OptionFilePicker.ImagePickerField
 import com.bortxapps.thewise.presentation.componentes.TextError.GetTextError
-import com.bortxapps.thewise.presentation.componentes.TextHeader.GetTextHeader
 import com.bortxapps.thewise.presentation.componentes.texfield.NoEmptyTextField
 import com.bortxapps.thewise.presentation.componentes.texfield.SelectableConditionBadge
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
@@ -39,7 +36,6 @@ fun OptionFormScreen(
     conditionalViewModel.configure(electionId)
 
     val nameLabel = stringResource(id = R.string.name_option)
-    val imageLabel = stringResource(id = R.string.image)
 
     val scope = rememberCoroutineScope()
 
@@ -50,26 +46,32 @@ fun OptionFormScreen(
     }
 
     Scaffold(backgroundColor = colorResource(id = R.color.white)) {
-        GetMainColumn {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Divider(
                 color = colorResource(R.color.dark_text),
-                thickness = 1.dp,
+                thickness = 3.dp,
                 modifier = Modifier
-                    .padding(start = 0.dp, top = 5.dp, end = 0.dp, bottom = 0.dp)
+                    .padding(start = 0.dp, top = 10.dp, end = 0.dp, bottom = 0.dp)
                     .width(50.dp)
             )
-            GetTextHeader(stringResource(R.string.create_option))
-            Divider(
-                color = colorResource(R.color.divider),
-                thickness = 1.dp,
-                modifier = Modifier.padding(start = 0.dp, top = 10.dp, end = 0.dp, bottom = 0.dp)
-            )
+            ImagePickerField(formViewModel.optionImageUrl)
+
             NoEmptyTextField(nameLabel, formViewModel.optionName) { formViewModel.setName(it) }
-            ImagePickerField(
-                imageLabel,
-                formViewModel.optionImageUrl
+
+            Text(
+                stringResource(R.string.assign_requisites),
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 10.dp)
+                    .fillMaxWidth(),
+                color = colorResource(id = R.color.dark_text)
             )
-            GetTextHeader(stringResource(R.string.assign_requisites))
             if (formViewModel.configuredConditions.isEmpty()) {
                 GetTextError(stringResource(R.string.tooltip_select_requisites))
             }
@@ -94,7 +96,7 @@ fun OptionFormScreen(
                     }
                 }
             }
-
+            Spacer(Modifier.weight(1f, false))
             GetBottomButton(
                 {
                     scope.launch {

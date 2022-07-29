@@ -11,17 +11,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.OptionFilePicker.ImagePickerField
 import com.bortxapps.thewise.presentation.componentes.texfield.getBitMap
 import com.skydoves.landscapist.glide.GlideImage
@@ -30,7 +27,7 @@ object OptionFilePicker {
 
     @Composable
     fun ImagePickerField(
-        label: String, itemId: String
+        itemId: String
     ) {
         val context = LocalContext.current
         val initialBitMap = getBitMap(context, itemId)
@@ -48,15 +45,11 @@ object OptionFilePicker {
 
         val source = remember { MutableInteractionSource() }
 
-        Column(modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)) {
-            Text(
-                text = label, color = colorResource(id = R.color.yellow_800)
-            )
+        Column(modifier = Modifier.padding(vertical = 10.dp)) {
             GlideImage(imageModel = bitmap,
                 Modifier
-                    .width(150.dp)
+                    .fillMaxWidth()
                     .height(150.dp)
-                    .padding(10.dp)
                     .clickable(interactionSource = source, indication = LocalIndication.current) {})
         }
 
@@ -69,5 +62,5 @@ object OptionFilePicker {
 @Preview
 @Composable
 fun PreviewImagePickerTextField() {
-    ImagePickerField("AAAAA", "BBBBBB")
+    ImagePickerField("AAAAA")
 }
