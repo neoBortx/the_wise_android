@@ -99,7 +99,8 @@ dependencies {
     implementation "androidx.palette:palette:1.0.0"
 
 
-    //Serialization
+    //Flippable
+    implementation "com.wajahatkarim:flippable:1.0.4"
 
     //Preferences
 

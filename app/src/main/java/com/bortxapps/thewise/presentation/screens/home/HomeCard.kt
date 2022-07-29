@@ -1,26 +1,27 @@
 package com.bortxapps.thewise.presentation.screens.home
 
 import android.util.Log
-import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import androidx.palette.graphics.Palette
 import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.application.pokos.Election
@@ -28,23 +29,29 @@ import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.navigation.Screen
 import com.bortxapps.thewise.presentation.componentes.texfield.SimpleConditionBadge
+import com.bortxapps.thewise.presentation.screens.home.viewmodel.HomeViewModel
 import com.bortxapps.thewise.presentation.screens.utils.getImagePath
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
 import com.skydoves.landscapist.glide.GlideImage
-import com.skydoves.landscapist.palette.BitmapPalette
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @Composable
-fun PaintElectionRow(item: Election, navHostController: NavHostController) {
+fun PaintElectionRow(
+    item: Election,
+    navHostController: NavHostController,
+    homeViewModel: HomeViewModel = hiltViewModel()
+) {
 
-    val colTitle = colorResource(id = R.color.yellow_800)
-    val colBack = colorResource(id = R.color.transparent)
-
-    var palette by remember { mutableStateOf<Palette?>(null) }
     val scope = rememberCoroutineScope()
+
+    var expanded by remember {
+        mutableStateOf(false)
+    }
+
+    val conditions by homeViewModel.getConditions(item.id).collectAsState(initial = listOf())
 
 
     fun openElectionInfo(item: Election) {
@@ -56,9 +63,7 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
 
     @Composable
     fun getOptionName(election: Election): String {
-        return election.getWinningOption()?.let {
-            "${stringResource(R.string.winning_option_label)} ${it.name}"
-        } ?: stringResource(R.string.no_options_configured)
+        return election.getWinningOption()?.name ?: stringResource(R.string.no_options_configured)
     }
 
     Card(
@@ -69,69 +74,90 @@ fun PaintElectionRow(item: Election, navHostController: NavHostController) {
             .wrapContentHeight(),
         onClick = { scope.launch { openElectionInfo(item) } },
     ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-            ) {
-                item.getWinningOption()?.imageUrl?.let { image ->
-                    GlideImage(modifier = Modifier
+        Column(verticalArrangement = Arrangement.SpaceBetween) {
+            item.getWinningOption()?.imageUrl?.let { image ->
+                GlideImage(
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(),
-                        imageModel = getImagePath(imageName = image),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        bitmapPalette = BitmapPalette {
-                            palette = it
-                        })
-                }
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .background(palette?.vibrantSwatch?.bodyTextColor?.let {
-                        Color(it)
-                    } ?: colBack)) {
-                    Text(text = item.name.replaceFirstChar { it.uppercase() },
-                        style = MaterialTheme.typography.h6,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
-                        color = palette?.vibrantSwatch?.rgb?.let {
-                            Color(it)
-                        } ?: colTitle,
-                        maxLines = 2)
-                }
+                        .heightIn(0.dp, 150.dp),
+                    imageModel = getImagePath(imageName = image),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
             }
-            Column(
-                Modifier.fillMaxWidth()
-            ) {
-                Text(text = getOptionName(item),
-                    style = MaterialTheme.typography.body1,
+
+            Text(
+                text = item.name.replaceFirstChar { it.uppercase() },
+                style = MaterialTheme.typography.h6,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
+                color = colorResource(id = R.color.yellow_800),
+                maxLines = 2
+            )
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                item.getWinningOption()?.let {
+                    Icon(
+                        painterResource(id = R.drawable.ic_trophy),
+                        contentDescription = "",
+                        tint = colorResource(
+                            id = R.color.yellow_800
+                        ),
+                        modifier = Modifier
+                            .size(30.dp)
+                            .padding(start = 10.dp)
+                    )
+                }
+                Text(
+                    text = getOptionName(item),
+                    style = MaterialTheme.typography.subtitle1,
                     textAlign = TextAlign.Left,
                     modifier = Modifier
-                        .padding(horizontal = 15.dp)
+                        .padding(horizontal = 10.dp)
                         .padding(bottom = 5.dp, top = 5.dp)
-                        .fillMaxWidth()
+                        .wrapContentWidth()
                         .wrapContentHeight(),
-                    color = palette?.vibrantSwatch?.rgb?.let {
-                        Color(it)
-                    } ?: colTitle,
+                    color = colorResource(id = R.color.dark_text),
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 3)
+                    maxLines = 3
+                )
 
-                item.getWinningOption()?.let { option ->
+                Spacer(Modifier.weight(1f))
+
+                IconButton(onClick = { expanded = !expanded }) {
+                    if (!expanded) {
+                        Icon(
+                            Icons.Default.ArrowDropDown,
+                            "",
+                            tint = colorResource(id = R.color.dark_text)
+                        )
+                    } else {
+                        Icon(
+                            Icons.Default.KeyboardArrowUp,
+                            contentDescription = "",
+                            tint = colorResource(id = R.color.dark_text)
+                        )
+                    }
+                }
+            }
+
+            AnimatedVisibility(visible = expanded) {
+
+                Column {
+                    Divider(modifier = Modifier.padding(vertical = 0.dp, horizontal = 5.dp))
+
                     FlowRow(
                         modifier = Modifier
                             .wrapContentHeight()
                             .fillMaxWidth()
-                            .padding(horizontal = 15.dp)
-                            .padding(bottom = 10.dp),
+                            .padding(horizontal = 15.dp, vertical = 15.dp),
                         mainAxisAlignment = MainAxisAlignment.Start,
                         mainAxisSize = SizeMode.Expand,
                         crossAxisSpacing = 5.dp,
                         mainAxisSpacing = 5.dp,
                     ) {
-                        option.matchingConditions.sortedByDescending { condition -> condition.weight }
+                        conditions.sortedByDescending { condition -> condition.weight }
                             .forEach { condition ->
                                 SimpleConditionBadge(condition.name, condition.weight)
                             }

@@ -2,7 +2,6 @@ package com.bortxapps.thewise.presentation.screens.elections
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -35,6 +34,8 @@ import com.bortxapps.thewise.presentation.screens.options.PaintOptionRow
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
+import com.wajahatkarim.flippable.Flippable
+import com.wajahatkarim.flippable.rememberFlipController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -60,9 +61,8 @@ fun ElectionInfoScreen(
     var showDialog by remember {
         mutableStateOf(false)
     }
-    var showTheWiseElection by remember {
-        mutableStateOf(false)
-    }
+
+    val flipController = rememberFlipController()
 
 
     fun openElectionForm() {
@@ -130,48 +130,49 @@ fun ElectionInfoScreen(
             }
 
             election.getWinningOption()?.let {
-
-                AnimatedVisibility(visible = !showTheWiseElection) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .padding(horizontal = 5.dp)
-                            .clickable {
-                                showTheWiseElection = true
-                            },
-                        elevation = 5.dp
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = "Touch here to reveal the wise's answer",
-                                modifier = Modifier.padding(10.dp)
-                            )
-                            Icon(
-                                modifier = Modifier
-                                    .size(250.dp)
-                                    .padding(bottom = 10.dp),
-                                painter = painterResource(id = R.drawable.the_wise_sleeping),
-                                contentDescription = "Waiting"
+                Flippable(
+                    frontSide = {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .padding(horizontal = 5.dp)
+                                .clickable {
+                                    flipController.flip()
+                                },
+                            elevation = 5.dp
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = "Touch here to reveal the wise's answer",
+                                    modifier = Modifier.padding(10.dp)
+                                )
+                                Icon(
+                                    modifier = Modifier
+                                        .size(250.dp)
+                                        .padding(bottom = 10.dp),
+                                    painter = painterResource(id = R.drawable.the_wise_sleeping),
+                                    contentDescription = "Waiting"
+                                )
+                            }
+                        }
+                    },
+                    backSide = {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .padding(horizontal = 5.dp)
+                                .defaultMinSize(minHeight = 200.dp)
+                        ) {
+                            PaintOptionRow(
+                                option = it,
+                                clickCallback = { },
+                                deleteCallBack = null,
                             )
                         }
-                    }
-                }
-
-                AnimatedVisibility(visible = showTheWiseElection) {
-                    Box(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(horizontal = 5.dp)
-                            .defaultMinSize(minHeight = 200.dp)
-                    ) {
-                        PaintOptionRow(
-                            option = it,
-                            clickCallback = { },
-                            deleteCallBack = null,
-                        )
-                    }
-                }
+                    },
+                    flipController = flipController
+                )
             } ?: PaintNoOption()
 
             if (showDialog) {

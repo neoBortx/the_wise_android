@@ -1,5 +1,6 @@
 package com.bortxapps.thewise.presentation.screens.home.viewmodel
 
+import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.Election
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -31,5 +32,9 @@ class HomeViewModelPreview : IHomeViewModel {
 
     override fun editElection(election: Election) {
         //Do nothing
+    }
+
+    override fun getConditions(electionId: Long): Flow<List<Condition>> {
+        return flow { }
     }
 }
