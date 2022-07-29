@@ -13,12 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.palette.graphics.Palette
 import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.application.pokos.Option
@@ -29,7 +30,6 @@ import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
 import com.skydoves.landscapist.glide.GlideImage
-import com.skydoves.landscapist.palette.BitmapPalette
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
@@ -37,12 +37,10 @@ import kotlinx.coroutines.launch
 fun PaintOptionRow(
     option: Option,
     clickCallback: () -> Unit,
-    deleteCallBack: (() -> Unit)?
+    deleteCallBack: (() -> Unit)?,
+    showWinningIcon: Boolean
 ) {
-
     val colTitle = colorResource(id = R.color.yellow_800)
-
-    var palette by remember { mutableStateOf<Palette?>(null) }
     val scope = rememberCoroutineScope()
     var expanded by remember {
         mutableStateOf(false)
@@ -62,26 +60,35 @@ fun PaintOptionRow(
         },
     ) {
         Column(verticalArrangement = Arrangement.SpaceBetween) {
-            GlideImage(modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(0.dp, 150.dp),
+            GlideImage(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(0.dp, 150.dp),
                 imageModel = getImagePath(imageName = option.imageUrl),
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
-                bitmapPalette = BitmapPalette {
-                    palette = it
-                })
+                contentScale = ContentScale.Crop
+            )
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = option.name.replaceFirstChar { it.uppercase() },
+                if (showWinningIcon) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_trophy),
+                        contentDescription = "",
+                        tint = colorResource(id = R.color.yellow_800),
+                        modifier = Modifier
+                            .size(35.dp)
+                            .padding(start = 10.dp)
+                    )
+                }
+                Text(
+                    text = option.name.replaceFirstChar { it.uppercase() },
                     style = MaterialTheme.typography.h6,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Left,
                     modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
-                    color = palette?.vibrantSwatch?.rgb?.let {
-                        Color(it)
-                    } ?: colTitle,
-                    maxLines = 2)
+                    color = colTitle,
+                    maxLines = 2
+                )
 
                 Spacer(Modifier.weight(1f))
 
@@ -132,11 +139,9 @@ fun PaintOptionRow(
                             )
                         ) {
                             Text(
-                                text = "DELETE",
+                                text = stringResource(id = R.string.delete),
                                 textDecoration = TextDecoration.Underline,
-                                color = palette?.vibrantSwatch?.rgb?.let {
-                                    Color(it)
-                                } ?: colTitle,
+                                color = colTitle,
                                 textAlign = TextAlign.End
                             )
                         }
@@ -177,6 +182,7 @@ fun PreviewPaintOptionRow() {
 
         }, deleteCallBack = {
 
-        }
+        },
+        true
     )
 }

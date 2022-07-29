@@ -168,6 +168,7 @@ fun ElectionInfoScreen(
                                 option = it,
                                 clickCallback = { },
                                 deleteCallBack = null,
+                                true
                             )
                         }
                     },

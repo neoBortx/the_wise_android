@@ -30,7 +30,6 @@ import com.bortxapps.thewise.R
 import com.bortxapps.thewise.navigation.Screen
 import com.bortxapps.thewise.presentation.componentes.BottomNavigation.GetBottomNavigation
 import com.bortxapps.thewise.presentation.componentes.DeleteAlertDialog
-import com.bortxapps.thewise.presentation.componentes.MainColumn
 import com.bortxapps.thewise.presentation.componentes.MenuAction
 import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.screens.elections.ElectionFormScreen
@@ -148,7 +147,9 @@ fun OptionsListScreen(
                 PaintOptionRow(
                     option = item,
                     clickCallback = { openOptionForm(item) },
-                    deleteCallBack = { optionsViewModel.deleteOption(item) })
+                    deleteCallBack = { optionsViewModel.deleteOption(item) },
+                    false
+                )
             }
         }
     }
@@ -198,7 +199,12 @@ fun OptionsListScreen(
     @ExperimentalMaterialApi
     @Composable
     fun DrawFrontLayer(options: List<Option>) {
-        MainColumn.GetMainColumn {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Top,
+        ) {
             if (options.any()) {
                 PaintLazyColumn(options)
             } else {
@@ -249,8 +255,11 @@ fun OptionsListScreen(
             Scaffold(
                 floatingActionButton = { GetFloatingActionButton() },
                 bottomBar = { GetBottomNavigation(navHostController, election) })
-            {
-                DrawFrontLayer(options)
+            { innerPadding ->
+                // Apply the padding globally to the whole BottomNavScreensController
+                Box(modifier = Modifier.padding(innerPadding)) {
+                    DrawFrontLayer(options)
+                }
             }
         },
         frontLayerContent = {
@@ -263,6 +272,7 @@ fun OptionsListScreen(
             }
         }
     ) {
+
     }
 
     if (showDialog) {
