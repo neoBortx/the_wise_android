@@ -3,6 +3,7 @@ package com.bortxapps.thewise.presentation.screens.options
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -186,7 +187,7 @@ fun OptionsListScreen(
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
-            Icon(
+            Image(
                 modifier = Modifier
                     .size(300.dp)
                     .padding(3.dp),

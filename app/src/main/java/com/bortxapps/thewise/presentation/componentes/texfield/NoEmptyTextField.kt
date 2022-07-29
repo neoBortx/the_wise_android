@@ -76,8 +76,8 @@ fun RegularTextField(label: String, defaultValue: String, callbackMethod: (text:
             colors = TextFieldDefaults.textFieldColors(
                 focusedLabelColor = colorResource(id = R.color.yellow_800),
                 unfocusedLabelColor = colorResource(id = R.color.yellow_800),
-                focusedIndicatorColor = colorResource(id = R.color.dark_text),
-                unfocusedIndicatorColor = colorResource(id = R.color.dark_text),
+                focusedIndicatorColor = colorResource(id = R.color.yellow_800),
+                unfocusedIndicatorColor = colorResource(id = R.color.yellow_800),
                 backgroundColor = colorResource(id = R.color.white)
             ),
             value = value,

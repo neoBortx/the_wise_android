@@ -2,6 +2,7 @@ package com.bortxapps.thewise.presentation.screens.elections
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -15,7 +16,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.bortxapps.application.pokos.Election
@@ -113,15 +117,31 @@ fun ElectionInfoScreen(
     @Composable
     fun DrawFrontLayer() {
         MainColumn.GetMainColumn {
+            if (election.description.isNotBlank()) {
+                TextHeader.GetTextHeader(stringResource(R.string.description))
+                Text(
+                    text = election.description,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier
+                        .padding(horizontal = 15.dp)
+                        .padding(top = 5.dp, bottom = 5.dp)
+                        .wrapContentWidth()
+                        .wrapContentHeight(),
+                    color = colorResource(id = R.color.dark_text),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 3
+                )
+            }
             TextHeader.GetTextHeader(stringResource(R.string.question_conditions_label))
             FlowRow(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 20.dp),
+                    .padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = 20.dp),
                 mainAxisAlignment = MainAxisAlignment.Start,
                 mainAxisSize = SizeMode.Expand,
-                crossAxisSpacing = 10.dp,
+                crossAxisSpacing = 5.dp,
                 mainAxisSpacing = 5.dp
             ) {
                 conditions.forEach { condition ->
@@ -147,7 +167,7 @@ fun ElectionInfoScreen(
                                     text = "Touch here to reveal the wise's answer",
                                     modifier = Modifier.padding(10.dp)
                                 )
-                                Icon(
+                                Image(
                                     modifier = Modifier
                                         .size(250.dp)
                                         .padding(bottom = 10.dp),

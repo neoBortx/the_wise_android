@@ -21,6 +21,7 @@ import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
 import com.bortxapps.thewise.presentation.componentes.GetConditionsControl
 import com.bortxapps.thewise.presentation.componentes.texfield.NoEmptyTextField
+import com.bortxapps.thewise.presentation.componentes.texfield.RegularTextField
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModelPreview
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.IElectionFormViewModel
@@ -40,7 +41,7 @@ fun ElectionFormScreen(
     electionFormViewModel.configureElection(election)
 
     val nameLabel = stringResource(id = R.string.name)
-    //val descLabel = stringResource(id = R.string.description)
+    val descLabel = stringResource(id = R.string.description)
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
 
@@ -67,6 +68,9 @@ fun ElectionFormScreen(
             )
             NoEmptyTextField(nameLabel, electionFormViewModel.electionName) {
                 electionFormViewModel.setName(it)
+            }
+            RegularTextField(descLabel, electionFormViewModel.electionDescription) {
+                electionFormViewModel.setDescription(it)
             }
             Text(
                 stringResource(R.string.question_conditions_label),
