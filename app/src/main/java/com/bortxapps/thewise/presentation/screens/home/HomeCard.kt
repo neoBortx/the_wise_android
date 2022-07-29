@@ -146,12 +146,23 @@ fun PaintElectionRow(
 
                 Column {
                     Divider(modifier = Modifier.padding(vertical = 0.dp, horizontal = 5.dp))
-
+                    Text(
+                        text = stringResource(id = R.string.question_conditions_label),
+                        style = MaterialTheme.typography.subtitle1,
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                            .padding(top = 5.dp)
+                            .wrapContentWidth()
+                            .wrapContentHeight(),
+                        color = colorResource(id = R.color.dark_text),
+                        overflow = TextOverflow.Ellipsis
+                    )
                     FlowRow(
                         modifier = Modifier
                             .wrapContentHeight()
                             .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 15.dp),
+                            .padding(horizontal = 10.dp, vertical = 8.dp),
                         mainAxisAlignment = MainAxisAlignment.Start,
                         mainAxisSize = SizeMode.Expand,
                         crossAxisSpacing = 5.dp,

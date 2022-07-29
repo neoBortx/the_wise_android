@@ -105,13 +105,24 @@ fun PaintOptionRow(
 
                 Column {
                     Divider(modifier = Modifier.padding(vertical = 0.dp, horizontal = 5.dp))
-
+                    Text(
+                        text = stringResource(id = R.string.matching_conditions_label),
+                        style = MaterialTheme.typography.subtitle1,
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                            .padding(top = 5.dp)
+                            .wrapContentWidth()
+                            .wrapContentHeight(),
+                        color = colorResource(id = R.color.dark_text),
+                        overflow = TextOverflow.Ellipsis
+                    )
                     FlowRow(
                         modifier = Modifier
                             .wrapContentHeight()
                             .fillMaxWidth()
                             .padding(
-                                top = 13.dp,
+                                top = 8.dp,
                                 start = 10.dp,
                                 end = 6.dp,
                                 bottom = if (deleteCallBack != null) 0.dp else 10.dp

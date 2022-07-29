@@ -113,7 +113,7 @@ fun ElectionInfoScreen(
     @Composable
     fun DrawFrontLayer() {
         MainColumn.GetMainColumn {
-            TextHeader.GetTextHeader(stringResource(R.string.matching_conditions_label))
+            TextHeader.GetTextHeader(stringResource(R.string.question_conditions_label))
             FlowRow(
                 modifier = Modifier
                     .wrapContentHeight()

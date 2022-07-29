@@ -69,7 +69,7 @@ fun ElectionFormScreen(
                 electionFormViewModel.setName(it)
             }
             Text(
-                stringResource(R.string.matching_conditions_label),
+                stringResource(R.string.question_conditions_label),
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
                     .padding(top = 10.dp)
