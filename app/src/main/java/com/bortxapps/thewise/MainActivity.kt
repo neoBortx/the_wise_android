@@ -1,12 +1,12 @@
 package com.bortxapps.thewise
 
+import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.bortxapps.thewise.navigation.SetSplashNavGraph
+import com.bortxapps.thewise.navigation.MyAppNavHost
+import com.bortxapps.thewise.permissions.RequestRequiredPermission
 import com.bortxapps.thewise.ui.theme.TheWiseTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -14,14 +14,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity()
 {
-    private lateinit var navController: NavHostController
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             TheWiseTheme {
-                navController = rememberNavController()
-                SetSplashNavGraph(navController = navController)
+                RequestRequiredPermission(Manifest.permission.CAMERA)
+                MyAppNavHost()
             }
         }
     }

@@ -1,8 +1,11 @@
 package com.bortxapps.thewise.presentation.screens.elections
 
 import android.util.Log
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -16,30 +19,51 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.bortxapps.application.pokos.Condition
+import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
-import com.bortxapps.thewise.presentation.componentes.GetConditionsControl
+import com.bortxapps.thewise.presentation.componentes.ConditionsConfigurationControl
+import com.bortxapps.thewise.presentation.componentes.form.FormDragControl
 import com.bortxapps.thewise.presentation.componentes.texfield.NoEmptyTextField
 import com.bortxapps.thewise.presentation.componentes.texfield.RegularTextField
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
-import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModelPreview
-import com.bortxapps.thewise.presentation.screens.elections.viewmodel.IElectionFormViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlin.coroutines.EmptyCoroutineContext
 
 @ExperimentalMaterialApi
 @Composable
 fun ElectionFormScreen(
-    electionFormViewModel: IElectionFormViewModel = hiltViewModel<ElectionFormViewModel>(),
-    election: Election?,
-    formCompletedCallback: () -> Job
+    electionFormViewModel: ElectionFormViewModel = hiltViewModel(),
+    formCompletedCallback: () -> Unit
 ) {
 
-    electionFormViewModel.configureElection(election)
+    DrawElectionFormScreenScaffold(
+        formCompletedCallback = formCompletedCallback,
+        onCreateNewElection = { electionFormViewModel.createNewElection() },
+        onSetName = { electionFormViewModel.setName(it) },
+        onSetDescription = { electionFormViewModel.setDescription(it) },
+        onAddCondition = { name, weight -> electionFormViewModel.addCondition(name, weight) },
+        onDeleteCondition = { electionFormViewModel.deleteCondition(it) },
+        election = electionFormViewModel.election,
+        conditions = electionFormViewModel.conditions,
+        isButtonEnabled = electionFormViewModel.isButtonEnabled
+    )
+}
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun DrawElectionFormScreenScaffold(
+    formCompletedCallback: () -> Unit,
+    onCreateNewElection: () -> Unit,
+    onSetName: (String) -> Unit,
+    onSetDescription: (String) -> Unit,
+    onAddCondition: (String, ConditionWeight) -> Unit,
+    onDeleteCondition: (Long) -> Unit,
+    election: Election,
+    conditions: List<Condition>,
+    isButtonEnabled: Boolean
+) {
     val nameLabel = stringResource(id = R.string.name)
     val descLabel = stringResource(id = R.string.description)
     val scope = rememberCoroutineScope()
@@ -47,30 +71,25 @@ fun ElectionFormScreen(
 
     fun onButtonFormClick() {
         Log.d("Elections", "Click in create election button")
-        electionFormViewModel.createNewElection()
+        onCreateNewElection()
         formCompletedCallback.invoke()
     }
 
-    Scaffold(backgroundColor = colorResource(id = R.color.white), drawerElevation = 5.dp) {
+    Scaffold(backgroundColor = colorResource(id = R.color.white), drawerElevation = 5.dp) { it ->
         Column(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+                .fillMaxHeight()
+                .padding(it),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Divider(
-                color = colorResource(R.color.dark_text),
-                thickness = 3.dp,
-                modifier = Modifier
-                    .padding(start = 0.dp, top = 10.dp, end = 0.dp, bottom = 0.dp)
-                    .width(50.dp)
-            )
-            NoEmptyTextField(nameLabel, electionFormViewModel.electionName) {
-                electionFormViewModel.setName(it)
+            FormDragControl()
+            NoEmptyTextField(nameLabel, election.name) { name ->
+                onSetName(name)
             }
-            RegularTextField(descLabel, electionFormViewModel.electionDescription) {
-                electionFormViewModel.setDescription(it)
+            RegularTextField(descLabel, election.description) { desc ->
+
+                onSetDescription(desc)
             }
             Text(
                 stringResource(R.string.question_conditions_label),
@@ -80,26 +99,42 @@ fun ElectionFormScreen(
                     .fillMaxWidth(),
                 color = colorResource(id = R.color.dark_text)
             )
-            GetConditionsControl(electionFormViewModel)
-            Spacer(Modifier.weight(5f, false))
+            ConditionsConfigurationControl(
+                conditions,
+                onConditionAdded = { name, weight ->
+                    onAddCondition(name, weight)
+                },
+                onConditionRemoved = { id -> onDeleteCondition(id) }
+            )
+            Spacer(Modifier.weight(1f))
             GetBottomButton(
                 {
                     focusManager.clearFocus()
                     scope.launch {
                         onButtonFormClick()
                     }
-                }, R.string.save_election, electionFormViewModel.isButtonEnabled
+                },
+                R.string.save_election,
+                isButtonEnabled
             )
         }
     }
+
 }
 
 @ExperimentalMaterialApi
 @Preview
 @Composable
 fun ShowPreview() {
-    val coroutineScope = CoroutineScope(EmptyCoroutineContext)
-    ElectionFormScreen(electionFormViewModel = ElectionFormViewModelPreview(),
+    DrawElectionFormScreenScaffold(
+        formCompletedCallback = { },
+        onCreateNewElection = { },
+        onSetName = { },
+        onSetDescription = { },
+        onAddCondition = { _, _ -> },
+        onDeleteCondition = { },
         election = Election.getEmpty(),
-        formCompletedCallback = { coroutineScope.launch { } })
+        conditions = listOf(),
+        isButtonEnabled = true
+    )
 }

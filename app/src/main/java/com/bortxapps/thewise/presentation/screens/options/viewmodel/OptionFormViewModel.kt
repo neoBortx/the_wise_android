@@ -6,31 +6,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bortxapps.application.contracts.service.IConditionsAppService
+import com.bortxapps.application.contracts.service.IOptionsAppService
 import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.Option
-import com.bortxapps.application.translators.ConditionTranslator
-import com.bortxapps.application.translators.OptionTranslator
-import com.bortxapps.thewise.domain.contrats.service.IConditionsDomainService
-import com.bortxapps.thewise.domain.contrats.service.IOptionsDomainService
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class OptionFormViewModel @Inject constructor(
-    private val optionsService: IOptionsDomainService,
-    private val conditionsService: IConditionsDomainService
-) :
-    ViewModel() {
+    private val optionsService: IOptionsAppService,
+    private val conditionsService: IConditionsAppService
+) : ViewModel() {
 
     var isButtonEnabled by mutableStateOf(false)
         private set
 
-    var optionName by mutableStateOf("")
-        private set
-    var optionImageUrl by mutableStateOf("")
+    var option by mutableStateOf(Option.getEmpty())
         private set
 
     var configuredConditions by mutableStateOf(listOf<Condition>())
@@ -39,52 +33,35 @@ class OptionFormViewModel @Inject constructor(
     var allConditions by mutableStateOf(listOf<Condition>())
         private set
 
-    private var electionId: Long = 0
-    private var optionId: Long = 0
+    fun configureOption(option: Option, electionId: Long) {
 
-    fun configureOption(option: Option?, electionId: Long) {
-        if (option != null) {
-            optionName = option.name
-            optionImageUrl = option.imageUrl
-            optionId = option.id
-            configuredConditions = option.matchingConditions
-        } else {
-            optionImageUrl = "image-${UUID.randomUUID().mostSignificantBits}"
+        val optionImageUrl = option.imageUrl.ifBlank {
+            "image-${UUID.randomUUID().mostSignificantBits}"
         }
+
+        this.option = option.copy(electionId = electionId, imageUrl = optionImageUrl)
+        configuredConditions = option.matchingConditions
 
         viewModelScope.launch {
             getConditions(electionId)
             configuredConditions = allConditions.filter { configuredConditions.contains(it) }
         }
-
-        this.electionId = electionId
     }
 
     fun clearOption() {
-        optionName = ""
-        optionImageUrl = ""
-        electionId = 0
+        option = Option.getEmpty()
+        configuredConditions = listOf()
     }
 
     fun setName(name: String) {
-        this.optionName = name
-        isButtonEnabled = optionName.isNotBlank() && configuredConditions.any()
+        option = option.copy(name = name)
+        isButtonEnabled = option.name.isNotBlank() && configuredConditions.any()
     }
 
     fun createNewOption() {
-        Log.i("Option", "Creating a new option $optionName")
+        Log.i("Option", "Creating a new option ${option.name}")
         viewModelScope.launch {
-            optionsService.addOption(
-                OptionTranslator.toEntity(
-                    Option(
-                        optionId,
-                        electionId,
-                        optionName,
-                        optionImageUrl
-                    ).apply {
-                        matchingConditions.addAll(configuredConditions)
-                    })
-            )
+            optionsService.addOption(option)
         }
     }
 
@@ -99,15 +76,13 @@ class OptionFormViewModel @Inject constructor(
             }
         }
 
-        isButtonEnabled = optionName.isNotBlank() && configuredConditions.any()
+        isButtonEnabled = option.name.isNotBlank() && configuredConditions.any()
     }
 
     private fun getConditions(electionId: Long) {
 
         viewModelScope.launch {
-            conditionsService.getConditionsFromElection(electionId = electionId).map {
-                it.map { conditionEntity -> ConditionTranslator.fromEntity(conditionEntity) }
-            }.collect {
+            conditionsService.getConditionsFromElection(electionId = electionId).collect {
                 allConditions = it
             }
         }

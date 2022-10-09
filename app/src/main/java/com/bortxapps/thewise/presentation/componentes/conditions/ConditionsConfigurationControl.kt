@@ -2,13 +2,35 @@ package com.bortxapps.thewise.presentation.componentes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ExposedDropdownMenuBox
+import androidx.compose.material.ExposedDropdownMenuDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -17,18 +39,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.texfield.RemovableConditionBadge
-import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModelPreview
-import com.bortxapps.thewise.presentation.screens.elections.viewmodel.IElectionFormViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
 
 @ExperimentalMaterialApi
 @Composable
-fun GetConditionsControl(electionFormViewModel: IElectionFormViewModel) {
+fun ConditionsConfigurationControl(
+    conditions: List<Condition>,
+    onConditionAdded: (String, ConditionWeight) -> Unit,
+    onConditionRemoved: (Long) -> Unit
+) {
     val maxCharacters = 20
     var conditionName by remember { mutableStateOf("") }
     var conditionWeight by remember { mutableStateOf(ConditionWeight.LOW) }
@@ -37,7 +62,6 @@ fun GetConditionsControl(electionFormViewModel: IElectionFormViewModel) {
     var buttonEnabled by remember { mutableStateOf(false) }
 
     val items = ConditionWeight.values()
-    val conditions = electionFormViewModel.conditions
     val focusManager = LocalFocusManager.current
 
     @Composable
@@ -92,7 +116,7 @@ fun GetConditionsControl(electionFormViewModel: IElectionFormViewModel) {
                     expanded = !expanded
                 },
                 modifier = Modifier
-                    .width(130.dp)
+                    .width(140.dp)
                     .fillMaxHeight()
                     .wrapContentSize(Alignment.TopStart)
                     .padding(horizontal = 15.dp)
@@ -137,7 +161,7 @@ fun GetConditionsControl(electionFormViewModel: IElectionFormViewModel) {
             }
 
             Button(modifier = Modifier.size(50.dp), enabled = buttonEnabled, onClick = {
-                electionFormViewModel.addCondition(conditionName, conditionWeight)
+                onConditionAdded(conditionName, conditionWeight)
                 focusManager.clearFocus()
                 conditionName = ""
             }) {
@@ -152,14 +176,14 @@ fun GetConditionsControl(electionFormViewModel: IElectionFormViewModel) {
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp),
+                    .padding(vertical = 10.dp, horizontal = 10.dp),
             )
         } else {
             FlowRow(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(top = 20.dp, bottom = 10.dp),
+                    .padding(vertical = 13.dp, horizontal = 5.dp),
                 mainAxisAlignment = MainAxisAlignment.Start,
                 mainAxisSize = SizeMode.Expand,
                 crossAxisSpacing = 12.dp,
@@ -167,7 +191,7 @@ fun GetConditionsControl(electionFormViewModel: IElectionFormViewModel) {
             ) {
                 conditions.forEach { condition ->
                     RemovableConditionBadge(condition.name, condition.weight) {
-                        electionFormViewModel.deleteCondition(conditionId = condition.id)
+                        onConditionRemoved(condition.id)
                     }
                 }
             }
@@ -175,10 +199,16 @@ fun GetConditionsControl(electionFormViewModel: IElectionFormViewModel) {
     }
 }
 
+
 @ExperimentalMaterialApi
 @Preview
 @Composable
 fun ShowControl() {
-    GetConditionsControl(ElectionFormViewModelPreview())
+    fun foo(a: String, b: ConditionWeight) = Unit
+    ConditionsConfigurationControl(
+        onConditionRemoved = {},
+        conditions = mutableListOf(),
+        onConditionAdded = ::foo
+    )
 }
 

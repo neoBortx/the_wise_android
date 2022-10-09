@@ -34,15 +34,18 @@
     <string name="no_options_configured">There aren\'t any option configured jet</string>
     <string name="question_conditions_label">Question requisites</string>
     <string name="matching_conditions_label">Matching requisites</string>
-    <string name="no_question_label">The wise is waiting for your questions, don\'t keep him waiting</string>
-    <string name="no_options_label">The wise need options to choose the best of the them for your question</string>
+    <string name="no_question_label">The Wise is waiting for your questions, don\'t keep him waiting.</string>
+    <string name="no_options_label">The Wise need options to choose the best of the them for your question.</string>
     <string name="edit">EDIT</string>
     <string name="insert_conditions">Insert requisite</string>
     <string name="requisite_name">Name</string>
     <string name="meh">Meh</string>
     <string name="wish">Wish</string>
     <string name="must">Must</string>
-    <string name="delete_disclaimer">The wise is going to forget all options and requisites of the question</string>
+    <string name="delete_disclaimer">The Wise is going to forget all options and requisites of the question.</string>
     <string name="keep">Keep</string>
     <string name="forget">Forget</string>
+    <string name="get_photo">Get a photo</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
 </resources>

@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
@@ -17,11 +17,12 @@ import com.bortxapps.thewise.navigation.Screen
 
 object BottomNavigation {
     @Composable
-    fun GetBottomNavigation(navController: NavController, election: Election) {
+    fun GetBottomNavigation(election: Election, navController: NavHostController) {
         val items = listOf(
             Screen.InfoElection,
             Screen.OptionsList
         )
+
         BottomNavigation(backgroundColor = colorResource(id = R.color.yellow_800)) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
@@ -45,9 +46,6 @@ object BottomNavigation {
                     selected = currentRoute == item.getFullRoute(),
                     onClick = {
                         navController.navigate(item.getRouteWithId(election.id.toString())) {
-                            popUpTo(Screen.Home.getFullRoute()) {
-                                saveState = true
-                            }
                             launchSingleTop = true
                             restoreState = true
                         }

@@ -13,7 +13,7 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
 
     override val allElections = electionDao.getElections()
 
-    override fun getElection(electionId: Long): Flow<ElectionWithOptions> {
+    override fun getElection(electionId: Long): Flow<ElectionWithOptions?> {
         try {
             return electionDao.getElection(electionId)
         } catch (ex: Exception) {

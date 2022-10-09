@@ -4,15 +4,34 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.BackdropScaffold
+import androidx.compose.material.BackdropValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.runtime.*
+import androidx.compose.material.rememberBackdropScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -28,7 +47,6 @@ import androidx.navigation.NavHostController
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
-import com.bortxapps.thewise.navigation.Screen
 import com.bortxapps.thewise.presentation.componentes.BottomNavigation.GetBottomNavigation
 import com.bortxapps.thewise.presentation.componentes.DeleteAlertDialog
 import com.bortxapps.thewise.presentation.componentes.MenuAction
@@ -36,7 +54,7 @@ import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.screens.elections.ElectionFormScreen
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
-import com.bortxapps.thewise.presentation.viewmodels.OptionsViewModel
+import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -44,15 +62,16 @@ import kotlinx.coroutines.launch
 @ExperimentalMaterialApi
 @Composable
 fun OptionsListScreen(
-    navHostController: NavHostController,
     optionsViewModel: OptionsViewModel = hiltViewModel(),
     optionFormViewModel: OptionFormViewModel = hiltViewModel(),
     electionFormViewModel: ElectionFormViewModel = hiltViewModel(),
-    electionId: Long
+    electionId: Long,
+    onBackToHome: () -> Unit,
+    onBackNavigation: () -> Unit,
+    navController: NavHostController
 ) {
 
     val scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed)
-    var gesturesState by remember { mutableStateOf(true) }
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -63,21 +82,14 @@ fun OptionsListScreen(
     val options by optionsViewModel.options.collectAsState(initial = listOf())
     val election by optionsViewModel.election.collectAsState(initial = Election.getEmpty())
 
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
-    var showOptionForm by remember {
-        mutableStateOf(false)
-    }
-
 
     @ExperimentalMaterialApi
-    fun openOptionForm(option: Option?) {
-        showOptionForm = true
+    fun openOptionForm(option: Option) {
+        optionsViewModel.showOptionForm()
         Log.d("Options", "Click in new option button")
         optionFormViewModel.clearOption()
         optionFormViewModel.configureOption(option, electionId = electionId)
-        gesturesState = true
+        optionsViewModel.enableGesturesBackDrop()
         coroutineScope.launch(Dispatchers.Main) {
             scaffoldState.conceal()
         }
@@ -85,7 +97,7 @@ fun OptionsListScreen(
 
     @ExperimentalMaterialApi
     fun closeOptionForm() {
-        gesturesState = true
+        optionsViewModel.disableGesturesBackDrop()
         focusManager.clearFocus()
         coroutineScope.launch(Dispatchers.Main) {
             scaffoldState.reveal()
@@ -94,10 +106,11 @@ fun OptionsListScreen(
 
     fun openElectionForm() {
         Log.d("Options", "Click in new option button")
-        showOptionForm = false
+        optionsViewModel.hideOptionForm()
         electionFormViewModel.clearElection()
-        electionFormViewModel.configureElection(election = election)
-        gesturesState = true
+        electionFormViewModel.prepareElectionData(election)
+
+        optionsViewModel.enableGesturesBackDrop()
         coroutineScope.launch(Dispatchers.Main) {
             scaffoldState.conceal()
         }
@@ -105,7 +118,7 @@ fun OptionsListScreen(
 
     @ExperimentalMaterialApi
     fun closeElectionForm() {
-        gesturesState = true
+        optionsViewModel.disableGesturesBackDrop()
         focusManager.clearFocus()
         coroutineScope.launch(Dispatchers.Main) {
             scaffoldState.reveal()
@@ -125,7 +138,7 @@ fun OptionsListScreen(
             MenuAction(
                 Icons.Default.Delete
             ) {
-                showDialog = true
+                optionsViewModel.showDeleteDialog()
             }
         )
     }
@@ -145,7 +158,7 @@ fun OptionsListScreen(
         )
         {
             items(options) { item ->
-                PaintOptionRow(
+                OptionCard(
                     option = item,
                     clickCallback = { openOptionForm(item) },
                     deleteCallBack = { optionsViewModel.deleteOption(item) },
@@ -158,41 +171,13 @@ fun OptionsListScreen(
     @Composable
     fun GetFloatingActionButton() {
         FloatingActionButton(
-            onClick = { scope.launch { openOptionForm(null) } },
+            onClick = { scope.launch { openOptionForm(Option.getEmpty()) } },
             backgroundColor = colorResource(id = R.color.yellow_800)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 "",
                 tint = colorResource(id = R.color.dark_text)
-            )
-        }
-    }
-
-    @Composable
-    fun NoOptionsMessage() {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(R.string.no_options_label),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 10.dp)
-                    .padding(top = 50.dp, bottom = 50.dp),
-                fontSize = 23.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            Image(
-                modifier = Modifier
-                    .size(300.dp)
-                    .padding(3.dp),
-                painter = painterResource(id = R.drawable.ic_thinking),
-                contentDescription = "Waiting"
             )
         }
     }
@@ -218,14 +203,14 @@ fun OptionsListScreen(
         if (!scaffoldState.isRevealed) {
             scope.launch { closeOptionForm() }
         } else {
-            navHostController.navigateUp()
+            onBackNavigation()
         }
     }
 
     @Composable
     fun GetTopAppTitle(): String {
         return if (!scaffoldState.isRevealed) {
-            if (showOptionForm) {
+            if (optionsViewModel.screenState.showOptionForm) {
                 stringResource(R.string.create_option)
             } else {
                 stringResource(R.string.edit_question)
@@ -241,7 +226,7 @@ fun OptionsListScreen(
 
     BackdropScaffold(
         scaffoldState = scaffoldState,
-        gesturesEnabled = gesturesState,
+        gesturesEnabled = optionsViewModel.screenState.gesturesBackDropEnabled,
         peekHeight = 50.dp,
         headerHeight = 0.dp,
         backLayerBackgroundColor = colorResource(id = R.color.white),
@@ -255,7 +240,7 @@ fun OptionsListScreen(
         backLayerContent = {
             Scaffold(
                 floatingActionButton = { GetFloatingActionButton() },
-                bottomBar = { GetBottomNavigation(navHostController, election) })
+                bottomBar = { GetBottomNavigation(election, navController) })
             { innerPadding ->
                 // Apply the padding globally to the whole BottomNavScreensController
                 Box(modifier = Modifier.padding(innerPadding)) {
@@ -264,26 +249,51 @@ fun OptionsListScreen(
             }
         },
         frontLayerContent = {
-            if (showOptionForm) {
-                OptionFormScreen(
-                    electionId = election.id
-                ) { scope.launch { closeOptionForm() } }
+            if (optionsViewModel.screenState.showOptionForm) {
+                OptionFormScreen { scope.launch { closeOptionForm() } }
             } else {
-                ElectionFormScreen(election = election) { scope.launch { closeElectionForm() } }
+                electionFormViewModel.prepareElectionData(election)
+                ElectionFormScreen { closeElectionForm() }
             }
         }
     ) {
 
     }
 
-    if (showDialog) {
+    if (optionsViewModel.screenState.showDeleteDialog) {
         DeleteAlertDialog(closeCallBack = {
-            showDialog = false
+            optionsViewModel.hideDeleteDialog()
         }, acceptCallBack = {
             optionsViewModel.deleteElection(election)
-            navHostController.navigate(Screen.Home.getFullRoute()) {
-                popUpTo(Screen.Home.getFullRoute())
-            }
+            onBackToHome()
         })
+    }
+}
+
+@Composable
+fun NoOptionsMessage() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.no_options_label),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 10.dp)
+                .padding(top = 50.dp, bottom = 50.dp),
+            fontSize = 23.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Image(
+            modifier = Modifier
+                .size(300.dp)
+                .padding(3.dp),
+            painter = painterResource(id = R.drawable.ic_thinking),
+            contentDescription = "Waiting"
+        )
     }
 }

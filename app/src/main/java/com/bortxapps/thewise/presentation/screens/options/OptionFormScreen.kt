@@ -1,7 +1,10 @@
 package com.bortxapps.thewise.presentation.screens.options
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,57 +15,75 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.bortxapps.application.pokos.Condition
+import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
-import com.bortxapps.thewise.presentation.componentes.OptionFilePicker.ImagePickerField
-import com.bortxapps.thewise.presentation.componentes.TextError.GetTextError
+import com.bortxapps.thewise.presentation.componentes.form.FormDragControl
+import com.bortxapps.thewise.presentation.componentes.form.OptionFilePicker.ImagePickerField
 import com.bortxapps.thewise.presentation.componentes.texfield.NoEmptyTextField
-import com.bortxapps.thewise.presentation.componentes.texfield.SelectableConditionBadge
+import com.bortxapps.thewise.presentation.componentes.text.TextError.GetTextError
+import com.bortxapps.thewise.presentation.screens.conditions.ConditionsSelectionControl
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
-import com.bortxapps.thewise.presentation.viewmodels.ConditionViewModel
-import com.google.accompanist.flowlayout.FlowRow
-import com.google.accompanist.flowlayout.MainAxisAlignment
-import com.google.accompanist.flowlayout.SizeMode
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @Composable
 fun OptionFormScreen(
     formViewModel: OptionFormViewModel = hiltViewModel(),
-    conditionalViewModel: ConditionViewModel = hiltViewModel(),
-    electionId: Long,
-    formCompletedCallback: () -> Job
+    formCompletedCallback: () -> Unit
 ) {
-    conditionalViewModel.configure(electionId)
+    OptionForm(
+        onCreateNewOption = { formViewModel.createNewOption() },
+        formCompletedCallback = formCompletedCallback,
+        option = formViewModel.option,
+        onNameChanged = { name -> formViewModel.setName(name) },
+        onConditionSelected = { sel, cond -> formViewModel.selectCondition(sel, cond) },
+        isButtonEnabled = formViewModel.isButtonEnabled,
+        allConditions = formViewModel.allConditions,
+        configuredConditions = formViewModel.configuredConditions
+    )
+}
 
+@Composable
+fun OptionFormFields(imageUrl: String, name: String, onNameChanged: (String) -> Unit) {
     val nameLabel = stringResource(id = R.string.name_option)
+    ImagePickerField(imageUrl)
+    NoEmptyTextField(nameLabel, name, onNameChanged)
+}
+
+@Composable
+fun OptionForm(
+    onCreateNewOption: () -> Unit,
+    formCompletedCallback: () -> Unit,
+    option: Option,
+    onNameChanged: (String) -> Unit,
+    allConditions: List<Condition>,
+    configuredConditions: List<Condition>,
+    onConditionSelected: (Boolean, Condition) -> Unit,
+    isButtonEnabled: Boolean
+) {
 
     val scope = rememberCoroutineScope()
 
     fun onButtonFormClick() {
-        formViewModel.createNewOption()
-        formViewModel.clearOption()
-        formCompletedCallback.invoke()
+        onCreateNewOption()
+        formCompletedCallback()
     }
 
     Scaffold(backgroundColor = colorResource(id = R.color.white)) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.SpaceBetween,
+                .fillMaxHeight()
+                .padding(it),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Divider(
-                color = colorResource(R.color.dark_text),
-                thickness = 3.dp,
-                modifier = Modifier
-                    .padding(start = 0.dp, top = 10.dp, end = 0.dp, bottom = 0.dp)
-                    .width(50.dp)
+            FormDragControl()
+            OptionFormFields(
+                imageUrl = option.imageUrl,
+                name = option.name,
+                onNameChanged = onNameChanged
             )
-            ImagePickerField(formViewModel.optionImageUrl)
-
-            NoEmptyTextField(nameLabel, formViewModel.optionName) { formViewModel.setName(it) }
 
             Text(
                 stringResource(R.string.assign_requisites),
@@ -72,30 +93,14 @@ fun OptionFormScreen(
                     .fillMaxWidth(),
                 color = colorResource(id = R.color.dark_text)
             )
-            if (formViewModel.configuredConditions.isEmpty()) {
+            if (configuredConditions.isEmpty()) {
                 GetTextError(stringResource(R.string.tooltip_select_requisites))
             }
-            FlowRow(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .padding(top = 15.dp, bottom = 10.dp)
-                    .padding(horizontal = 20.dp),
-                mainAxisAlignment = MainAxisAlignment.Start,
-                mainAxisSize = SizeMode.Expand,
-                crossAxisSpacing = 12.dp,
-                mainAxisSpacing = 8.dp
-            ) {
-                formViewModel.allConditions.forEach { condition ->
-                    SelectableConditionBadge(
-                        label = condition.name,
-                        weight = condition.weight,
-                        isSelected = formViewModel.configuredConditions.any { it == condition }
-                    ) {
-                        formViewModel.selectCondition(it, condition)
-                    }
-                }
-            }
+            ConditionsSelectionControl(
+                allConditions = allConditions,
+                conditionsConfigured = configuredConditions,
+                onConditionSelected = onConditionSelected
+            )
             Spacer(Modifier.weight(1f, false))
             GetBottomButton(
                 {
@@ -104,9 +109,8 @@ fun OptionFormScreen(
                     }
                 },
                 R.string.save_option,
-                formViewModel.isButtonEnabled
+                isButtonEnabled
             )
         }
     }
-
 }

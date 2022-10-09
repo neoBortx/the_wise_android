@@ -6,9 +6,7 @@ import com.bortxapps.thewise.navigation.NavigationConstants.OPTIONS_SCREEN_ARGUM
 
 sealed class Screen(
     val routeSourcePath: String,
-    //Just for tab navigation
     val label: Int = 0,
-    //Just for tab navigation
     val iconId: Int = 0
 ) {
     abstract fun getFullRoute(): String

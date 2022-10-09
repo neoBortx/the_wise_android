@@ -4,35 +4,13 @@ import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.domain.model.ElectionEntity
 import com.bortxapps.thewise.domain.model.ElectionWithOptions
 
-class ElectionTranslator {
+fun ElectionEntity.fromEntity() = Election(electId, name, description)
+fun ElectionWithOptions.fromEntity() =
+    Election(
+        election.electId,
+        election.name,
+        election.description,
+        options.map { it.fromEntity() }.toList()
+    )
 
-    companion object {
-        fun fromEntity(entity: ElectionEntity?): Election? {
-            return entity?.let {
-                Election(entity.electId, entity.name, entity.description)
-            }
-        }
-
-        fun fromEntity(entity: ElectionWithOptions?): Election? {
-            return entity?.let {
-                Election(
-                    entity.election.electId,
-                    entity.election.name,
-                    entity.election.description
-                ).apply {
-                    entity.options.forEach { option ->
-                        this.options.add(
-                            OptionTranslator.fromEntity(
-                                option
-                            )
-                        )
-                    }
-                }
-            }
-        }
-
-        fun toEntity(poko: Election): ElectionEntity {
-            return ElectionEntity(poko.id, poko.name, poko.description)
-        }
-    }
-}
+fun Election.toEntity() = ElectionEntity(id, name, description)

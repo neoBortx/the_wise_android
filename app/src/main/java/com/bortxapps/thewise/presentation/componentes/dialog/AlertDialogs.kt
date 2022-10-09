@@ -47,9 +47,49 @@ fun DeleteAlertDialog(closeCallBack: () -> Unit, acceptCallBack: () -> Unit) {
 }
 
 @Composable
+fun TakeDialog(photoCallBack: () -> Unit, galleryCallback: () -> Unit, closeCallBack: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = closeCallBack,
+        title = { Text(stringResource(id = R.string.get_photo)) },
+        text = {
+            Column() {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_photo),
+                    contentDescription = "",
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    photoCallBack()
+                    closeCallBack()
+                }) {
+                Text(stringResource(R.string.camera))
+            }
+        },
+        dismissButton = {
+            Button(onClick = {
+                galleryCallback()
+                closeCallBack()
+            }) {
+                Text(stringResource(R.string.gallery))
+            }
+        }
+    )
+}
+
+@Composable
 @Preview
 fun PreviewDeleteAlertDialog() {
-    DeleteAlertDialog(closeCallBack = { /*TODO*/ }) {
+    DeleteAlertDialog(closeCallBack = { }) {
 
     }
+}
+
+@Composable
+@Preview
+fun PreviewDialog() {
+    TakeDialog(closeCallBack = { }, photoCallBack = {}, galleryCallback = {})
 }

@@ -1,4 +1,4 @@
-package com.bortxapps.thewise.presentation.componentes
+package com.bortxapps.thewise.presentation.componentes.text
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

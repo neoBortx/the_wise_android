@@ -1,8 +1,5 @@
 package com.bortxapps.thewise.domain.serivces
 
-import android.app.Service
-import android.content.Intent
-import android.os.IBinder
 import com.bortxapps.thewise.domain.contrats.repository.IOptionsRepository
 import com.bortxapps.thewise.domain.contrats.service.IOptionsDomainService
 import com.bortxapps.thewise.domain.model.OptionEntity
@@ -11,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class OptionsDomainService @Inject constructor(private val optionsRepository: IOptionsRepository) :
-    Service(),
     IOptionsDomainService {
 
     override fun getOptionsFromElection(electionId: Long): Flow<List<OptionWithConditionsEntity>> {
@@ -36,9 +32,5 @@ class OptionsDomainService @Inject constructor(private val optionsRepository: IO
 
     override suspend fun updateOption(option: OptionWithConditionsEntity) {
         optionsRepository.updateOption(option)
-    }
-
-    override fun onBind(p0: Intent?): IBinder? {
-        TODO("Not yet implemented")
     }
 }

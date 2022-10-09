@@ -1,7 +1,12 @@
 package com.bortxapps.thewise.presentation.screens.splash
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,23 +20,14 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.bortxapps.thewise.R
-import com.bortxapps.thewise.navigation.Screen
 import com.bortxapps.thewise.ui.theme.Yellow300
 import com.bortxapps.thewise.ui.theme.Yellow800
 
 @Composable
-fun SplashScreen(navHostController: NavHostController) {
+fun SplashScreen(onNavigateToHome: () -> Unit) {
     Splash()
-    navHostController.navigate(route = Screen.Home.getFullRoute()) {
-        popUpTo(
-            route =
-            Screen.Splash.getFullRoute()
-        ) {
-            inclusive = true
-        }
-    }
+    onNavigateToHome()
 }
 
 @Composable

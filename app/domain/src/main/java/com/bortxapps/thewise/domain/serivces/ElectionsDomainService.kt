@@ -12,7 +12,7 @@ class ElectionsDomainService @Inject constructor(private val electionsRepository
 
     override val allElections = electionsRepository.allElections
 
-    override fun getElection(electionId: Long): Flow<ElectionWithOptions> {
+    override fun getElection(electionId: Long): Flow<ElectionWithOptions?> {
         return electionsRepository.getElection(electionId)
     }
 
