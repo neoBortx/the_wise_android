@@ -27,12 +27,12 @@ data class MenuAction(val imageVector: ImageVector, val actionCallBack: () -> Un
 object TopAppBar {
 
     @Composable
-    fun DrawIcon(backCallback: (() -> Unit)) {
+    fun DrawBackArrow(backCallback: (() -> Unit)) {
         IconButton(onClick = { backCallback() }) {
             Icon(
                 Icons.Rounded.ArrowBack,
                 "",
-                tint = colorResource(id = R.color.dark_text)
+                tint = colorResource(id = R.color.light_text)
             )
         }
     }
@@ -44,7 +44,7 @@ object TopAppBar {
                 Icon(
                     it.imageVector,
                     contentDescription = null,
-                    tint = colorResource(id = R.color.dark_text)
+                    tint = colorResource(id = R.color.light_text)
                 )
             }
         }
@@ -66,11 +66,11 @@ object TopAppBar {
                     ) {
                         Text(
                             title,
-                            color = colorResource(id = R.color.dark_text)
+                            color = colorResource(id = R.color.light_text)
                         )
                     }
                 },
-                navigationIcon = { DrawIcon(backCallback) },
+                navigationIcon = { DrawBackArrow(backCallback) },
                 actions = { DrawMenu(menuActions) },
                 backgroundColor = colorResource(id = R.color.yellow_800)
             )
@@ -84,7 +84,7 @@ object TopAppBar {
                     ) {
                         Text(
                             title,
-                            color = colorResource(id = R.color.dark_text),
+                            color = colorResource(id = R.color.light_text),
                             fontSize = 24.sp,
                             fontFamily = FontFamily(Font(R.font.washington_text))
                         )

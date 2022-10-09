@@ -42,6 +42,7 @@ fun NoEmptyTextField(label: String, textValue: String, callbackMethod: (text: St
                 focusedIndicatorColor = colorResource(id = R.color.yellow_800),
                 unfocusedIndicatorColor = colorResource(id = R.color.yellow_800),
                 backgroundColor = colorResource(id = R.color.white),
+                textColor = colorResource(id = R.color.light_text)
             ),
             value = value,
             modifier = Modifier
@@ -50,9 +51,9 @@ fun NoEmptyTextField(label: String, textValue: String, callbackMethod: (text: St
             label = { Text(text = label) },
             isError = isEmpty,
             onValueChange = { newValue ->
-                isEmpty = newValue.isBlank()
                 value = newValue
                 callbackMethod(value)
+                isEmpty = newValue.isBlank()
             },
             maxLines = 1,
             singleLine = true,
@@ -82,7 +83,8 @@ fun RegularTextField(label: String, defaultValue: String, callbackMethod: (text:
                 unfocusedLabelColor = colorResource(id = R.color.yellow_800),
                 focusedIndicatorColor = colorResource(id = R.color.yellow_800),
                 unfocusedIndicatorColor = colorResource(id = R.color.yellow_800),
-                backgroundColor = colorResource(id = R.color.white)
+                backgroundColor = colorResource(id = R.color.white),
+                textColor = colorResource(id = R.color.light_text)
             ),
             value = value,
             modifier = Modifier

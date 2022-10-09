@@ -50,6 +50,15 @@ private fun getColor(weight: ConditionWeight): Color {
 }
 
 @Composable
+private fun getContentColor(weight: ConditionWeight): Color {
+    return when (weight) {
+        ConditionWeight.LOW -> colorResource(id = R.color.dark_text)
+        ConditionWeight.MEDIUM -> colorResource(id = R.color.white)
+        ConditionWeight.MUST -> colorResource(id = R.color.white)
+    }
+}
+
+@Composable
 fun SimpleConditionBadge(label: String, weight: ConditionWeight) {
 
     Badge(
@@ -66,7 +75,7 @@ fun SimpleConditionBadge(label: String, weight: ConditionWeight) {
         ) {
             Text(
                 text = label, maxLines = 1,
-                color = colorResource(id = R.color.black),
+                color = getContentColor(weight = weight),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center,
@@ -96,7 +105,7 @@ fun RemovableConditionBadge(
         ) {
             Text(
                 text = label, maxLines = 1,
-                color = colorResource(id = R.color.black),
+                color = getContentColor(weight = weight),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center,
@@ -116,7 +125,12 @@ fun RemovableConditionBadge(
                     disabledBackgroundColor = Color.Transparent,
                 )
             ) {
-                Icon(imageVector = Icons.Default.Close, "", Modifier.size(40.dp))
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "",
+                    modifier = Modifier.size(40.dp),
+                    tint = getContentColor(weight = weight)
+                )
             }
         }
     }
@@ -148,7 +162,7 @@ fun SelectableConditionBadge(
         ) {
             Text(
                 text = label, maxLines = 1,
-                color = colorResource(id = R.color.black),
+                color = getContentColor(weight = weight),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center,

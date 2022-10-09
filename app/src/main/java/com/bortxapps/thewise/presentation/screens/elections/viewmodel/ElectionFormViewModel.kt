@@ -81,10 +81,8 @@ class ElectionFormViewModel @Inject constructor(
     }
 
     fun setName(name: String) {
-        if (name.isNotEmpty()) {
-            election = election.copy(name = name)
-            isButtonEnabled = conditions.count() >= 2
-        }
+        election = election.copy(name = name)
+        isButtonEnabled = conditions.count() >= 2 && election.name.isNotBlank()
     }
 
     fun setDescription(description: String) {

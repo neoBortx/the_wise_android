@@ -32,13 +32,14 @@
     <string name="assign_requisites">Select requisites</string>
     <string name="tooltip_select_requisites">You must select at least one requisite by clicking in it</string>
     <string name="no_options_configured">There aren\'t any option configured jet</string>
-    <string name="question_conditions_label">Question requisites</string>
+    <string name="question_conditions_label">Requisites</string>
     <string name="matching_conditions_label">Matching requisites</string>
     <string name="no_question_label">The Wise is waiting for your questions, don\'t keep him waiting.</string>
     <string name="no_options_label">The Wise need options to choose the best of the them for your question.</string>
     <string name="edit">EDIT</string>
     <string name="insert_conditions">Insert requisite</string>
     <string name="requisite_name">Name</string>
+    <string name="requisite_importance">Interest</string>
     <string name="meh">Meh</string>
     <string name="wish">Wish</string>
     <string name="must">Must</string>

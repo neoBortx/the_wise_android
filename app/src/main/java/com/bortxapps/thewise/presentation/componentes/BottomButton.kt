@@ -20,11 +20,14 @@ object BottomButton {
             modifier = Modifier
                 .padding(horizontal = 10.dp, vertical = 20.dp)
                 .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.yellow_800)),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = colorResource(id = R.color.yellow_800),
+                disabledBackgroundColor = colorResource(id = R.color.disabled_button)
+            ),
             onClick = { callback() },
             enabled = enabled
         ) {
-            Text(stringResource(stringResourceId))
+            Text(stringResource(stringResourceId), color = colorResource(id = R.color.dark_text))
         }
     }
 }

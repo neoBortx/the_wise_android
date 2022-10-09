@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
@@ -92,7 +93,8 @@ fun ConditionsConfigurationControl(
                     unfocusedLabelColor = colorResource(id = R.color.yellow_800),
                     focusedIndicatorColor = colorResource(id = R.color.yellow_800),
                     unfocusedIndicatorColor = colorResource(id = R.color.yellow_800),
-                    backgroundColor = colorResource(id = R.color.white)
+                    backgroundColor = colorResource(id = R.color.white),
+                    textColor = colorResource(id = R.color.light_text)
                 ),
                 label = { Text(text = stringResource(id = R.string.requisite_name)) },
                 modifier = Modifier
@@ -118,7 +120,7 @@ fun ConditionsConfigurationControl(
                 modifier = Modifier
                     .width(140.dp)
                     .fillMaxHeight()
-                    .wrapContentSize(Alignment.TopStart)
+                    .wrapContentSize(Alignment.BottomStart)
                     .padding(horizontal = 15.dp)
             ) {
                 TextField(
@@ -127,8 +129,10 @@ fun ConditionsConfigurationControl(
                         unfocusedLabelColor = colorResource(id = R.color.yellow_800),
                         focusedIndicatorColor = colorResource(id = R.color.yellow_800),
                         unfocusedIndicatorColor = colorResource(id = R.color.yellow_800),
-                        backgroundColor = colorResource(id = R.color.white)
+                        backgroundColor = colorResource(id = R.color.white),
+                        textColor = colorResource(id = R.color.light_text)
                     ),
+                    label = { Text(text = stringResource(id = R.string.requisite_importance)) },
                     modifier = Modifier
                         .background(color = colorResource(id = R.color.white))
                         .fillMaxWidth()
@@ -160,13 +164,23 @@ fun ConditionsConfigurationControl(
                 }
             }
 
-            Button(modifier = Modifier.size(50.dp), enabled = buttonEnabled, onClick = {
-                onConditionAdded(conditionName, conditionWeight)
-                focusManager.clearFocus()
-                conditionName = ""
-            }) {
+            Button(modifier = Modifier.size(50.dp),
+                enabled = buttonEnabled,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = colorResource(id = R.color.yellow_800),
+                    disabledBackgroundColor = colorResource(id = R.color.disabled_button)
+                ),
+                onClick = {
+                    onConditionAdded(conditionName, conditionWeight)
+                    focusManager.clearFocus()
+                    conditionName = ""
+                    buttonEnabled = false
+                }) {
                 Icon(
-                    imageVector = Icons.Default.Add, "", modifier = Modifier.size(40.dp)
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "",
+                    modifier = Modifier.size(40.dp),
+                    tint = colorResource(id = R.color.dark_text)
                 )
             }
         }

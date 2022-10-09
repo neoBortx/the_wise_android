@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -229,7 +230,6 @@ fun OptionsListScreen(
         gesturesEnabled = optionsViewModel.screenState.gesturesBackDropEnabled,
         peekHeight = 50.dp,
         headerHeight = 0.dp,
-        backLayerBackgroundColor = colorResource(id = R.color.white),
         appBar = {
             GetTopAppBar(
                 title = GetTopAppTitle(),
@@ -243,7 +243,10 @@ fun OptionsListScreen(
                 bottomBar = { GetBottomNavigation(election, navController) })
             { innerPadding ->
                 // Apply the padding globally to the whole BottomNavScreensController
-                Box(modifier = Modifier.padding(innerPadding)) {
+                Box(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                ) {
                     DrawFrontLayer(options)
                 }
             }
@@ -273,7 +276,10 @@ fun OptionsListScreen(
 @Composable
 fun NoOptionsMessage() {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.white))
+            .padding(10.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -286,7 +292,8 @@ fun NoOptionsMessage() {
                 .padding(top = 50.dp, bottom = 50.dp),
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = colorResource(id = R.color.light_text)
         )
         Image(
             modifier = Modifier

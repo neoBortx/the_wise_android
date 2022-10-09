@@ -1,5 +1,6 @@
 package com.bortxapps.thewise.presentation.screens.options
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -76,7 +77,8 @@ fun OptionForm(
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .padding(it),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
             FormDragControl()
             OptionFormFields(

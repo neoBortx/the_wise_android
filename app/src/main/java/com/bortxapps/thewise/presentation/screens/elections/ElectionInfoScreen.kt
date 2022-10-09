@@ -3,6 +3,7 @@ package com.bortxapps.thewise.presentation.screens.elections
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -165,7 +166,6 @@ private fun DrawElectionInfoScreenBackdropScaffold(
         gesturesEnabled = true,
         peekHeight = 50.dp,
         headerHeight = 0.dp,
-        backLayerBackgroundColor = colorResource(id = R.color.white),
         appBar = {
             GetTopAppBar(
                 title = election.name.replaceFirstChar { it.uppercase() },
@@ -181,7 +181,8 @@ private fun DrawElectionInfoScreenBackdropScaffold(
                     modifier = Modifier
                         .padding(it)
                         .fillMaxHeight()
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .background(color = colorResource(id = R.color.white)),
                     verticalArrangement = Arrangement.Top
                 ) {
                     DrawElectionInfoScreenFrontLayer(
@@ -213,29 +214,14 @@ private fun DrawElectionInfoScreenFrontLayer(
         mutableStateOf(false)
     }
 
-    if (election.description.isNotBlank()) {
-        TextHeader.GetTextHeader(stringResource(R.string.description))
-        Text(
-            text = election.description,
-            fontSize = 14.sp,
-            textAlign = TextAlign.Left,
-            modifier = Modifier
-                .padding(horizontal = 15.dp)
-                .padding(top = 5.dp, bottom = 5.dp)
-                .wrapContentWidth()
-                .wrapContentHeight(),
-            color = colorResource(id = R.color.dark_text),
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 3
-        )
+    Column(Modifier.padding(horizontal = 10.dp)) {
+        Description(election.description)
+        Requisites(conditions)
+
+        election.getWinningOption()?.let {
+            WinningOption(it)
+        } ?: NoOptionsMessage()
     }
-
-    Requisites(conditions)
-
-    election.getWinningOption()?.let {
-        WinningOption(it)
-    } ?: NoOptionsMessage()
-
     if (showDeleteDialog) {
         DeleteAlertDialog(closeCallBack = {
             showDeleteDialog = false
@@ -244,6 +230,26 @@ private fun DrawElectionInfoScreenFrontLayer(
             onDeleteElection(election)
             onBackToHome()
         })
+    }
+}
+
+@Composable
+private fun Description(description: String) {
+    if (description.isNotBlank()) {
+        TextHeader.GetTextHeader(stringResource(R.string.description))
+        Text(
+            text = description,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Left,
+            modifier = Modifier
+                .padding(horizontal = 15.dp)
+                .padding(top = 5.dp, bottom = 5.dp)
+                .wrapContentWidth()
+                .wrapContentHeight(),
+            color = colorResource(id = R.color.light_text),
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 3
+        )
     }
 }
 

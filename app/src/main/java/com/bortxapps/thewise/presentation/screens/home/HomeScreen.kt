@@ -2,6 +2,7 @@ package com.bortxapps.thewise.presentation.screens.home
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -141,7 +142,7 @@ fun DrawFrontLayer(
                 Icon(
                     imageVector = Icons.Default.Add,
                     "",
-                    tint = colorResource(id = R.color.dark_text)
+                    tint = colorResource(id = R.color.light_text)
                 )
             }
         })
@@ -150,7 +151,8 @@ fun DrawFrontLayer(
             modifier = Modifier
                 .padding(it)
                 .fillMaxHeight()
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .background(colorResource(id = R.color.white)),
             verticalArrangement = Arrangement.Top
         ) {
             if (elections.any()) {
@@ -178,7 +180,8 @@ fun NoQuestionsMessage() {
                 .padding(top = 50.dp, bottom = 75.dp),
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = colorResource(id = R.color.light_text)
         )
         Image(
             modifier = Modifier
@@ -197,7 +200,9 @@ fun PaintLazyColumn(elections: List<Election>, onNavigationToDetail: (Long) -> U
     val listState = rememberLazyListState()
 
     LazyColumn(
-        modifier = Modifier.wrapContentHeight(),
+        modifier = Modifier
+            .wrapContentHeight()
+            .padding(10.dp),
         contentPadding = PaddingValues(bottom = 5.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         state = listState

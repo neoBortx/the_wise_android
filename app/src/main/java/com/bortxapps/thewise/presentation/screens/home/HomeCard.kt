@@ -2,6 +2,7 @@ package com.bortxapps.thewise.presentation.screens.home
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -84,7 +85,10 @@ fun PaintElectionRow(
             .wrapContentHeight(),
         onClick = { scope.launch { openElectionInfo(item) } },
     ) {
-        Column(verticalArrangement = Arrangement.SpaceBetween) {
+        Column(
+            verticalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.background(colorResource(id = R.color.white))
+        ) {
             item.getWinningOption()?.imageUrl?.let { image ->
                 GlideImage(
                     modifier = Modifier
@@ -128,7 +132,7 @@ fun PaintElectionRow(
                         .padding(bottom = 5.dp, top = 5.dp)
                         .wrapContentWidth()
                         .wrapContentHeight(),
-                    color = colorResource(id = R.color.dark_text),
+                    color = colorResource(id = R.color.light_text),
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3
                 )
@@ -140,13 +144,13 @@ fun PaintElectionRow(
                         Icon(
                             Icons.Default.ArrowDropDown,
                             "",
-                            tint = colorResource(id = R.color.dark_text)
+                            tint = colorResource(id = R.color.light_text)
                         )
                     } else {
                         Icon(
                             Icons.Default.KeyboardArrowUp,
                             contentDescription = "",
-                            tint = colorResource(id = R.color.dark_text)
+                            tint = colorResource(id = R.color.light_text)
                         )
                     }
                 }
@@ -165,7 +169,7 @@ fun PaintElectionRow(
                             .padding(top = 5.dp)
                             .wrapContentWidth()
                             .wrapContentHeight(),
-                        color = colorResource(id = R.color.dark_text),
+                        color = colorResource(id = R.color.light_text),
                         overflow = TextOverflow.Ellipsis
                     )
                     FlowRow(
