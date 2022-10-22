@@ -45,7 +45,6 @@ import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.screens.elections.ElectionFormScreen
-import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import kotlinx.coroutines.launch
 
 
@@ -53,17 +52,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
-    electionFormViewModel: ElectionFormViewModel = hiltViewModel(),
     onBackNavigation: () -> Unit,
     onNavigationToDetail: (Long) -> Unit
 ) {
 
     val questions by homeViewModel.questions.collectAsState(initial = listOf())
-    electionFormViewModel.clearElection()
 
     DrawHomeBackdropScaffold(
         questions = questions,
-        clearElection = { electionFormViewModel.clearElection() },
         onNavigationToDetail = onNavigationToDetail,
         onBackNavigation = onBackNavigation,
     )
@@ -73,7 +69,6 @@ fun HomeScreen(
 @Composable
 fun DrawHomeBackdropScaffold(
     questions: List<Election>,
-    clearElection: () -> Unit,
     onNavigationToDetail: (Long) -> Unit,
     onBackNavigation: () -> Unit
 ) {
@@ -84,7 +79,6 @@ fun DrawHomeBackdropScaffold(
 
 
     fun closeBackDrop() {
-        clearElection()
         scope.launch {
             scaffoldState.reveal()
         }
@@ -120,7 +114,7 @@ fun DrawHomeBackdropScaffold(
                 onNavigationToDetail = onNavigationToDetail
             )
         },
-        frontLayerContent = { ElectionFormScreen() { closeBackDrop() } }
+        frontLayerContent = { ElectionFormScreen { closeBackDrop() } }
     ) {
     }
 }
@@ -222,8 +216,7 @@ fun HomeScreenPreview() {
     DrawHomeBackdropScaffold(
         questions = mutableListOf(),
         onNavigationToDetail = {},
-        onBackNavigation = {},
-        clearElection = {})
+        onBackNavigation = {})
 }
 
 @ExperimentalMaterialApi

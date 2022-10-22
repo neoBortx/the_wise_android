@@ -1,6 +1,5 @@
 package com.bortxapps.thewise.presentation.componentes.form
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
@@ -25,45 +24,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bortxapps.thewise.presentation.componentes.TakeDialog
 import com.bortxapps.thewise.presentation.componentes.form.OptionFilePicker.ImagePickerField
-import com.bortxapps.thewise.presentation.componentes.texfield.getBitMap
 import com.skydoves.landscapist.glide.GlideImage
 
 object OptionFilePicker {
 
-    fun getUri(context: Context, itemId: String): Uri? {
-        return try {
-            Uri.parse(context.applicationInfo.dataDir + "/" + itemId)
-        } catch (exception: java.lang.Exception) {
-            null
-        }
-
-    }
-
     @Composable
     fun ImagePickerField(
-        itemId: String,
+        imageUrl: String,
+        onImageSelected: (Bitmap) -> Unit,
     ) {
         val context = LocalContext.current
-        val initialBitMap = getBitMap(context, itemId)
-        var imageUri by remember {
-            mutableStateOf(getUri(context, itemId))
+        val url = imageUrl.ifEmpty {
+            "file:///android_asset/no_image.png"
         }
-        var bitmap by remember { mutableStateOf(initialBitMap) }
+
         var showPhotoDialog by remember {
             mutableStateOf(false)
         }
 
-
-        fun saveBitMap(image: Bitmap?) = context.openFileOutput(itemId, Context.MODE_PRIVATE).use {
-            image?.compress(Bitmap.CompressFormat.PNG, 100, it)
+        var bitmap by remember {
+            mutableStateOf<Bitmap?>(null)
         }
 
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent()
         ) { uri: Uri? ->
-            imageUri = uri
-            bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
-            saveBitMap(bitmap)
+            bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)!!
+            onImageSelected(bitmap!!)
         }
 
         val cameraLauncher = rememberLauncherForActivityResult(
@@ -74,12 +61,16 @@ object OptionFilePicker {
 
         val source = remember { MutableInteractionSource() }
 
-        Column(modifier = Modifier.padding(vertical = 10.dp)) {
-            GlideImage(imageModel = imageUri,
+        Column(modifier = Modifier.padding(top = 10.dp)) {
+            GlideImage(imageModel = if (bitmap != null) bitmap else url,
                 Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
-                    .clickable(interactionSource = source, indication = LocalIndication.current) {})
+                    .padding(horizontal = 10.dp)
+                    .height(200.dp)
+                    .clickable(
+                        interactionSource = source,
+                        indication = LocalIndication.current
+                    ) {})
         }
 
         if (showPhotoDialog) {
@@ -98,5 +89,7 @@ object OptionFilePicker {
 @Preview
 @Composable
 fun PreviewImagePickerTextField() {
-    ImagePickerField("AAAAA")
+    ImagePickerField("AAAAA") {
+
+    }
 }

@@ -1,5 +1,6 @@
 package com.bortxapps.thewise.presentation.screens.options
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +39,7 @@ fun OptionFormScreen(
         formCompletedCallback = formCompletedCallback,
         option = formViewModel.option,
         onNameChanged = { name -> formViewModel.setName(name) },
+        onImageChanged = { image -> formViewModel.setImage(image) },
         onConditionSelected = { sel, cond -> formViewModel.selectCondition(sel, cond) },
         isButtonEnabled = formViewModel.isButtonEnabled,
         allConditions = formViewModel.allConditions,
@@ -46,9 +48,14 @@ fun OptionFormScreen(
 }
 
 @Composable
-fun OptionFormFields(imageUrl: String, name: String, onNameChanged: (String) -> Unit) {
+fun OptionFormFields(
+    imageUrl: String,
+    name: String,
+    onNameChanged: (String) -> Unit,
+    onImageChanged: (Bitmap) -> Unit
+) {
     val nameLabel = stringResource(id = R.string.name_option)
-    ImagePickerField(imageUrl)
+    ImagePickerField(imageUrl, onImageChanged)
     NoEmptyTextField(nameLabel, name, onNameChanged)
 }
 
@@ -58,6 +65,7 @@ fun OptionForm(
     formCompletedCallback: () -> Unit,
     option: Option,
     onNameChanged: (String) -> Unit,
+    onImageChanged: (Bitmap) -> Unit,
     allConditions: List<Condition>,
     configuredConditions: List<Condition>,
     onConditionSelected: (Boolean, Condition) -> Unit,
@@ -84,7 +92,8 @@ fun OptionForm(
             OptionFormFields(
                 imageUrl = option.imageUrl,
                 name = option.name,
-                onNameChanged = onNameChanged
+                onNameChanged = onNameChanged,
+                onImageChanged = onImageChanged
             )
 
             Text(

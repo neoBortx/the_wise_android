@@ -31,7 +31,7 @@ class ElectionFormViewModel @Inject constructor(
     var conditions by mutableStateOf(listOf<Condition>())
         private set
 
-    var oldConditions = listOf<Condition>()
+    private var oldConditions = listOf<Condition>()
 
     private var updateExistingElection = false
 
@@ -74,7 +74,7 @@ class ElectionFormViewModel @Inject constructor(
         conditions = conditions.filter { condition -> condition.id != conditionId }
     }
 
-    fun clearElection() {
+    private fun clearElection() {
         election = Election.getEmpty()
         conditions = listOf()
         oldConditions = listOf()
@@ -90,6 +90,7 @@ class ElectionFormViewModel @Inject constructor(
     }
 
     fun createNewElection() {
+
         viewModelScope.launch {
             if (updateExistingElection) {
                 Log.i("Election", "Updating election ${election.name} - ${election.id}")
@@ -101,15 +102,11 @@ class ElectionFormViewModel @Inject constructor(
 
             conditions.filterNot { oldConditions.contains(it) }
                 .forEach { conditionsService.addCondition(it.copy(electionId = election.id)) }
+
             oldConditions.filterNot { conditions.contains(it) }
                 .forEach { conditionsService.deleteCondition(it.copy(electionId = election.id)) }
 
             clearElection()
         }
-    }
-
-    fun deleteElection(election: Election) {
-        Log.i("Election", "Deleting election ${election.id}-${election.name}")
-        viewModelScope.launch { electionsService.deleteElection(election) }
     }
 }

@@ -88,7 +88,6 @@ fun OptionsListScreen(
     fun openOptionForm(option: Option) {
         optionsViewModel.showOptionForm()
         Log.d("Options", "Click in new option button")
-        optionFormViewModel.clearOption()
         optionFormViewModel.configureOption(option, electionId = electionId)
         optionsViewModel.enableGesturesBackDrop()
         coroutineScope.launch(Dispatchers.Main) {
@@ -108,7 +107,6 @@ fun OptionsListScreen(
     fun openElectionForm() {
         Log.d("Options", "Click in new option button")
         optionsViewModel.hideOptionForm()
-        electionFormViewModel.clearElection()
         electionFormViewModel.prepareElectionData(election)
 
         optionsViewModel.enableGesturesBackDrop()
@@ -155,7 +153,10 @@ fun OptionsListScreen(
                 end = 12.dp,
                 bottom = 16.dp
             ),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .background(colorResource(id = R.color.white))
+                .fillMaxHeight()
         )
         {
             items(options) { item ->

@@ -288,10 +288,14 @@ private fun WinningOption(option: Option) {
                     },
                 elevation = 5.dp
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.background(color = colorResource(id = R.color.white))
+                ) {
                     Text(
                         text = "Touch here to reveal the wise's answer",
-                        modifier = Modifier.padding(10.dp)
+                        modifier = Modifier.padding(10.dp),
+                        color = colorResource(id = R.color.light_text)
                     )
                     Image(
                         modifier = Modifier

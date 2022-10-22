@@ -22,7 +22,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -142,8 +142,8 @@ fun PaintElectionRow(
                 IconButton(onClick = { expanded = !expanded }) {
                     if (!expanded) {
                         Icon(
-                            Icons.Default.ArrowDropDown,
-                            "",
+                            Icons.Default.KeyboardArrowDown,
+                            contentDescription = "",
                             tint = colorResource(id = R.color.light_text)
                         )
                     } else {
@@ -193,40 +193,3 @@ fun PaintElectionRow(
         }
     }
 }
-
-/*@ExperimentalMaterialApi
-@Preview
-@Composable
-fun PreviewPaintElectionRow() {
-    PaintElectionRow(
-        Election(id = 0,
-            name = "Super election",
-            description = "this is a description",
-            options = mutableListOf<Option>().apply {
-                add(
-                    Option(id = 0,
-                        electionId = 0,
-                        name = "option 1",
-                        imageUrl = "",
-                        matchingConditions = mutableListOf<Condition>().apply {
-                            add(
-                                Condition(
-                                    id = 0,
-                                    electionId = 0,
-                                    "Condition 1",
-                                    weight = ConditionWeight.MUST
-                                )
-                            )
-                            add(
-                                Condition(
-                                    id = 1,
-                                    electionId = 0,
-                                    "Condition 2",
-                                    weight = ConditionWeight.LOW
-                                )
-                            )
-                        })
-                )
-            })
-    )
-}*/

@@ -5,14 +5,10 @@ data class Option(
     val electionId: Long,
     val name: String,
     val imageUrl: String,
-    val matchingConditions: MutableList<Condition> = mutableListOf()
+    val matchingConditions: List<Condition> = listOf()
 ) {
     fun getPunctuation(): Int {
         return matchingConditions.sumOf { it.weight.numericalWeight }
-    }
-
-    fun getMatchingConditions(): String {
-        return matchingConditions.joinToString { condition -> condition.name.replaceFirstChar { it.uppercase() } }
     }
 
     companion object {
