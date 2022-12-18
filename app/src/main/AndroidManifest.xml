@@ -37,7 +37,7 @@
         </activity>
 
         <provider
-            android:name=".presentation.componentes.form.ComposeFileProvider"
+            android:name=".presentation.components.form.ComposeFileProvider"
             android:authorities="com.bortxapps.thewise.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

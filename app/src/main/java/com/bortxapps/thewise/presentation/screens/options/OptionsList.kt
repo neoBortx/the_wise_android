@@ -48,10 +48,10 @@ import androidx.navigation.NavHostController
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
-import com.bortxapps.thewise.presentation.componentes.BottomNavigation.GetBottomNavigation
-import com.bortxapps.thewise.presentation.componentes.DeleteAlertDialog
-import com.bortxapps.thewise.presentation.componentes.MenuAction
-import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
+import com.bortxapps.thewise.presentation.components.BottomNavigation.GetBottomNavigation
+import com.bortxapps.thewise.presentation.components.MenuAction
+import com.bortxapps.thewise.presentation.components.TopAppBar.GetTopAppBar
+import com.bortxapps.thewise.presentation.components.dialog.DeleteAlertDialog
 import com.bortxapps.thewise.presentation.screens.elections.ElectionFormScreen
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
@@ -218,7 +218,7 @@ fun OptionsListScreen(
     fun GetTopAppTitle(): String {
         return if (!scaffoldState.isRevealed) {
             if (optionsViewModel.screenState.showOptionForm) {
-                stringResource(R.string.create_option)
+                stringResource(R.string.edit_option)
             } else {
                 stringResource(R.string.edit_question)
             }
@@ -259,7 +259,7 @@ fun OptionsListScreen(
         },
         frontLayerContent = {
             if (optionsViewModel.screenState.showOptionForm) {
-                OptionFormScreen() { scope.launch { closeOptionForm() } }
+                OptionFormScreen { scope.launch { closeOptionForm() } }
             } else {
                 electionFormViewModel.prepareElectionData(election)
                 ElectionFormScreen { closeElectionForm() }

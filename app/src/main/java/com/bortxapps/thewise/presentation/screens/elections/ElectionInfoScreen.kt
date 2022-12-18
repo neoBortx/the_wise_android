@@ -51,12 +51,12 @@ import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
-import com.bortxapps.thewise.presentation.componentes.BottomNavigation.GetBottomNavigation
-import com.bortxapps.thewise.presentation.componentes.DeleteAlertDialog
-import com.bortxapps.thewise.presentation.componentes.MenuAction
-import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
-import com.bortxapps.thewise.presentation.componentes.texfield.SimpleConditionBadge
-import com.bortxapps.thewise.presentation.componentes.text.TextHeader
+import com.bortxapps.thewise.presentation.components.BottomNavigation.GetBottomNavigation
+import com.bortxapps.thewise.presentation.components.MenuAction
+import com.bortxapps.thewise.presentation.components.TopAppBar.GetTopAppBar
+import com.bortxapps.thewise.presentation.components.badges.SimpleConditionBadge
+import com.bortxapps.thewise.presentation.components.dialog.DeleteAlertDialog
+import com.bortxapps.thewise.presentation.components.text.TextHeader
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionInfoViewModel
 import com.bortxapps.thewise.presentation.screens.options.NoOptionsMessage
@@ -114,10 +114,6 @@ private fun DrawElectionInfoScreenBackdropScaffold(
     val scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed)
     val coroutineScope = rememberCoroutineScope()
     val scope = rememberCoroutineScope()
-
-    var showDeleteDialog by remember {
-        mutableStateOf(false)
-    }
 
     fun openElectionForm() {
         Log.d("Options", "Click in new option button")

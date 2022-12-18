@@ -23,11 +23,11 @@ import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
-import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
-import com.bortxapps.thewise.presentation.componentes.ConditionsConfigurationControl
-import com.bortxapps.thewise.presentation.componentes.form.FormDragControl
-import com.bortxapps.thewise.presentation.componentes.texfield.NoEmptyTextField
-import com.bortxapps.thewise.presentation.componentes.texfield.RegularTextField
+import com.bortxapps.thewise.presentation.components.BottomButton.GetBottomButton
+import com.bortxapps.thewise.presentation.components.conditions.ConditionsConfigurationControl
+import com.bortxapps.thewise.presentation.components.form.FormDragControl
+import com.bortxapps.thewise.presentation.components.form.NoEmptyTextField
+import com.bortxapps.thewise.presentation.components.form.RegularTextField
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import kotlinx.coroutines.launch
 
@@ -75,7 +75,7 @@ fun DrawElectionFormScreenScaffold(
         formCompletedCallback.invoke()
     }
 
-    Scaffold(backgroundColor = colorResource(id = R.color.white), drawerElevation = 5.dp) { it ->
+    Scaffold(backgroundColor = colorResource(id = R.color.white), drawerElevation = 5.dp) {
         Column(
             Modifier
                 .fillMaxWidth()

@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
-import com.bortxapps.thewise.presentation.componentes.TopAppBar.GetTopAppBar
+import com.bortxapps.thewise.presentation.components.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.screens.elections.ElectionFormScreen
 import kotlinx.coroutines.launch
 

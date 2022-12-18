@@ -1,34 +1,22 @@
 <resources>
     <string name="app_name">The Wise</string>
-    <string name="title_activity_splash">SplashActivity</string>
     <string name="app_logo">App logo</string>
-    <string name="title_activity_election">ElectionActivity</string>
     <!-- Form fields -->
     <string name="name">Question</string>
     <string name="name_option">Option</string>
     <string name="description">Description</string>
-    <string name="url">Url</string>
-    <string name="image">Image</string>
     <!-- -->
-    <string name="new_election">Add new question</string>
-    <string name="edit_election">Edit question</string>
     <string name="save_election">Save question</string>
     <string name="save_option">Save option</string>
-    <string name="save_condition">Save condition</string>
     <string name="delete_election">Remove question</string>
     <string name="cant_be_empty">the wise need a question</string>
     <string name="delete">Delete</string>
-    <string name="add_condition">Add new condition</string>
     <string name="options">Options</string>
     <string name="questions">Questions</string>
 
     <!-- Headers -->
-    <string name="create_question">Make a new question to the wise</string>
-    <string name="edit_question">Edit question</string>
-    <string name="create_option">Edit option</string>
     <string name="edit_option">Edit option</string>
-    <string name="create_condition">Create a new condition</string>
-    <string name="edit__condition">Edit condition</string>
+    <string name="edit_question">Edit question</string>
     <string name="assign_requisites">Select requisites</string>
     <string name="tooltip_select_requisites">You must select at least one requisite by clicking in it</string>
     <string name="no_options_configured">There aren\'t any option configured jet</string>
@@ -36,8 +24,6 @@
     <string name="matching_conditions_label">Matching requisites</string>
     <string name="no_question_label">The Wise is waiting for your questions, don\'t keep him waiting.</string>
     <string name="no_options_label">The Wise need options to choose the best of the them for your question.</string>
-    <string name="edit">EDIT</string>
-    <string name="insert_conditions">Insert requisite</string>
     <string name="requisite_name">Name</string>
     <string name="requisite_importance">Interest</string>
     <string name="meh">Meh</string>

@@ -17,7 +17,7 @@ class ElectionsAppService @Inject constructor(private val domainService: IElecti
 
     override fun getElection(electionId: Long): Flow<Election> {
         return domainService.getElection(electionId)
-            .map { election -> election?.let { it.fromEntity() } ?: Election.getEmpty() }
+            .map { election -> election?.fromEntity() ?: Election.getEmpty() }
     }
 
     override suspend fun addElection(election: Election): Long {

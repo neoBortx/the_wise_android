@@ -45,7 +45,7 @@ import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
-import com.bortxapps.thewise.presentation.componentes.texfield.SimpleConditionBadge
+import com.bortxapps.thewise.presentation.components.badges.SimpleConditionBadge
 import com.bortxapps.thewise.presentation.screens.utils.getImagePath
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment

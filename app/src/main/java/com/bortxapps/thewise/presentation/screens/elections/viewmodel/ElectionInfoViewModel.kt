@@ -32,7 +32,7 @@ class ElectionInfoViewModel @Inject constructor(
     }
 
     fun configureElection(electionId: Long) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             election = electionsService.getElection(electionId)
             conditions = conditionsService.getConditionsFromElection(electionId = electionId)
             options = optionsService.getOptionsFromElection(electionId = electionId)

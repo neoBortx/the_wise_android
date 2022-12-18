@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
-import com.bortxapps.thewise.presentation.componentes.texfield.SimpleConditionBadge
+import com.bortxapps.thewise.presentation.components.badges.SimpleConditionBadge
 import com.bortxapps.thewise.presentation.screens.utils.getImagePath
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
