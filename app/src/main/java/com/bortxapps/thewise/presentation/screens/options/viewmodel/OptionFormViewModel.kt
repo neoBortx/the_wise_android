@@ -2,7 +2,7 @@ package com.bortxapps.thewise.presentation.screens.options.viewmodel
 
 import android.app.Application
 import android.content.Context
-import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -29,7 +29,7 @@ class OptionFormViewModel @Inject constructor(
     var isButtonEnabled by mutableStateOf(false)
         private set
 
-    var option by mutableStateOf(Option.getEmpty())
+    var option by mutableStateOf(Option.getEmpty().copy(imageUrl = getImageName()))
         private set
 
     val configuredConditions = mutableStateListOf<Condition>()
@@ -37,7 +37,7 @@ class OptionFormViewModel @Inject constructor(
     var allConditions by mutableStateOf(listOf<Condition>())
         private set
 
-    var configuredBitmap: Bitmap? = null
+    var configuredImage: Uri? = null
 
     fun configureOption(option: Option, electionId: Long) {
 
@@ -50,9 +50,18 @@ class OptionFormViewModel @Inject constructor(
         }
     }
 
+    fun configureNewOption(electionId: Long) {
+        this.option = Option.getEmpty().copy(electionId = electionId, imageUrl = getImageName())
+
+        viewModelScope.launch {
+            getConditions(electionId)
+            configuredConditions.clear()
+        }
+    }
+
     private fun clearOption() {
-        option = Option.getEmpty()
-        configuredBitmap = null
+        option = Option.getEmpty().copy(imageUrl = getImageName())
+        configuredImage = null
         configuredConditions.clear()
     }
 
@@ -61,30 +70,38 @@ class OptionFormViewModel @Inject constructor(
         isButtonEnabled = option.name.isNotBlank() && configuredConditions.any()
     }
 
-    private fun saveBitMap(image: Bitmap?) {
+    private fun saveBitMap(image: Uri) {
+        val input =
+            getApplication<Application>().applicationContext.contentResolver.openInputStream(image)
         getApplication<Application>().applicationContext.openFileOutput(
             option.imageUrl,
             Context.MODE_PRIVATE
         ).use {
-            image?.compress(Bitmap.CompressFormat.PNG, 100, it)
+            val buffer = ByteArray(4 * 1024) // buffer size
+            while (true) {
+                if (input != null) {
+                    val byteCount = input.read(buffer)
+                    if (byteCount < 0) break
+                    it.write(buffer, 0, byteCount)
+                }
+            }
+            it.flush()
         }
+        input?.close()
     }
 
-    fun setImage(bitmap: Bitmap) {
+    fun setImage(image: Uri) {
         option.imageUrl.ifBlank {
-            option = option.copy(imageUrl = "image-${UUID.randomUUID().mostSignificantBits}.png")
+            option = option.copy(imageUrl = getImageName())
         }
-
-        configuredBitmap = bitmap
+        configuredImage = image
     }
 
     fun createNewOption() {
         Log.i("Option", "Creating a new option ${option.name}")
         viewModelScope.launch {
             optionsService.addOption(option)
-            if (configuredBitmap != null) {
-                saveBitMap(configuredBitmap)
-            }
+            configuredImage?.let { saveBitMap(it) }
             clearOption()
         }
     }
@@ -113,4 +130,6 @@ class OptionFormViewModel @Inject constructor(
             }
         }
     }
+
+    private fun getImageName() = "image-${UUID.randomUUID().mostSignificantBits}.jpeg"
 }

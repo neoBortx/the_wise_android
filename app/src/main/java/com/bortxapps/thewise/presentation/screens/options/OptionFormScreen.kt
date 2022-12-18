@@ -1,6 +1,6 @@
 package com.bortxapps.thewise.presentation.screens.options
 
-import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,11 +25,12 @@ import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.componentes.BottomButton.GetBottomButton
 import com.bortxapps.thewise.presentation.componentes.form.FormDragControl
-import com.bortxapps.thewise.presentation.componentes.form.OptionFilePicker.ImagePickerField
+import com.bortxapps.thewise.presentation.componentes.form.ImageFilePicker.ImagePickerField
 import com.bortxapps.thewise.presentation.componentes.texfield.NoEmptyTextField
 import com.bortxapps.thewise.presentation.componentes.text.TextError.GetTextError
 import com.bortxapps.thewise.presentation.screens.conditions.ConditionsSelectionControl
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -52,10 +56,12 @@ fun OptionFormFields(
     imageUrl: String,
     name: String,
     onNameChanged: (String) -> Unit,
-    onImageChanged: (Bitmap) -> Unit
+    onImageChanged: (Uri) -> Unit,
+    snackBarHostState: SnackbarHostState,
+    scope: CoroutineScope,
 ) {
     val nameLabel = stringResource(id = R.string.name_option)
-    ImagePickerField(imageUrl, onImageChanged)
+    ImagePickerField(imageUrl, onImageChanged, snackBarHostState, scope)
     NoEmptyTextField(nameLabel, name, onNameChanged)
 }
 
@@ -65,21 +71,25 @@ fun OptionForm(
     formCompletedCallback: () -> Unit,
     option: Option,
     onNameChanged: (String) -> Unit,
-    onImageChanged: (Bitmap) -> Unit,
+    onImageChanged: (Uri) -> Unit,
     allConditions: List<Condition>,
     configuredConditions: List<Condition>,
     onConditionSelected: (Boolean, Condition) -> Unit,
     isButtonEnabled: Boolean
 ) {
-
-    val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
 
     fun onButtonFormClick() {
         onCreateNewOption()
         formCompletedCallback()
     }
 
-    Scaffold(backgroundColor = colorResource(id = R.color.white)) {
+    val scope = rememberCoroutineScope()
+
+    Scaffold(backgroundColor = colorResource(id = R.color.white),
+        snackbarHost = { SnackbarHost(snackBarHostState) })
+    {
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -93,7 +103,9 @@ fun OptionForm(
                 imageUrl = option.imageUrl,
                 name = option.name,
                 onNameChanged = onNameChanged,
-                onImageChanged = onImageChanged
+                onImageChanged = onImageChanged,
+                snackBarHostState = snackBarHostState,
+                scope = scope
             )
 
             Text(

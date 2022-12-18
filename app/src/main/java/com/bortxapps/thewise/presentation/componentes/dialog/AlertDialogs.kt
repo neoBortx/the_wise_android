@@ -48,7 +48,12 @@ fun DeleteAlertDialog(closeCallBack: () -> Unit, acceptCallBack: () -> Unit) {
 }
 
 @Composable
-fun TakeDialog(photoCallBack: () -> Unit, galleryCallback: () -> Unit, closeCallBack: () -> Unit) {
+fun TakeDialog(
+    photoCallBack: () -> Unit,
+    galleryCallback: () -> Unit,
+    closeCallBack: () -> Unit,
+    enableCamera: Boolean
+) {
     AlertDialog(
         onDismissRequest = closeCallBack,
         title = { Text(stringResource(id = R.string.get_photo)) },
@@ -66,7 +71,8 @@ fun TakeDialog(photoCallBack: () -> Unit, galleryCallback: () -> Unit, closeCall
                 onClick = {
                     photoCallBack()
                     closeCallBack()
-                }) {
+                }, enabled = enableCamera
+            ) {
                 Text(stringResource(R.string.camera))
             }
         },
@@ -93,5 +99,5 @@ fun PreviewDeleteAlertDialog() {
 @Composable
 @Preview
 fun PreviewDialog() {
-    TakeDialog(closeCallBack = { }, photoCallBack = {}, galleryCallback = {})
+    TakeDialog(closeCallBack = { }, photoCallBack = {}, galleryCallback = {}, enableCamera = false)
 }

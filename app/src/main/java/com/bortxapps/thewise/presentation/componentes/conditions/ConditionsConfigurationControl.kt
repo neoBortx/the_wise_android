@@ -118,10 +118,10 @@ fun ConditionsConfigurationControl(
                     expanded = !expanded
                 },
                 modifier = Modifier
-                    .width(140.dp)
+                    .width(150.dp)
                     .fillMaxHeight()
                     .wrapContentSize(Alignment.BottomStart)
-                    .padding(horizontal = 15.dp)
+                    .padding(horizontal = 10.dp)
             ) {
                 TextField(
                     colors = TextFieldDefaults.textFieldColors(
@@ -218,11 +218,10 @@ fun ConditionsConfigurationControl(
 @Preview
 @Composable
 fun ShowControl() {
-    fun foo(a: String, b: ConditionWeight) = Unit
     ConditionsConfigurationControl(
         onConditionRemoved = {},
         conditions = mutableListOf(),
-        onConditionAdded = ::foo
+        onConditionAdded = { _, _ -> }
     )
 }
 

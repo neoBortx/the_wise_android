@@ -73,9 +73,9 @@ fun OptionsListScreen(
 ) {
 
     val scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed)
+
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
-
     val scope = rememberCoroutineScope()
 
     optionsViewModel.configure(electionId)
@@ -85,10 +85,15 @@ fun OptionsListScreen(
 
 
     @ExperimentalMaterialApi
-    fun openOptionForm(option: Option) {
+    fun openOptionForm(option: Option? = null) {
         optionsViewModel.showOptionForm()
         Log.d("Options", "Click in new option button")
-        optionFormViewModel.configureOption(option, electionId = electionId)
+        if (option != null) {
+            optionFormViewModel.configureOption(option, electionId = electionId)
+        } else {
+            optionFormViewModel.configureNewOption(electionId = electionId)
+        }
+
         optionsViewModel.enableGesturesBackDrop()
         coroutineScope.launch(Dispatchers.Main) {
             scaffoldState.conceal()
@@ -173,7 +178,7 @@ fun OptionsListScreen(
     @Composable
     fun GetFloatingActionButton() {
         FloatingActionButton(
-            onClick = { scope.launch { openOptionForm(Option.getEmpty()) } },
+            onClick = { openOptionForm() },
             backgroundColor = colorResource(id = R.color.yellow_800)
         ) {
             Icon(
@@ -254,15 +259,13 @@ fun OptionsListScreen(
         },
         frontLayerContent = {
             if (optionsViewModel.screenState.showOptionForm) {
-                OptionFormScreen { scope.launch { closeOptionForm() } }
+                OptionFormScreen() { scope.launch { closeOptionForm() } }
             } else {
                 electionFormViewModel.prepareElectionData(election)
                 ElectionFormScreen { closeElectionForm() }
             }
         }
-    ) {
-
-    }
+    )
 
     if (optionsViewModel.screenState.showDeleteDialog) {
         DeleteAlertDialog(closeCallBack = {

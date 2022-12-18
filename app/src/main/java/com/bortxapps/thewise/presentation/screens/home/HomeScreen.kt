@@ -98,8 +98,6 @@ fun DrawHomeBackdropScaffold(
             onBackNavigation()
         }
     }
-
-
     BackdropScaffold(
         scaffoldState = scaffoldState,
         gesturesEnabled = true,
@@ -115,8 +113,7 @@ fun DrawHomeBackdropScaffold(
             )
         },
         frontLayerContent = { ElectionFormScreen { closeBackDrop() } }
-    ) {
-    }
+    )
 }
 
 @ExperimentalMaterialApi
@@ -130,7 +127,11 @@ fun DrawFrontLayer(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { scope.launch { openElectionForm.invoke() } },
+                onClick = {
+                    scope.launch {
+                        openElectionForm.invoke()
+                    }
+                },
                 backgroundColor = colorResource(id = R.color.yellow_800)
             ) {
                 Icon(
