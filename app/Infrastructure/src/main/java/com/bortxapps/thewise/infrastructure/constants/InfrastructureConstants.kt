@@ -1,4 +1,4 @@
-package com.bortxapps.thewise.infraestructure.constants
+package com.bortxapps.thewise.infrastructure.constants
 
 object InfrastructureConstants {
 

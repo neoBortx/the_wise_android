@@ -1,4 +1,4 @@
-package com.bortxapps.thewise.infraestructure.dao
+package com.bortxapps.thewise.infrastructure.dao
 
 import androidx.room.Dao
 import androidx.room.Delete

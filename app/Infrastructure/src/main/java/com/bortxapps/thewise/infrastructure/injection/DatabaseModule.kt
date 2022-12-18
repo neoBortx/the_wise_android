@@ -1,12 +1,12 @@
-package com.bortxapps.thewise.infraestructure.injection
+package com.bortxapps.thewise.infrastructure.injection
 
 import android.content.Context
 import androidx.room.Room
-import com.bortxapps.thewise.infraestructure.constants.InfrastructureConstants.DATABASE_NAME
-import com.bortxapps.thewise.infraestructure.dao.ConditionDao
-import com.bortxapps.thewise.infraestructure.dao.ElectionDao
-import com.bortxapps.thewise.infraestructure.dao.OptionDao
-import com.bortxapps.thewise.infraestructure.database.TheWiseDatabase
+import com.bortxapps.thewise.infrastructure.constants.InfrastructureConstants.DATABASE_NAME
+import com.bortxapps.thewise.infrastructure.dao.ConditionDao
+import com.bortxapps.thewise.infrastructure.dao.ElectionDao
+import com.bortxapps.thewise.infrastructure.dao.OptionDao
+import com.bortxapps.thewise.infrastructure.database.TheWiseDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

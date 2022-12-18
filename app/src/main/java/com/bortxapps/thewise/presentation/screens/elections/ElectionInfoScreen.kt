@@ -115,6 +115,10 @@ private fun DrawElectionInfoScreenBackdropScaffold(
     val coroutineScope = rememberCoroutineScope()
     val scope = rememberCoroutineScope()
 
+    var showDeleteDialog by remember {
+        mutableStateOf(false)
+    }
+
     fun openElectionForm() {
         Log.d("Options", "Click in new option button")
         onPrepareElectionData(election)

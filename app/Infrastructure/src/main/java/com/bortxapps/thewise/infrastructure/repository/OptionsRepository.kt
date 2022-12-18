@@ -1,4 +1,4 @@
-package com.bortxapps.thewise.infraestructure.repository
+package com.bortxapps.thewise.infrastructure.repository
 
 import android.util.Log
 import androidx.room.Transaction
@@ -6,7 +6,7 @@ import com.bortxapps.thewise.domain.contrats.repository.IOptionsRepository
 import com.bortxapps.thewise.domain.model.ConditionInOptionCrossRef
 import com.bortxapps.thewise.domain.model.OptionEntity
 import com.bortxapps.thewise.domain.model.OptionWithConditionsEntity
-import com.bortxapps.thewise.infraestructure.dao.OptionDao
+import com.bortxapps.thewise.infrastructure.dao.OptionDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

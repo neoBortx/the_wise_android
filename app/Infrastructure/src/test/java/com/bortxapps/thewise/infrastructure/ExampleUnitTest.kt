@@ -1,4 +1,4 @@
-package com.bortxapps.thewise.infraestructure
+package com.bortxapps.thewise.infrastructure
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

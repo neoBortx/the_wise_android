@@ -1,11 +1,11 @@
-package com.bortxapps.thewise.infraestructure.injection
+package com.bortxapps.thewise.infrastructure.injection
 
 import com.bortxapps.thewise.domain.contrats.repository.IConditionsRepository
 import com.bortxapps.thewise.domain.contrats.repository.IElectionsRepository
 import com.bortxapps.thewise.domain.contrats.repository.IOptionsRepository
-import com.bortxapps.thewise.infraestructure.repository.ConditionsRepository
-import com.bortxapps.thewise.infraestructure.repository.ElectionsRepository
-import com.bortxapps.thewise.infraestructure.repository.OptionsRepository
+import com.bortxapps.thewise.infrastructure.repository.ConditionsRepository
+import com.bortxapps.thewise.infrastructure.repository.ElectionsRepository
+import com.bortxapps.thewise.infrastructure.repository.OptionsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

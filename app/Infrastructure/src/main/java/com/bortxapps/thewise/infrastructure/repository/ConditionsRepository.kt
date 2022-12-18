@@ -1,9 +1,9 @@
-package com.bortxapps.thewise.infraestructure.repository
+package com.bortxapps.thewise.infrastructure.repository
 
 import android.util.Log
 import com.bortxapps.thewise.domain.contrats.repository.IConditionsRepository
 import com.bortxapps.thewise.domain.model.ConditionEntity
-import com.bortxapps.thewise.infraestructure.dao.ConditionDao
+import com.bortxapps.thewise.infrastructure.dao.ConditionDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

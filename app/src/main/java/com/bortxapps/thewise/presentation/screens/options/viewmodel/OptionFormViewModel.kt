@@ -37,7 +37,7 @@ class OptionFormViewModel @Inject constructor(
     var allConditions by mutableStateOf(listOf<Condition>())
         private set
 
-    var configuredImage: Uri? = null
+    private var configuredImage: Uri? = null
 
     fun configureOption(option: Option, electionId: Long) {
 

@@ -1,10 +1,10 @@
-package com.bortxapps.thewise.infraestructure.repository
+package com.bortxapps.thewise.infrastructure.repository
 
 import android.util.Log
 import com.bortxapps.thewise.domain.contrats.repository.IElectionsRepository
 import com.bortxapps.thewise.domain.model.ElectionEntity
 import com.bortxapps.thewise.domain.model.ElectionWithOptions
-import com.bortxapps.thewise.infraestructure.dao.ElectionDao
+import com.bortxapps.thewise.infrastructure.dao.ElectionDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
