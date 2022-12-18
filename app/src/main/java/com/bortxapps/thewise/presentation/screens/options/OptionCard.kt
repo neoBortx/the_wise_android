@@ -1,5 +1,8 @@
 package com.bortxapps.thewise.presentation.screens.options
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -205,7 +208,11 @@ fun OptionCard(
                 option = option,
             )
 
-            androidx.compose.animation.AnimatedVisibility(visible = expanded) {
+            AnimatedVisibility(
+                visible = expanded,
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
                 Column {
                     Divider(modifier = Modifier.padding(vertical = 0.dp, horizontal = 5.dp))
                     Requisites(
