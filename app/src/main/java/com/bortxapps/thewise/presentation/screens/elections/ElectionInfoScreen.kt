@@ -89,6 +89,7 @@ fun ElectionInfoScreen(
         electionId = electionId,
         conditions = conditions,
         onPrepareElectionData = electionFormViewModel::prepareElectionData,
+        onNewElectionToConfigure = infoViewModel::configure,
         onBackToHome = onBackToHome,
         onBackNavigation = onBackNavigation,
         navController = navController,
@@ -104,6 +105,7 @@ private fun DrawElectionInfoScreenBackdropScaffold(
     electionId: Long,
     conditions: List<Condition>,
     onPrepareElectionData: (Long) -> Unit,
+    onNewElectionToConfigure: (Long) -> Unit,
     onBackToHome: () -> Unit,
     onBackNavigation: () -> Unit,
     navController: NavHostController,
@@ -116,7 +118,7 @@ private fun DrawElectionInfoScreenBackdropScaffold(
     val scope = rememberCoroutineScope()
 
     fun closeElectionForm() {
-        onPrepareElectionData(electionId)
+        onNewElectionToConfigure(electionId)
         focusManager.clearFocus()
         coroutineScope.launch(Dispatchers.Main) {
             scaffoldState.reveal()

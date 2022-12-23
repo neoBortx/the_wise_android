@@ -82,6 +82,7 @@ fun OptionsListScreen(
         onBackToHome = onBackToHome,
         onPrepareOptionData = optionFormViewModel::configureOption,
         onPrepareElectionData = electionFormViewModel::prepareElectionData,
+        onNewElectionToConfigure = optionsViewModel::configure,
         navController = navController,
         screenState = optionsViewModel.screenState
     )
@@ -106,10 +107,13 @@ fun openOptionForm(
 
 @ExperimentalMaterialApi
 fun closeOptionForm(
+    electionId: Long,
+    onNewElectionToConfigure: (Long) -> Unit,
     focusManager: FocusManager,
     scope: CoroutineScope,
     scaffoldState: BackdropScaffoldState
 ) {
+    onNewElectionToConfigure(electionId)
     focusManager.clearFocus()
     scope.launch(Dispatchers.Main) {
         scaffoldState.reveal()
@@ -322,6 +326,7 @@ private fun DrawOptionsListScreenBackdropScaffold(
     onBackNavigation: () -> Unit,
     onBackToHome: () -> Unit,
     onPrepareOptionData: (Option?, Long) -> Unit,
+    onNewElectionToConfigure: (Long) -> Unit,
     onPrepareElectionData: (Long) -> Unit,
     navController: NavHostController,
     screenState: ScreenState
@@ -406,6 +411,8 @@ private fun DrawOptionsListScreenBackdropScaffold(
                 OptionFormScreen {
                     scope.launch {
                         closeOptionForm(
+                            electionId,
+                            onNewElectionToConfigure,
                             focusManager,
                             scope,
                             scaffoldState
