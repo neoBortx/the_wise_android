@@ -57,6 +57,7 @@ import com.bortxapps.thewise.presentation.components.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.components.badges.SimpleConditionBadge
 import com.bortxapps.thewise.presentation.components.dialog.DeleteAlertDialog
 import com.bortxapps.thewise.presentation.components.text.TextHeader
+import com.bortxapps.thewise.presentation.screens.common.ScreenState
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionInfoViewModel
 import com.bortxapps.thewise.presentation.screens.options.NoOptionsMessage
@@ -74,25 +75,24 @@ import kotlinx.coroutines.launch
 @Composable
 fun ElectionInfoScreen(
     infoViewModel: ElectionInfoViewModel = hiltViewModel(),
-    formViewModel: ElectionFormViewModel = hiltViewModel(),
+    electionFormViewModel: ElectionFormViewModel = hiltViewModel(),
     electionId: Long,
     onBackNavigation: () -> Unit,
     onBackToHome: () -> Unit,
     navController: NavHostController
 ) {
-    infoViewModel.configureElection(electionId)
+    infoViewModel.configure(electionId)
 
     val conditions by infoViewModel.conditions.collectAsState(initial = listOf())
-    val election by infoViewModel.election.collectAsState(initial = Election.getEmpty())
 
     DrawElectionInfoScreenBackdropScaffold(
-        election = election,
+        electionId = electionId,
         conditions = conditions,
+        onPrepareElectionData = electionFormViewModel::prepareElectionData,
         onBackToHome = onBackToHome,
         onBackNavigation = onBackNavigation,
         navController = navController,
-        onPrepareElectionData = { formViewModel.prepareElectionData(election) },
-        onDeleteElection = { infoViewModel.deleteElection(election) }
+        screenState = infoViewModel.screenState
     )
 
 }
@@ -101,13 +101,13 @@ fun ElectionInfoScreen(
 @ExperimentalMaterialApi
 @Composable
 private fun DrawElectionInfoScreenBackdropScaffold(
-    election: Election,
+    electionId: Long,
     conditions: List<Condition>,
+    onPrepareElectionData: (Long) -> Unit,
     onBackToHome: () -> Unit,
-    onDeleteElection: (Election) -> Unit,
     onBackNavigation: () -> Unit,
-    onPrepareElectionData: (Election) -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
+    screenState: ScreenState
 ) {
 
     val focusManager = LocalFocusManager.current
@@ -115,19 +115,8 @@ private fun DrawElectionInfoScreenBackdropScaffold(
     val coroutineScope = rememberCoroutineScope()
     val scope = rememberCoroutineScope()
 
-    var showDeleteDialog by remember {
-        mutableStateOf(false)
-    }
-
-    fun openElectionForm() {
-        Log.d("Options", "Click in new option button")
-        onPrepareElectionData(election)
-        coroutineScope.launch(Dispatchers.Main) {
-            scaffoldState.conceal()
-        }
-    }
-
     fun closeElectionForm() {
+        onPrepareElectionData(electionId)
         focusManager.clearFocus()
         coroutineScope.launch(Dispatchers.Main) {
             scaffoldState.reveal()
@@ -147,6 +136,14 @@ private fun DrawElectionInfoScreenBackdropScaffold(
     }
 
 
+    fun openElectionForm() {
+        Log.d("Options", "Click in edit option button")
+        onPrepareElectionData(electionId)
+        coroutineScope.launch(Dispatchers.Main) {
+            scaffoldState.conceal()
+        }
+    }
+
     val actions = mutableListOf<MenuAction>().apply {
         add(
             MenuAction(Icons.Default.Edit) {
@@ -155,11 +152,19 @@ private fun DrawElectionInfoScreenBackdropScaffold(
         )
         add(
             MenuAction(Icons.Default.Delete) {
-                showDeleteDialog = true
+                screenState.showDeleteDialog()
             }
         )
     }
 
+    if (screenState.isDeleteDialogVisible) {
+        DeleteAlertDialog(closeCallBack = {
+            screenState.hideDeleteDialog()
+        }, acceptCallBack = {
+            screenState.deleteElection(screenState.election)
+            onBackToHome()
+        })
+    }
 
     BackdropScaffold(
         scaffoldState = scaffoldState,
@@ -168,14 +173,14 @@ private fun DrawElectionInfoScreenBackdropScaffold(
         headerHeight = 0.dp,
         appBar = {
             GetTopAppBar(
-                title = election.name.replaceFirstChar { it.uppercase() },
+                title = screenState.election.name.replaceFirstChar { it.uppercase() },
                 menuActions = actions,
                 backCallback = { navigateBack() }
             )
         },
         backLayerContent = {
             Scaffold(
-                bottomBar = { GetBottomNavigation(election, navController) })
+                bottomBar = { GetBottomNavigation(screenState.election, navController) })
             {
                 Column(
                     modifier = Modifier
@@ -186,15 +191,14 @@ private fun DrawElectionInfoScreenBackdropScaffold(
                     verticalArrangement = Arrangement.Top
                 ) {
                     DrawElectionInfoScreenFrontLayer(
-                        election = election,
+                        election = screenState.election,
                         conditions = conditions,
                         onBackToHome = onBackToHome,
-                        onDeleteElection = { elect -> onDeleteElection(elect) })
+                        onDeleteElection = { elect -> screenState.deleteElection(elect) })
                 }
             }
         },
         frontLayerContent = {
-            onPrepareElectionData(election)
             ElectionFormScreen { scope.launch { closeElectionForm() } }
         }
     ) {

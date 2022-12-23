@@ -45,6 +45,7 @@ import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.components.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.screens.elections.ElectionFormScreen
+import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import kotlinx.coroutines.launch
 
 
@@ -52,6 +53,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
+    electionFormViewModel: ElectionFormViewModel = hiltViewModel(),
     onBackNavigation: () -> Unit,
     onNavigationToDetail: (Long) -> Unit
 ) {
@@ -62,6 +64,7 @@ fun HomeScreen(
         questions = questions,
         onNavigationToDetail = onNavigationToDetail,
         onBackNavigation = onBackNavigation,
+        prepareElectionData = electionFormViewModel::prepareElectionData
     )
 }
 
@@ -70,7 +73,8 @@ fun HomeScreen(
 fun DrawHomeBackdropScaffold(
     questions: List<Election>,
     onNavigationToDetail: (Long) -> Unit,
-    onBackNavigation: () -> Unit
+    onBackNavigation: () -> Unit,
+    prepareElectionData: (Long) -> Unit
 ) {
 
     val scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed)
@@ -85,6 +89,7 @@ fun DrawHomeBackdropScaffold(
     }
 
     fun showBackDrop() {
+        prepareElectionData(0)
         focusManager.clearFocus()
         scope.launch {
             scaffoldState.conceal()
@@ -112,7 +117,9 @@ fun DrawHomeBackdropScaffold(
                 onNavigationToDetail = onNavigationToDetail
             )
         },
-        frontLayerContent = { ElectionFormScreen { closeBackDrop() } }
+        frontLayerContent = {
+            ElectionFormScreen { closeBackDrop() }
+        }
     )
 }
 
@@ -129,7 +136,7 @@ fun DrawFrontLayer(
             FloatingActionButton(
                 onClick = {
                     scope.launch {
-                        openElectionForm.invoke()
+                        openElectionForm()
                     }
                 },
                 backgroundColor = colorResource(id = R.color.yellow_800)
@@ -217,7 +224,8 @@ fun HomeScreenPreview() {
     DrawHomeBackdropScaffold(
         questions = mutableListOf(),
         onNavigationToDetail = {},
-        onBackNavigation = {})
+        onBackNavigation = {},
+        prepareElectionData = {})
 }
 
 @ExperimentalMaterialApi

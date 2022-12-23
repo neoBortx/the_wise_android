@@ -8,7 +8,8 @@
     <!-- -->
     <string name="save_election">Save question</string>
     <string name="save_option">Save option</string>
-    <string name="delete_election">Remove question</string>
+    <string name="delete_option">Remove option</string>
+    <string name="delete_question">Remove question</string>
     <string name="cant_be_empty">the wise need a question</string>
     <string name="delete">Delete</string>
     <string name="options">Options</string>

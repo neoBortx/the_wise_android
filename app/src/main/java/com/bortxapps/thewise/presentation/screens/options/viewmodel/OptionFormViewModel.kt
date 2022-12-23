@@ -39,23 +39,15 @@ class OptionFormViewModel @Inject constructor(
 
     private var configuredImage: Uri? = null
 
-    fun configureOption(option: Option, electionId: Long) {
+    fun configureOption(opt: Option?, electionId: Long) {
 
-        this.option = option.copy(electionId = electionId)
+        this.option = opt?.copy(electionId = electionId)
+            ?: Option.getEmpty().copy(electionId = electionId, imageUrl = getImageName())
 
         viewModelScope.launch {
             getConditions(electionId)
             configuredConditions.clear()
             configuredConditions.addAll(allConditions.filter { option.matchingConditions.contains(it) })
-        }
-    }
-
-    fun configureNewOption(electionId: Long) {
-        this.option = Option.getEmpty().copy(electionId = electionId, imageUrl = getImageName())
-
-        viewModelScope.launch {
-            getConditions(electionId)
-            configuredConditions.clear()
         }
     }
 

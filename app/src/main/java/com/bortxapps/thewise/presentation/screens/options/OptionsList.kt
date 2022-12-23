@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.BackdropScaffold
+import androidx.compose.material.BackdropScaffoldState
 import androidx.compose.material.BackdropValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
@@ -30,11 +31,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -45,17 +45,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.bortxapps.application.pokos.Election
 import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.components.BottomNavigation.GetBottomNavigation
 import com.bortxapps.thewise.presentation.components.MenuAction
 import com.bortxapps.thewise.presentation.components.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.components.dialog.DeleteAlertDialog
+import com.bortxapps.thewise.presentation.screens.common.ScreenState
 import com.bortxapps.thewise.presentation.screens.elections.ElectionFormScreen
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionsViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -72,208 +73,104 @@ fun OptionsListScreen(
     navController: NavHostController
 ) {
 
-    val scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed)
-
-    val focusManager = LocalFocusManager.current
-    val coroutineScope = rememberCoroutineScope()
-    val scope = rememberCoroutineScope()
-
     optionsViewModel.configure(electionId)
 
-    val options by optionsViewModel.options.collectAsState(initial = listOf())
-    val election by optionsViewModel.election.collectAsState(initial = Election.getEmpty())
-
-
-    @ExperimentalMaterialApi
-    fun openOptionForm(option: Option? = null) {
-        optionsViewModel.showOptionForm()
-        Log.d("Options", "Click in new option button")
-        if (option != null) {
-            optionFormViewModel.configureOption(option, electionId = electionId)
-        } else {
-            optionFormViewModel.configureNewOption(electionId = electionId)
-        }
-
-        optionsViewModel.enableGesturesBackDrop()
-        coroutineScope.launch(Dispatchers.Main) {
-            scaffoldState.conceal()
-        }
-    }
-
-    @ExperimentalMaterialApi
-    fun closeOptionForm() {
-        optionsViewModel.disableGesturesBackDrop()
-        focusManager.clearFocus()
-        coroutineScope.launch(Dispatchers.Main) {
-            scaffoldState.reveal()
-        }
-    }
-
-    fun openElectionForm() {
-        Log.d("Options", "Click in new option button")
-        optionsViewModel.hideOptionForm()
-        electionFormViewModel.prepareElectionData(election)
-
-        optionsViewModel.enableGesturesBackDrop()
-        coroutineScope.launch(Dispatchers.Main) {
-            scaffoldState.conceal()
-        }
-    }
-
-    @ExperimentalMaterialApi
-    fun closeElectionForm() {
-        optionsViewModel.disableGesturesBackDrop()
-        focusManager.clearFocus()
-        coroutineScope.launch(Dispatchers.Main) {
-            scaffoldState.reveal()
-        }
-    }
-
-    val actions = mutableListOf<MenuAction>().apply {
-        add(
-            MenuAction(
-                Icons.Default.Edit
-            ) {
-                coroutineScope.launch { openElectionForm() }
-            }
-        )
-
-        add(
-            MenuAction(
-                Icons.Default.Delete
-            ) {
-                optionsViewModel.showDeleteDialog()
-            }
-        )
-    }
-
-
-    @ExperimentalMaterialApi
-    @Composable
-    fun PaintLazyColumn(options: List<Option>) {
-        LazyColumn(
-            contentPadding = PaddingValues(
-                start = 12.dp,
-                top = 16.dp,
-                end = 12.dp,
-                bottom = 16.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier
-                .background(colorResource(id = R.color.white))
-                .fillMaxHeight()
-        )
-        {
-            items(options) { item ->
-                OptionCard(
-                    option = item,
-                    clickCallback = { openOptionForm(item) },
-                    deleteCallBack = { optionsViewModel.deleteOption(item) },
-                    false
-                )
-            }
-        }
-    }
-
-    @Composable
-    fun GetFloatingActionButton() {
-        FloatingActionButton(
-            onClick = { openOptionForm() },
-            backgroundColor = colorResource(id = R.color.yellow_800)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                "",
-                tint = colorResource(id = R.color.dark_text)
-            )
-        }
-    }
-
-    @ExperimentalMaterialApi
-    @Composable
-    fun DrawFrontLayer(options: List<Option>) {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Top,
-        ) {
-            if (options.any()) {
-                PaintLazyColumn(options)
-            } else {
-                NoOptionsMessage()
-            }
-        }
-    }
-
-    fun navigateBack() {
-        if (!scaffoldState.isRevealed) {
-            scope.launch { closeOptionForm() }
-        } else {
-            onBackNavigation()
-        }
-    }
-
-    @Composable
-    fun GetTopAppTitle(): String {
-        return if (!scaffoldState.isRevealed) {
-            if (optionsViewModel.screenState.showOptionForm) {
-                stringResource(R.string.edit_option)
-            } else {
-                stringResource(R.string.edit_question)
-            }
-        } else {
-            election.name.replaceFirstChar { it.uppercase() }
-        }
-    }
-
-    BackHandler {
-        navigateBack()
-    }
-
-    BackdropScaffold(
-        scaffoldState = scaffoldState,
-        gesturesEnabled = optionsViewModel.screenState.gesturesBackDropEnabled,
-        peekHeight = 50.dp,
-        headerHeight = 0.dp,
-        appBar = {
-            GetTopAppBar(
-                title = GetTopAppTitle(),
-                menuActions = actions,
-                backCallback = { navigateBack() }
-            )
-        },
-        backLayerContent = {
-            Scaffold(
-                floatingActionButton = { GetFloatingActionButton() },
-                bottomBar = { GetBottomNavigation(election, navController) })
-            { innerPadding ->
-                // Apply the padding globally to the whole BottomNavScreensController
-                Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                ) {
-                    DrawFrontLayer(options)
-                }
-            }
-        },
-        frontLayerContent = {
-            if (optionsViewModel.screenState.showOptionForm) {
-                OptionFormScreen { scope.launch { closeOptionForm() } }
-            } else {
-                electionFormViewModel.prepareElectionData(election)
-                ElectionFormScreen { closeElectionForm() }
-            }
-        }
+    DrawOptionsListScreenBackdropScaffold(
+        electionId = electionId,
+        onDeleteOption = optionsViewModel::deleteOption,
+        onBackNavigation = onBackNavigation,
+        onBackToHome = onBackToHome,
+        onPrepareOptionData = optionFormViewModel::configureOption,
+        onPrepareElectionData = electionFormViewModel::prepareElectionData,
+        navController = navController,
+        screenState = optionsViewModel.screenState
     )
+}
 
-    if (optionsViewModel.screenState.showDeleteDialog) {
-        DeleteAlertDialog(closeCallBack = {
-            optionsViewModel.hideDeleteDialog()
-        }, acceptCallBack = {
-            optionsViewModel.deleteElection(election)
-            onBackToHome()
-        })
+@ExperimentalMaterialApi
+fun openOptionForm(
+    option: Option? = null,
+    electionId: Long,
+    onPrepareOptionData: (Option?, Long) -> Unit,
+    onConfigureOptionForm: () -> Unit,
+    scope: CoroutineScope,
+    scaffoldState: BackdropScaffoldState
+) {
+    onConfigureOptionForm()
+    Log.d("Options", "Click in new option button")
+    onPrepareOptionData(option, electionId)
+    scope.launch(Dispatchers.Main) {
+        scaffoldState.conceal()
+    }
+}
+
+@ExperimentalMaterialApi
+fun closeOptionForm(
+    focusManager: FocusManager,
+    scope: CoroutineScope,
+    scaffoldState: BackdropScaffoldState
+) {
+    focusManager.clearFocus()
+    scope.launch(Dispatchers.Main) {
+        scaffoldState.reveal()
+    }
+}
+
+@ExperimentalMaterialApi
+fun closeElectionForm(
+    electionId: Long,
+    prepareElectionData: (Long) -> Unit,
+    focusManager: FocusManager,
+    scope: CoroutineScope,
+    scaffoldState: BackdropScaffoldState
+) {
+    prepareElectionData(electionId)
+    focusManager.clearFocus()
+    scope.launch(Dispatchers.Main) {
+        scaffoldState.reveal()
+    }
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun PaintLazyColumn(
+    options: List<Option>,
+    onDeleteOption: (Option) -> Unit,
+    onPrepareOptionData: (Option?, Long) -> Unit,
+    onConfigureOptionForm: () -> Unit,
+    scope: CoroutineScope,
+    scaffoldState: BackdropScaffoldState
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(
+            start = 12.dp,
+            top = 16.dp,
+            end = 12.dp,
+            bottom = 16.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier
+            .background(colorResource(id = R.color.white))
+            .fillMaxHeight()
+    )
+    {
+        items(options) { option ->
+            OptionCard(
+                option = option,
+                clickCallback = {
+                    openOptionForm(
+                        option,
+                        option.electionId,
+                        onPrepareOptionData,
+                        onConfigureOptionForm,
+                        scope,
+                        scaffoldState
+                    )
+                },
+                deleteCallBack = { onDeleteOption(option) },
+                false
+            )
+        }
     }
 }
 
@@ -308,3 +205,234 @@ fun NoOptionsMessage() {
         )
     }
 }
+
+@ExperimentalMaterialApi
+@Composable
+fun GetFloatingActionButton(
+    electionId: Long,
+    onPrepareOptionData: (Option?, Long) -> Unit,
+    onConfigureOptionForm: () -> Unit,
+    scope: CoroutineScope,
+    scaffoldState: BackdropScaffoldState
+) {
+    FloatingActionButton(
+        onClick = {
+            openOptionForm(
+                null,
+                electionId,
+                onPrepareOptionData,
+                onConfigureOptionForm,
+                scope,
+                scaffoldState
+            )
+        },
+        backgroundColor = colorResource(id = R.color.yellow_800)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            "",
+            tint = colorResource(id = R.color.dark_text)
+        )
+    }
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun DrawFrontLayer(
+    options: List<Option>,
+    onDeleteOption: (Option) -> Unit,
+    onPrepareOptionData: (Option?, Long) -> Unit,
+    onConfigureOptionForm: () -> Unit,
+    scope: CoroutineScope,
+    scaffoldState: BackdropScaffoldState
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Top,
+    ) {
+        if (options.any()) {
+            PaintLazyColumn(
+                options,
+                onDeleteOption,
+                onPrepareOptionData,
+                onConfigureOptionForm,
+                scope,
+                scaffoldState
+            )
+        } else {
+            NoOptionsMessage()
+        }
+    }
+}
+
+@ExperimentalMaterialApi
+fun navigateBack(
+    scaffoldState: BackdropScaffoldState,
+    scope: CoroutineScope,
+    onCloseOptionForm: () -> Unit,
+    onBackNavigation: () -> Unit
+) {
+    if (!scaffoldState.isRevealed) {
+        scope.launch { onCloseOptionForm() }
+    } else {
+        onBackNavigation()
+    }
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun getTopAppTitle(
+    screenState: ScreenState,
+    scaffoldState: BackdropScaffoldState
+): String {
+    return if (!scaffoldState.isRevealed) {
+        if (screenState.showOptionForm) {
+            stringResource(R.string.edit_option)
+        } else {
+            stringResource(R.string.edit_question)
+        }
+    } else {
+        screenState.election.name.replaceFirstChar { it.uppercase() }
+    }
+}
+
+@ExperimentalMaterialApi
+fun openElectionForm(
+    electionId: Long,
+    prepareElectionData: (Long) -> Unit,
+    screenState: ScreenState,
+    scope: CoroutineScope,
+    scaffoldState: BackdropScaffoldState
+) {
+    prepareElectionData(electionId)
+    Log.d("Options", "Click in new option button")
+    screenState.configureElectionForm()
+    scope.launch(Dispatchers.Main) {
+        scaffoldState.conceal()
+    }
+}
+
+@ExperimentalMaterialApi
+@Composable
+private fun DrawOptionsListScreenBackdropScaffold(
+    electionId: Long,
+    onDeleteOption: (Option) -> Unit,
+    onBackNavigation: () -> Unit,
+    onBackToHome: () -> Unit,
+    onPrepareOptionData: (Option?, Long) -> Unit,
+    onPrepareElectionData: (Long) -> Unit,
+    navController: NavHostController,
+    screenState: ScreenState
+) {
+
+    val scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed)
+
+    val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
+
+
+    val actions = mutableListOf<MenuAction>().apply {
+        add(MenuAction(Icons.Default.Edit) {
+            coroutineScope.launch {
+                openElectionForm(
+                    electionId,
+                    onPrepareElectionData,
+                    screenState,
+                    scope,
+                    scaffoldState
+                )
+            }
+        })
+        add(MenuAction(Icons.Default.Delete) { screenState.showDeleteDialog() })
+    }
+
+    BackHandler {
+        navigateBack(scaffoldState, scope, onBackNavigation, onBackToHome)
+    }
+
+    BackdropScaffold(
+        scaffoldState = scaffoldState,
+        gesturesEnabled = true,
+        peekHeight = 50.dp,
+        headerHeight = 0.dp,
+        appBar = {
+            GetTopAppBar(
+                title = getTopAppTitle(screenState, scaffoldState),
+                menuActions = actions,
+                backCallback = {
+                    navigateBack(
+                        scaffoldState,
+                        scope,
+                        onBackNavigation,
+                        onBackToHome
+                    )
+                }
+            )
+        },
+        backLayerContent = {
+            Scaffold(
+                floatingActionButton = {
+                    GetFloatingActionButton(
+                        screenState.election.id,
+                        onPrepareOptionData,
+                        screenState.configureOptionForm,
+                        scope,
+                        scaffoldState
+                    )
+                },
+                bottomBar = { GetBottomNavigation(screenState.election, navController) })
+            { innerPadding ->
+                // Apply the padding globally to the whole BottomNavScreensController
+                Box(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                ) {
+                    DrawFrontLayer(
+                        screenState.options,
+                        onDeleteOption,
+                        onPrepareOptionData,
+                        screenState.configureOptionForm,
+                        scope,
+                        scaffoldState
+                    )
+                }
+            }
+        },
+        frontLayerContent = {
+            if (screenState.showOptionForm) {
+                OptionFormScreen {
+                    scope.launch {
+                        closeOptionForm(
+                            focusManager,
+                            scope,
+                            scaffoldState
+                        )
+                    }
+                }
+            } else {
+                ElectionFormScreen() {
+                    closeElectionForm(
+                        electionId,
+                        onPrepareElectionData,
+                        focusManager,
+                        scope,
+                        scaffoldState
+                    )
+                }
+            }
+        }
+    )
+
+    if (screenState.isDeleteDialogVisible) {
+        DeleteAlertDialog(closeCallBack = {
+            screenState.hideDeleteDialog()
+        }, acceptCallBack = {
+            screenState.deleteElection(screenState.election)
+            onBackToHome()
+        })
+    }
+}
+

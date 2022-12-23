@@ -19,7 +19,7 @@ import com.bortxapps.thewise.R
 fun DeleteAlertDialog(closeCallBack: () -> Unit, acceptCallBack: () -> Unit) {
     AlertDialog(
         onDismissRequest = closeCallBack,
-        title = { Text(stringResource(id = R.string.delete_election)) },
+        title = { Text(stringResource(id = R.string.delete_question)) },
         text = {
             Column {
                 Text(stringResource(R.string.delete_disclaimer))

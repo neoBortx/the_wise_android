@@ -43,7 +43,8 @@ object ImageFilePicker {
         currentImageUrl: String,
         onImageSelected: (Uri) -> Unit,
         snackBarHostState: SnackbarHostState,
-        scope: CoroutineScope
+        scope: CoroutineScope,
+        enabled: Boolean
     ) {
         val context = LocalContext.current
         var enablePhotos by remember {
@@ -101,7 +102,7 @@ object ImageFilePicker {
                     ) {})
         }
 
-        if (showPhotoDialog) {
+        if (showPhotoDialog && enabled) {
             TakeDialog(
                 closeCallBack = { showPhotoDialog = false },
                 photoCallBack = {

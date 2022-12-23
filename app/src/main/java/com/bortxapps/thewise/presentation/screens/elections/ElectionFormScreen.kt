@@ -88,7 +88,6 @@ fun DrawElectionFormScreenScaffold(
                 onSetName(name)
             }
             RegularTextField(descLabel, election.description) { desc ->
-
                 onSetDescription(desc)
             }
             Text(

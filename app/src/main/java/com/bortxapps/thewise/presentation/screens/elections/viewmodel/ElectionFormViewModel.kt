@@ -35,17 +35,20 @@ class ElectionFormViewModel @Inject constructor(
 
     private var updateExistingElection = false
 
-    fun prepareElectionData(oldElection: Election) {
+    fun prepareElectionData(electionId: Long) {
 
-        val id = if (oldElection.id == 0L) {
-            updateExistingElection = false
-            UUID.randomUUID().mostSignificantBits
-        } else {
+        if (electionId != 0L) {
             updateExistingElection = true
-            oldElection.id
+            viewModelScope.launch {
+                electionsService.getElection(electionId).collect {
+                    election = it
+                }
+            }
+        } else {
+            updateExistingElection = false
+            election = Election(id = UUID.randomUUID().mostSignificantBits, "", "", listOf())
         }
 
-        election = oldElection.copy(id = id)
         getConditions(election.id)
     }
 
