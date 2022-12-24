@@ -420,7 +420,7 @@ private fun DrawOptionsListScreenBackdropScaffold(
                     }
                 }
             } else {
-                ElectionFormScreen() {
+                ElectionFormScreen {
                     closeElectionForm(
                         electionId,
                         onPrepareElectionData,

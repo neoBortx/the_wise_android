@@ -19,16 +19,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.permissions.PermissionData
 import com.bortxapps.thewise.permissions.RequestSinglePermission
 import com.bortxapps.thewise.presentation.components.dialog.TakeDialog
 import com.bortxapps.thewise.presentation.screens.utils.getImagePath
-import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
@@ -52,15 +53,15 @@ object ImageFilePicker {
         }
 
         val currentImageFullPath = getImagePath(currentImageUrl)
-        val url = if (imageExists(currentImageFullPath)) {
-            currentImageFullPath
-        } else {
-            noImageUrl
-        }
 
-        var imageUri by remember {
-            mutableStateOf<Uri>(Uri.parse(url))
-        }
+        val imageUri = Uri.parse(
+            if (imageExists(currentImageFullPath)) {
+                currentImageFullPath
+            } else {
+                noImageUrl
+            }
+        )
+
 
         var cameraUri by remember {
             mutableStateOf<Uri?>(null)
@@ -74,8 +75,7 @@ object ImageFilePicker {
             contract = ActivityResultContracts.GetContent()
         ) { uri: Uri? ->
             if (uri != null) {
-                imageUri = uri
-                onImageSelected(imageUri)
+                onImageSelected(uri)
             }
         }
 
@@ -83,16 +83,16 @@ object ImageFilePicker {
             contract = ActivityResultContracts.TakePicture()
         ) { success ->
             if (success && cameraUri != null) {
-                imageUri = cameraUri!!
-                onImageSelected(imageUri)
+                onImageSelected(cameraUri!!)
             }
         }
 
         val source = remember { MutableInteractionSource() }
 
         Column(modifier = Modifier.padding(top = 10.dp)) {
-            GlideImage(imageModel = imageUri,
-                Modifier
+            AsyncImage(model = imageUri, "",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
                     .height(200.dp)

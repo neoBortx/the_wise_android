@@ -40,7 +40,7 @@ class OptionFormViewModel @Inject constructor(
 
         state = state.copy(
             option = opt?.copy(electionId = electionId)
-                ?: Option.getEmpty().copy(electionId = electionId, imageUrl = getImageName())
+                ?: Option.getEmpty().copy(electionId = electionId)
         )
 
         viewModelScope.launch {
@@ -62,11 +62,11 @@ class OptionFormViewModel @Inject constructor(
         updateButtonVisibility()
     }
 
-    private fun saveBitMap(image: Uri) {
+    private fun saveBitMap(image: Uri, destiny: String) {
         val input =
             getApplication<Application>().applicationContext.contentResolver.openInputStream(image)
         getApplication<Application>().applicationContext.openFileOutput(
-            state.option.imageUrl,
+            destiny,
             Context.MODE_PRIVATE
         ).use {
             val buffer = ByteArray(4 * 1024) // buffer size
@@ -83,9 +83,10 @@ class OptionFormViewModel @Inject constructor(
     }
 
     fun setImage(image: Uri) {
-        state.option.imageUrl.ifBlank {
-            state = state.copy(option = state.option.copy(imageUrl = getImageName()))
-        }
+
+        val newImage = getImageName()
+        saveBitMap(image, newImage)
+        state = state.copy(option = state.option.copy(imageUrl = newImage))
         configuredImage = image
         updateButtonVisibility()
     }
@@ -94,7 +95,6 @@ class OptionFormViewModel @Inject constructor(
         Log.i("Option", "Creating a new option ${state.option.name}")
         viewModelScope.launch {
             optionsService.addOption(state.option)
-            configuredImage?.let { saveBitMap(it) }
             clearOption()
         }
     }

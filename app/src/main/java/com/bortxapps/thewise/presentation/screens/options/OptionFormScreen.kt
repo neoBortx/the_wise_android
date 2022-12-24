@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bortxapps.application.pokos.Condition
+import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.components.BottomButton.GetBottomButton
 import com.bortxapps.thewise.presentation.components.conditions.ConditionsSelectionControl
@@ -53,17 +54,15 @@ fun OptionFormScreen(
 
 @Composable
 fun OptionFormFields(
-    imageUrl: String,
-    name: String,
+    option: Option,
     onNameChanged: (String) -> Unit,
     onImageChanged: (Uri) -> Unit,
     snackBarHostState: SnackbarHostState,
     scope: CoroutineScope,
     enabledForm: Boolean
 ) {
-    val nameLabel = stringResource(id = R.string.name_option)
-    ImagePickerField(imageUrl, onImageChanged, snackBarHostState, scope, enabledForm)
-    NoEmptyTextField(nameLabel, name, onNameChanged)
+    ImagePickerField(option.imageUrl, onImageChanged, snackBarHostState, scope, enabledForm)
+    NoEmptyTextField(stringResource(id = R.string.name_option), option.name, onNameChanged)
 }
 
 @Composable
@@ -100,8 +99,7 @@ fun OptionForm(
         ) {
             FormDragControl()
             OptionFormFields(
-                imageUrl = state.option.imageUrl,
-                name = state.option.name,
+                option = state.option,
                 onNameChanged = onNameChanged,
                 onImageChanged = onImageChanged,
                 snackBarHostState = snackBarHostState,
