@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.pokos.ConditionWeight
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
@@ -28,6 +27,7 @@ import com.bortxapps.thewise.presentation.components.conditions.ConditionsConfig
 import com.bortxapps.thewise.presentation.components.form.FormDragControl
 import com.bortxapps.thewise.presentation.components.form.NoEmptyTextField
 import com.bortxapps.thewise.presentation.components.form.RegularTextField
+import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormState
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import kotlinx.coroutines.launch
 
@@ -45,9 +45,7 @@ fun ElectionFormScreen(
         onSetDescription = { electionFormViewModel.setDescription(it) },
         onAddCondition = { name, weight -> electionFormViewModel.addCondition(name, weight) },
         onDeleteCondition = { electionFormViewModel.deleteCondition(it) },
-        election = electionFormViewModel.election,
-        conditions = electionFormViewModel.conditions,
-        isButtonEnabled = electionFormViewModel.isButtonEnabled
+        electionFormState = electionFormViewModel.state
     )
 }
 
@@ -60,9 +58,8 @@ fun DrawElectionFormScreenScaffold(
     onSetDescription: (String) -> Unit,
     onAddCondition: (String, ConditionWeight) -> Unit,
     onDeleteCondition: (Long) -> Unit,
-    election: Election,
-    conditions: List<Condition>,
-    isButtonEnabled: Boolean
+    electionFormState: ElectionFormState
+
 ) {
     val nameLabel = stringResource(id = R.string.name)
     val descLabel = stringResource(id = R.string.description)
@@ -84,10 +81,10 @@ fun DrawElectionFormScreenScaffold(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             FormDragControl()
-            NoEmptyTextField(nameLabel, election.name) { name ->
+            NoEmptyTextField(nameLabel, electionFormState.election.name) { name ->
                 onSetName(name)
             }
-            RegularTextField(descLabel, election.description) { desc ->
+            RegularTextField(descLabel, electionFormState.election.description) { desc ->
                 onSetDescription(desc)
             }
             Text(
@@ -99,7 +96,7 @@ fun DrawElectionFormScreenScaffold(
                 color = colorResource(id = R.color.dark_text)
             )
             ConditionsConfigurationControl(
-                conditions,
+                electionFormState.configuredConditions,
                 onConditionAdded = { name, weight ->
                     onAddCondition(name, weight)
                 },
@@ -114,7 +111,7 @@ fun DrawElectionFormScreenScaffold(
                     }
                 },
                 R.string.save_election,
-                isButtonEnabled
+                electionFormState.isButtonEnabled
             )
         }
     }
@@ -132,8 +129,6 @@ fun ShowPreview() {
         onSetDescription = { },
         onAddCondition = { _, _ -> },
         onDeleteCondition = { },
-        election = Election.getEmpty(),
-        conditions = listOf(),
-        isButtonEnabled = true
+        electionFormState = ElectionFormState(Election.getEmpty(), listOf(), false),
     )
 }

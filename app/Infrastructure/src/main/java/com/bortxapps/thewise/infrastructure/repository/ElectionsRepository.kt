@@ -17,7 +17,7 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
         try {
             return electionDao.getElection(electionId)
         } catch (ex: Exception) {
-            Log.e("Conditions", "Error getting Election $electionId because ${ex.message}")
+            Log.e("Elections", "Error getting Election $electionId because ${ex.message}")
             ex.printStackTrace()
             throw ex
         }
@@ -27,7 +27,7 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
         try {
             return electionDao.addElection(election)
         } catch (ex: Exception) {
-            Log.e("Conditions", "Error adding Election because ${ex.message}")
+            Log.e("Elections", "Error adding Election because ${ex.message}")
             ex.printStackTrace()
             throw ex
         }
@@ -38,7 +38,7 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
             return electionDao.deleteElection(election)
         } catch (ex: Exception) {
             Log.e(
-                "Conditions",
+                "Elections",
                 "Error deleting Election ${election.electId} because ${ex.message}"
             )
             ex.printStackTrace()

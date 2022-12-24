@@ -16,22 +16,14 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+
 @HiltViewModel
 class ElectionFormViewModel @Inject constructor(
     private val electionsService: IElectionsAppService,
     private val conditionsService: IConditionsAppService
 ) : ViewModel() {
 
-    var election by mutableStateOf(Election.getEmpty())
-        private set
-
-    var isButtonEnabled by mutableStateOf(false)
-        private set
-
-    var conditions by mutableStateOf(listOf<Condition>())
-        private set
-
-    private var oldConditions = listOf<Condition>()
+    var state by mutableStateOf(ElectionFormState(Election.getEmpty(), listOf(), false))
 
     private var updateExistingElection = false
 
@@ -41,73 +33,83 @@ class ElectionFormViewModel @Inject constructor(
             updateExistingElection = true
             viewModelScope.launch {
                 electionsService.getElection(electionId).collect {
-                    election = it
+                    state = state.copy(election = it, configuredConditions = it.conditions)
                 }
             }
         } else {
             updateExistingElection = false
-            election = Election(id = UUID.randomUUID().mostSignificantBits, "", "", listOf())
-        }
-
-        getConditions(election.id)
-    }
-
-    private fun getConditions(electionId: Long) {
-
-        viewModelScope.launch {
-            conditionsService.getConditionsFromElection(electionId = electionId).collect {
-                conditions = it
-                oldConditions = it
-            }
+            state = state.copy(
+                election = Election(
+                    id = UUID.randomUUID().mostSignificantBits,
+                    "",
+                    "",
+                    listOf(),
+                    listOf()
+                ),
+                configuredConditions = listOf(),
+                isButtonEnabled = false
+            )
         }
     }
 
     fun addCondition(conditionName: String, weight: ConditionWeight) {
-        conditions = conditions + Condition(
-            id = UUID.randomUUID().mostSignificantBits,
-            electionId = election.id,
-            name = conditionName,
-            weight = weight
+        state = state.copy(
+            configuredConditions = state.configuredConditions + Condition(
+                id = UUID.randomUUID().mostSignificantBits,
+                electionId = state.election.id,
+                name = conditionName,
+                weight = weight
+            )
         )
-
-        isButtonEnabled = election.name.isNotBlank() && conditions.count() >= 2
+        updateButtonVisibility()
     }
 
     fun deleteCondition(conditionId: Long) {
-        conditions = conditions.filter { condition -> condition.id != conditionId }
+        state = state.copy(
+            configuredConditions = state.configuredConditions.filter { condition -> condition.id != conditionId }
+        )
+        updateButtonVisibility()
     }
 
     private fun clearElection() {
-        election = Election.getEmpty()
-        conditions = listOf()
-        oldConditions = listOf()
+        state = ElectionFormState(Election.getEmpty(), listOf(), false)
     }
 
     fun setName(name: String) {
-        election = election.copy(name = name)
-        isButtonEnabled = conditions.count() >= 2 && election.name.isNotBlank()
+        state = state.copy(election = state.election.copy(name = name))
+        updateButtonVisibility()
     }
 
     fun setDescription(description: String) {
-        election = election.copy(description = description)
+        state = state.copy(election = state.election.copy(description = description))
+        updateButtonVisibility()
+    }
+
+    fun updateButtonVisibility() {
+        state = state.copy(
+            isButtonEnabled = state.configuredConditions.count() >= 2 && state.election.name.isNotBlank()
+        )
     }
 
     fun createNewElection() {
 
         viewModelScope.launch {
             if (updateExistingElection) {
-                Log.i("Election", "Updating election ${election.name} - ${election.id}")
-                electionsService.updateElection(election)
+                Log.i("Election", "Updating election ${state.election.name} - ${state.election.id}")
+                electionsService.updateElection(state.election)
             } else {
-                Log.i("Election", "Creating a new election ${election.name} - ${election.id}")
-                election = election.copy(id = electionsService.addElection(election))
+                Log.i(
+                    "Election",
+                    "Creating a new election ${state.election.name} - ${state.election.id}"
+                )
+                electionsService.addElection(state.election)
             }
 
-            conditions.filterNot { oldConditions.contains(it) }
-                .forEach { conditionsService.addCondition(it.copy(electionId = election.id)) }
+            state.configuredConditions.filterNot { state.election.conditions.contains(it) }
+                .forEach { conditionsService.addCondition(it.copy(electionId = state.election.id)) }
 
-            oldConditions.filterNot { conditions.contains(it) }
-                .forEach { conditionsService.deleteCondition(it.copy(electionId = election.id)) }
+            state.election.conditions.filterNot { state.configuredConditions.contains(it) }
+                .forEach { conditionsService.deleteCondition(it.copy(electionId = state.election.id)) }
 
             clearElection()
         }
