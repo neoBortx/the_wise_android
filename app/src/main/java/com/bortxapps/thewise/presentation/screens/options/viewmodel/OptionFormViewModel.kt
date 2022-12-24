@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
@@ -26,47 +25,48 @@ class OptionFormViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    var isButtonEnabled by mutableStateOf(false)
-        private set
-
-    var option by mutableStateOf(Option.getEmpty().copy(imageUrl = getImageName()))
-        private set
-
-    val configuredConditions = mutableStateListOf<Condition>()
-
-    var allConditions by mutableStateOf(listOf<Condition>())
+    var state by mutableStateOf(
+        OptionFormState(
+            Option.getEmpty(),
+            listOf(),
+            false
+        )
+    )
         private set
 
     private var configuredImage: Uri? = null
 
     fun configureOption(opt: Option?, electionId: Long) {
 
-        this.option = opt?.copy(electionId = electionId)
-            ?: Option.getEmpty().copy(electionId = electionId, imageUrl = getImageName())
+        state = state.copy(
+            option = opt?.copy(electionId = electionId)
+                ?: Option.getEmpty().copy(electionId = electionId, imageUrl = getImageName())
+        )
 
         viewModelScope.launch {
             getConditions(electionId)
-            configuredConditions.clear()
-            configuredConditions.addAll(allConditions.filter { option.matchingConditions.contains(it) })
         }
     }
 
     private fun clearOption() {
-        option = Option.getEmpty().copy(imageUrl = getImageName())
+        state = OptionFormState(
+            Option.getEmpty(),
+            listOf(),
+            false
+        )
         configuredImage = null
-        configuredConditions.clear()
     }
 
     fun setName(name: String) {
-        option = option.copy(name = name)
-        isButtonEnabled = option.name.isNotBlank() && configuredConditions.any()
+        state = state.copy(option = state.option.copy(name = name))
+        updateButtonVisibility()
     }
 
     private fun saveBitMap(image: Uri) {
         val input =
             getApplication<Application>().applicationContext.contentResolver.openInputStream(image)
         getApplication<Application>().applicationContext.openFileOutput(
-            option.imageUrl,
+            state.option.imageUrl,
             Context.MODE_PRIVATE
         ).use {
             val buffer = ByteArray(4 * 1024) // buffer size
@@ -83,16 +83,17 @@ class OptionFormViewModel @Inject constructor(
     }
 
     fun setImage(image: Uri) {
-        option.imageUrl.ifBlank {
-            option = option.copy(imageUrl = getImageName())
+        state.option.imageUrl.ifBlank {
+            state = state.copy(option = state.option.copy(imageUrl = getImageName()))
         }
         configuredImage = image
+        updateButtonVisibility()
     }
 
     fun createNewOption() {
-        Log.i("Option", "Creating a new option ${option.name}")
+        Log.i("Option", "Creating a new option ${state.option.name}")
         viewModelScope.launch {
-            optionsService.addOption(option)
+            optionsService.addOption(state.option)
             configuredImage?.let { saveBitMap(it) }
             clearOption()
         }
@@ -100,25 +101,33 @@ class OptionFormViewModel @Inject constructor(
 
     fun selectCondition(selected: Boolean, condition: Condition) {
         if (selected) {
-            if (!configuredConditions.contains(condition)) {
-                configuredConditions.add(condition)
+            if (!state.option.matchingConditions.contains(condition)) {
+                state =
+                    state.copy(option = state.option.copy(matchingConditions = state.option.matchingConditions + condition))
             }
         } else {
-            if (configuredConditions.contains(condition)) {
-                configuredConditions.remove(condition)
+            if (state.option.matchingConditions.contains(condition)) {
+                state =
+                    state.copy(
+                        option = state.option.copy(
+                            matchingConditions = state.option.matchingConditions.filterNot { it == condition })
+                    )
             }
         }
 
-        option = option.copy(matchingConditions = configuredConditions)
+        updateButtonVisibility()
+    }
 
-        isButtonEnabled = option.name.isNotBlank() && configuredConditions.any()
+    private fun updateButtonVisibility() {
+        state =
+            state.copy(isButtonEnabled = state.option.name.isNotBlank() && state.option.matchingConditions.any())
     }
 
     private fun getConditions(electionId: Long) {
 
         viewModelScope.launch {
             conditionsService.getConditionsFromElection(electionId = electionId).collect {
-                allConditions = it
+                state = state.copy(allConditions = it)
             }
         }
     }

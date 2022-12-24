@@ -24,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bortxapps.application.pokos.Condition
-import com.bortxapps.application.pokos.Option
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.components.BottomButton.GetBottomButton
 import com.bortxapps.thewise.presentation.components.conditions.ConditionsSelectionControl
@@ -32,6 +31,7 @@ import com.bortxapps.thewise.presentation.components.form.FormDragControl
 import com.bortxapps.thewise.presentation.components.form.ImageFilePicker.ImagePickerField
 import com.bortxapps.thewise.presentation.components.form.NoEmptyTextField
 import com.bortxapps.thewise.presentation.components.text.TextError.GetTextError
+import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormState
 import com.bortxapps.thewise.presentation.screens.options.viewmodel.OptionFormViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -44,13 +44,10 @@ fun OptionFormScreen(
     OptionForm(
         onCreateNewOption = { formViewModel.createNewOption() },
         formCompletedCallback = formCompletedCallback,
-        option = formViewModel.option,
+        state = formViewModel.state,
         onNameChanged = { name -> formViewModel.setName(name) },
         onImageChanged = { image -> formViewModel.setImage(image) },
-        onConditionSelected = { sel, cond -> formViewModel.selectCondition(sel, cond) },
-        isButtonEnabled = formViewModel.isButtonEnabled,
-        allConditions = formViewModel.allConditions,
-        configuredConditions = formViewModel.configuredConditions
+        onConditionSelected = { sel, cond -> formViewModel.selectCondition(sel, cond) }
     )
 }
 
@@ -73,13 +70,10 @@ fun OptionFormFields(
 fun OptionForm(
     onCreateNewOption: () -> Unit,
     formCompletedCallback: () -> Unit,
-    option: Option,
+    state: OptionFormState,
     onNameChanged: (String) -> Unit,
     onImageChanged: (Uri) -> Unit,
-    allConditions: List<Condition>,
-    configuredConditions: List<Condition>,
     onConditionSelected: (Boolean, Condition) -> Unit,
-    isButtonEnabled: Boolean
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     var enabledForm by remember { mutableStateOf(true) }
@@ -106,8 +100,8 @@ fun OptionForm(
         ) {
             FormDragControl()
             OptionFormFields(
-                imageUrl = option.imageUrl,
-                name = option.name,
+                imageUrl = state.option.imageUrl,
+                name = state.option.name,
                 onNameChanged = onNameChanged,
                 onImageChanged = onImageChanged,
                 snackBarHostState = snackBarHostState,
@@ -123,12 +117,12 @@ fun OptionForm(
                     .fillMaxWidth(),
                 color = colorResource(id = R.color.dark_text)
             )
-            if (configuredConditions.isEmpty()) {
+            if (state.option.matchingConditions.isEmpty()) {
                 GetTextError(stringResource(R.string.tooltip_select_requisites))
             }
             ConditionsSelectionControl(
-                allConditions = allConditions,
-                conditionsConfigured = configuredConditions,
+                allConditions = state.allConditions,
+                conditionsConfigured = state.option.matchingConditions,
                 onConditionSelected = onConditionSelected
             )
             Spacer(Modifier.weight(1f, false))
@@ -139,7 +133,7 @@ fun OptionForm(
                     }
                 },
                 R.string.save_option,
-                isButtonEnabled
+                state.isButtonEnabled
             )
         }
     }

@@ -85,7 +85,7 @@ class ElectionFormViewModel @Inject constructor(
         updateButtonVisibility()
     }
 
-    fun updateButtonVisibility() {
+    private fun updateButtonVisibility() {
         state = state.copy(
             isButtonEnabled = state.configuredConditions.count() >= 2 && state.election.name.isNotBlank()
         )
