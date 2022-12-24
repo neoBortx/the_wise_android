@@ -12,11 +12,8 @@ import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -59,9 +56,8 @@ fun OptionFormFields(
     onImageChanged: (Uri) -> Unit,
     snackBarHostState: SnackbarHostState,
     scope: CoroutineScope,
-    enabledForm: Boolean
 ) {
-    ImagePickerField(option.imageUrl, onImageChanged, snackBarHostState, scope, enabledForm)
+    ImagePickerField(option.imageUrl, onImageChanged, snackBarHostState, scope)
     NoEmptyTextField(stringResource(id = R.string.name_option), option.name, onNameChanged)
 }
 
@@ -75,11 +71,9 @@ fun OptionForm(
     onConditionSelected: (Boolean, Condition) -> Unit,
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
-    var enabledForm by remember { mutableStateOf(true) }
 
     fun onButtonFormClick() {
         onCreateNewOption()
-        enabledForm = false
         formCompletedCallback()
     }
 
@@ -103,8 +97,7 @@ fun OptionForm(
                 onNameChanged = onNameChanged,
                 onImageChanged = onImageChanged,
                 snackBarHostState = snackBarHostState,
-                scope = scope,
-                enabledForm = enabledForm
+                scope = scope
             )
 
             Text(

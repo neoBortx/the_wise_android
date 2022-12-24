@@ -7,7 +7,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,11 +43,14 @@ object ImageFilePicker {
         currentImageUrl: String,
         onImageSelected: (Uri) -> Unit,
         snackBarHostState: SnackbarHostState,
-        scope: CoroutineScope,
-        enabled: Boolean
+        scope: CoroutineScope
     ) {
         val context = LocalContext.current
         var enablePhotos by remember {
+            mutableStateOf(false)
+        }
+
+        var askPermissions by remember {
             mutableStateOf(false)
         }
 
@@ -87,8 +89,6 @@ object ImageFilePicker {
             }
         }
 
-        val source = remember { MutableInteractionSource() }
-
         Column(modifier = Modifier.padding(top = 10.dp)) {
             AsyncImage(model = imageUri, "",
                 contentScale = ContentScale.FillBounds,
@@ -97,12 +97,14 @@ object ImageFilePicker {
                     .padding(horizontal = 10.dp)
                     .height(200.dp)
                     .clickable(
-                        interactionSource = source,
+                        interactionSource = MutableInteractionSource(),
                         indication = LocalIndication.current
-                    ) {})
+                    ) {
+                        askPermissions = true
+                    })
         }
 
-        if (showPhotoDialog && enabled) {
+        if (showPhotoDialog) {
             TakeDialog(
                 closeCallBack = { showPhotoDialog = false },
                 photoCallBack = {
@@ -114,17 +116,20 @@ object ImageFilePicker {
             )
         }
 
-        if (source.collectIsPressedAsState().value) {
+        if (askPermissions) {
             RequestSinglePermission(
-                permissionData = PermissionData(permission = Manifest.permission.CAMERA,
+                permissionData = PermissionData(
+                    permission = Manifest.permission.CAMERA,
                     rationaleMessage = stringResource(R.string.rationale_message),
                     dismissMessage = stringResource(R.string.dismiss_permissions_message),
                     checkPermissionsActionMessage = stringResource(R.string.check_permissions),
                     onAccepted = {
+                        askPermissions = false
                         enablePhotos = true
                         showPhotoDialog = true
                     },
                     onDismiss = {
+                        askPermissions = false
                         enablePhotos = false
                         showPhotoDialog = true
                     }),
