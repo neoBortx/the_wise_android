@@ -1,9 +1,10 @@
-package com.bortxapps.thewise.domain.model
+package com.bortxapps.thewise.infrastructure.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.bortxapps.thewise.domain.model.IConditionEntity
 
 @Entity(
     indices = [Index("condId"), Index("electionId")],
@@ -18,8 +19,8 @@ import androidx.room.PrimaryKey
     tableName = "condition"
 )
 data class ConditionEntity(
-    @PrimaryKey(autoGenerate = true) val condId: Long,
-    val electionId: Long,
-    val name: String,
-    val weight: Int
-)
+    @PrimaryKey(autoGenerate = true) override val condId: Long,
+    override val electionId: Long,
+    override val name: String,
+    override val weight: Int
+) : IConditionEntity

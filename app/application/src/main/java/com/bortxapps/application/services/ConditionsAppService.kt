@@ -4,7 +4,7 @@ import com.bortxapps.application.contracts.service.IConditionsAppService
 import com.bortxapps.application.pokos.Condition
 import com.bortxapps.application.translators.fromEntity
 import com.bortxapps.application.translators.toEntity
-import com.bortxapps.thewise.domain.contrats.service.IConditionsDomainService
+import com.bortxapps.thewise.domain.serivces.IConditionsDomainService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

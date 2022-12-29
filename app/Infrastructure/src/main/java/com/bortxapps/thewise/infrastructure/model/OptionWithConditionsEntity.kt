@@ -1,15 +1,16 @@
-package com.bortxapps.thewise.domain.model
+package com.bortxapps.thewise.infrastructure.model
 
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import com.bortxapps.thewise.domain.model.IOptionWithConditionsEntity
 
 data class OptionWithConditionsEntity(
-    @Embedded val option: OptionEntity,
+    @Embedded override val option: OptionEntity,
     @Relation(
         parentColumn = "optId",
         entityColumn = "condId",
         associateBy = Junction(ConditionInOptionCrossRef::class)
     )
-    val conditions: List<ConditionEntity>
-)
+    override val conditions: List<ConditionEntity>
+) : IOptionWithConditionsEntity

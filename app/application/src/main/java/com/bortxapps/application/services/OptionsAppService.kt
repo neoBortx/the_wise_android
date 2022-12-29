@@ -5,7 +5,7 @@ import com.bortxapps.application.pokos.Option
 import com.bortxapps.application.translators.fromEntity
 import com.bortxapps.application.translators.toEntity
 import com.bortxapps.application.translators.toSimpleEntity
-import com.bortxapps.thewise.domain.contrats.service.IOptionsDomainService
+import com.bortxapps.thewise.domain.serivces.IOptionsDomainService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

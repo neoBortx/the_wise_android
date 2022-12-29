@@ -1,20 +1,21 @@
-package com.bortxapps.thewise.domain.model
+package com.bortxapps.thewise.infrastructure.model
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.bortxapps.thewise.domain.model.IElectionWithOptions
 
 data class ElectionWithOptions(
-    @Embedded val election: ElectionEntity,
+    @Embedded override val election: ElectionEntity,
     @Relation(
         entity = OptionEntity::class,
         parentColumn = "electId",
         entityColumn = "electionId"
     )
-    val options: List<OptionWithConditionsEntity>,
+    override val options: List<OptionWithConditionsEntity>,
     @Relation(
         entity = ConditionEntity::class,
         parentColumn = "electId",
         entityColumn = "electionId"
     )
-    val conditions: List<ConditionEntity>,
-)
+    override val conditions: List<ConditionEntity>,
+) : IElectionWithOptions

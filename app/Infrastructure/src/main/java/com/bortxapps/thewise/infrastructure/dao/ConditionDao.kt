@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.bortxapps.thewise.domain.model.ConditionEntity
+import com.bortxapps.thewise.infrastructure.model.ConditionEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

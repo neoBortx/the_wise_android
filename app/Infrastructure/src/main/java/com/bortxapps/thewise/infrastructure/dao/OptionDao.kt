@@ -7,9 +7,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.bortxapps.thewise.domain.model.ConditionInOptionCrossRef
-import com.bortxapps.thewise.domain.model.OptionEntity
-import com.bortxapps.thewise.domain.model.OptionWithConditionsEntity
+import com.bortxapps.thewise.infrastructure.model.ConditionInOptionCrossRef
+import com.bortxapps.thewise.infrastructure.model.OptionEntity
+import com.bortxapps.thewise.infrastructure.model.OptionWithConditionsEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

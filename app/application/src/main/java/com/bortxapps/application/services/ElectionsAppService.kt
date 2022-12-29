@@ -4,7 +4,7 @@ import com.bortxapps.application.contracts.service.IElectionsAppService
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.application.translators.fromEntity
 import com.bortxapps.application.translators.toEntity
-import com.bortxapps.thewise.domain.contrats.service.IElectionsDomainService
+import com.bortxapps.thewise.domain.serivces.IElectionsDomainService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

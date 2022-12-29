@@ -1,9 +1,10 @@
-package com.bortxapps.thewise.domain.model
+package com.bortxapps.thewise.infrastructure.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.bortxapps.thewise.domain.model.IOptionEntity
 
 @Entity(
     indices = [Index("optId"), Index("electionId")], foreignKeys = [ForeignKey(
@@ -14,8 +15,8 @@ import androidx.room.PrimaryKey
     )], tableName = "option"
 )
 data class OptionEntity(
-    @PrimaryKey(autoGenerate = true) val optId: Long,
-    val electionId: Long,
-    val name: String,
-    val imageUrl: String
-)
+    @PrimaryKey(autoGenerate = true) override val optId: Long,
+    override val electionId: Long,
+    override val name: String,
+    override val imageUrl: String
+) : IOptionEntity

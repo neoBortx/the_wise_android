@@ -1,10 +1,10 @@
 package com.bortxapps.application.translators
 
 import com.bortxapps.application.pokos.Election
-import com.bortxapps.thewise.domain.model.ElectionEntity
-import com.bortxapps.thewise.domain.model.ElectionWithOptions
+import com.bortxapps.thewise.domain.model.IElectionEntity
+import com.bortxapps.thewise.domain.model.IElectionWithOptions
 
-fun ElectionWithOptions.fromEntity() =
+fun IElectionWithOptions.fromEntity() =
     Election(
         election.electId,
         election.name,
@@ -13,4 +13,14 @@ fun ElectionWithOptions.fromEntity() =
         conditions.map { it.fromEntity() }
     )
 
-fun Election.toEntity() = ElectionEntity(id, name, description)
+fun Election.toEntity(): IElectionEntity {
+    val elect = this
+    return object : IElectionEntity {
+        override val electId: Long
+            get() = elect.id
+        override val name: String
+            get() = elect.name
+        override val description: String
+            get() = elect.description
+    }
+}

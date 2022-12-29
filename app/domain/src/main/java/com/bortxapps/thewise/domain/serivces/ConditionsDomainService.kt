@@ -1,8 +1,7 @@
 package com.bortxapps.thewise.domain.serivces
 
-import com.bortxapps.thewise.domain.contrats.repository.IConditionsRepository
-import com.bortxapps.thewise.domain.contrats.service.IConditionsDomainService
-import com.bortxapps.thewise.domain.model.ConditionEntity
+import com.bortxapps.thewise.domain.model.IConditionEntity
+import com.bortxapps.thewise.domain.repository.IConditionsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -11,26 +10,23 @@ class ConditionsDomainService @Inject constructor(private val conditionsReposito
 
     override val allConditions = conditionsRepository.allConditions
 
-    override suspend fun addCondition(condition: ConditionEntity) {
+    override suspend fun addCondition(condition: IConditionEntity) {
         conditionsRepository.addCondition(condition)
     }
 
-    override suspend fun getCondition(conditionId: Long): ConditionEntity? {
+    override suspend fun getCondition(conditionId: Long): IConditionEntity? {
         return conditionsRepository.getCondition(conditionId)
     }
 
-    override fun getConditionsFromElection(electionId: Long): Flow<List<ConditionEntity>>
-    {
+    override fun getConditionsFromElection(electionId: Long): Flow<List<IConditionEntity>> {
         return conditionsRepository.getConditionsFromElection(electionId)
     }
 
-    override suspend fun deleteCondition(condition: ConditionEntity)
-    {
+    override suspend fun deleteCondition(condition: IConditionEntity) {
         conditionsRepository.deleteCondition(condition)
     }
 
-    override suspend fun updateCondition(condition: ConditionEntity)
-    {
+    override suspend fun updateCondition(condition: IConditionEntity) {
         conditionsRepository.updateCondition(condition)
     }
 }

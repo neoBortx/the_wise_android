@@ -7,8 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.bortxapps.thewise.domain.model.ElectionEntity
-import com.bortxapps.thewise.domain.model.ElectionWithOptions
+import com.bortxapps.thewise.infrastructure.model.ElectionEntity
+import com.bortxapps.thewise.infrastructure.model.ElectionWithOptions
 import kotlinx.coroutines.flow.Flow
 
 @Dao

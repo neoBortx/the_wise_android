@@ -1,36 +1,33 @@
 package com.bortxapps.thewise.domain.serivces
 
-import com.bortxapps.thewise.domain.contrats.repository.IOptionsRepository
-import com.bortxapps.thewise.domain.contrats.service.IOptionsDomainService
-import com.bortxapps.thewise.domain.model.OptionEntity
-import com.bortxapps.thewise.domain.model.OptionWithConditionsEntity
+import com.bortxapps.thewise.domain.model.IOptionEntity
+import com.bortxapps.thewise.domain.model.IOptionWithConditionsEntity
+import com.bortxapps.thewise.domain.repository.IOptionsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class OptionsDomainService @Inject constructor(private val optionsRepository: IOptionsRepository) :
     IOptionsDomainService {
 
-    override fun getOptionsFromElection(electionId: Long): Flow<List<OptionWithConditionsEntity>> {
+    override fun getOptionsFromElection(electionId: Long): Flow<List<IOptionWithConditionsEntity>> {
         return optionsRepository.getOptionsFromElection(electionId)
     }
 
-    override suspend fun addOption(option: OptionWithConditionsEntity) {
+    override suspend fun addOption(option: IOptionWithConditionsEntity) {
         optionsRepository.addOption(option)
     }
 
-    override suspend fun getOption(optionId: Long): OptionWithConditionsEntity?
-    {
+    override suspend fun getOption(optionId: Long): IOptionWithConditionsEntity? {
         return optionsRepository.getOption(optionId)
     }
 
     override val allOptions = optionsRepository.allOptions
 
-    override suspend fun deleteOption(option: OptionEntity)
-    {
+    override suspend fun deleteOption(option: IOptionEntity) {
         optionsRepository.deleteOption(option)
     }
 
-    override suspend fun updateOption(option: OptionWithConditionsEntity) {
+    override suspend fun updateOption(option: IOptionWithConditionsEntity) {
         optionsRepository.updateOption(option)
     }
 }

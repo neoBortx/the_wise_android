@@ -1,10 +1,11 @@
 package com.bortxapps.thewise.infrastructure.repository
 
 import android.util.Log
-import com.bortxapps.thewise.domain.contrats.repository.IElectionsRepository
-import com.bortxapps.thewise.domain.model.ElectionEntity
-import com.bortxapps.thewise.domain.model.ElectionWithOptions
+import com.bortxapps.thewise.domain.model.IElectionEntity
+import com.bortxapps.thewise.domain.model.IElectionWithOptions
+import com.bortxapps.thewise.domain.repository.IElectionsRepository
 import com.bortxapps.thewise.infrastructure.dao.ElectionDao
+import com.bortxapps.thewise.infrastructure.model.translators.toEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -13,7 +14,7 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
 
     override val allElections = electionDao.getElections()
 
-    override fun getElection(electionId: Long): Flow<ElectionWithOptions?> {
+    override fun getElection(electionId: Long): Flow<IElectionWithOptions?> {
         try {
             return electionDao.getElection(electionId)
         } catch (ex: Exception) {
@@ -23,9 +24,9 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
         }
     }
 
-    override suspend fun addElection(election: ElectionEntity): Long {
+    override suspend fun addElection(election: IElectionEntity): Long {
         try {
-            return electionDao.addElection(election)
+            return electionDao.addElection(election.toEntity())
         } catch (ex: Exception) {
             Log.e("Elections", "Error adding Election because ${ex.message}")
             ex.printStackTrace()
@@ -33,9 +34,9 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
         }
     }
 
-    override suspend fun deleteElection(election: ElectionEntity) {
+    override suspend fun deleteElection(election: IElectionEntity) {
         try {
-            return electionDao.deleteElection(election)
+            return electionDao.deleteElection(election.toEntity())
         } catch (ex: Exception) {
             Log.e(
                 "Elections",
@@ -46,9 +47,9 @@ class ElectionsRepository @Inject constructor(private val electionDao: ElectionD
         }
     }
 
-    override suspend fun updateElection(election: ElectionEntity) {
+    override suspend fun updateElection(election: IElectionEntity) {
         try {
-            return electionDao.updateElection(election)
+            return electionDao.updateElection(election.toEntity())
         } catch (ex: Exception) {
             Log.e(
                 "Conditions",

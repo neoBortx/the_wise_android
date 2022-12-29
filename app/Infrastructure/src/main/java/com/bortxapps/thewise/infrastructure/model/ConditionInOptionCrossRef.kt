@@ -1,4 +1,4 @@
-package com.bortxapps.thewise.domain.model
+package com.bortxapps.thewise.infrastructure.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

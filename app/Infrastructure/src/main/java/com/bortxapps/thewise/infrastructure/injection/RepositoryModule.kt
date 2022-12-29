@@ -1,8 +1,8 @@
 package com.bortxapps.thewise.infrastructure.injection
 
-import com.bortxapps.thewise.domain.contrats.repository.IConditionsRepository
-import com.bortxapps.thewise.domain.contrats.repository.IElectionsRepository
-import com.bortxapps.thewise.domain.contrats.repository.IOptionsRepository
+import com.bortxapps.thewise.domain.repository.IConditionsRepository
+import com.bortxapps.thewise.domain.repository.IElectionsRepository
+import com.bortxapps.thewise.domain.repository.IOptionsRepository
 import com.bortxapps.thewise.infrastructure.repository.ConditionsRepository
 import com.bortxapps.thewise.infrastructure.repository.ElectionsRepository
 import com.bortxapps.thewise.infrastructure.repository.OptionsRepository

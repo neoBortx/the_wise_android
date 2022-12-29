@@ -2,11 +2,12 @@ package com.bortxapps.thewise.infrastructure.repository
 
 import android.util.Log
 import androidx.room.Transaction
-import com.bortxapps.thewise.domain.contrats.repository.IOptionsRepository
-import com.bortxapps.thewise.domain.model.ConditionInOptionCrossRef
-import com.bortxapps.thewise.domain.model.OptionEntity
-import com.bortxapps.thewise.domain.model.OptionWithConditionsEntity
+import com.bortxapps.thewise.domain.model.IOptionEntity
+import com.bortxapps.thewise.domain.model.IOptionWithConditionsEntity
+import com.bortxapps.thewise.domain.repository.IOptionsRepository
 import com.bortxapps.thewise.infrastructure.dao.OptionDao
+import com.bortxapps.thewise.infrastructure.model.ConditionInOptionCrossRef
+import com.bortxapps.thewise.infrastructure.model.translators.toEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -15,7 +16,7 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
 
     override val allOptions = optionDao.getOptions()
 
-    override fun getOptionsFromElection(electionId: Long): Flow<List<OptionWithConditionsEntity>> {
+    override fun getOptionsFromElection(electionId: Long): Flow<List<IOptionWithConditionsEntity>> {
         try {
             return optionDao.getOptionsFromElection(electionId)
         } catch (ex: Exception) {
@@ -29,9 +30,9 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
     }
 
     @Transaction
-    override suspend fun addOption(option: OptionWithConditionsEntity) {
+    override suspend fun addOption(option: IOptionWithConditionsEntity) {
         try {
-            val optionId = optionDao.addOption(option.option)
+            val optionId = optionDao.addOption(option.option.toEntity())
             option.conditions.forEach {
                 optionDao.insertConditionInOption(
                     ConditionInOptionCrossRef(
@@ -48,7 +49,7 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
         }
     }
 
-    override suspend fun getOption(optionId: Long): OptionWithConditionsEntity? {
+    override suspend fun getOption(optionId: Long): IOptionWithConditionsEntity? {
         try {
             return optionDao.getOption(optionId)
         } catch (ex: Exception) {
@@ -58,9 +59,9 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
         }
     }
 
-    override suspend fun deleteOption(option: OptionEntity) {
+    override suspend fun deleteOption(option: IOptionEntity) {
         try {
-            return optionDao.deleteOption(option)
+            return optionDao.deleteOption(option.toEntity())
         } catch (ex: Exception) {
             Log.e("Conditions", "Error deleting Option ${option.optId} because ${ex.message}")
             ex.printStackTrace()
@@ -69,9 +70,9 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
     }
 
     @Transaction
-    override suspend fun updateOption(option: OptionWithConditionsEntity) {
+    override suspend fun updateOption(option: IOptionWithConditionsEntity) {
         try {
-            optionDao.updateOption(option.option)
+            optionDao.updateOption(option.option.toEntity())
             optionDao.clearConditionsOfOption(option.option.optId)
             option.conditions.forEach {
                 optionDao.insertConditionInOption(
