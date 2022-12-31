@@ -19,8 +19,10 @@ class ConditionsAppService @Inject constructor(private val domainService: ICondi
         domainService.addCondition(condition.toEntity())
     }
 
-    override suspend fun getCondition(conditionId: Long): Condition? {
-        return domainService.getCondition(conditionId)?.fromEntity()
+    override fun getCondition(conditionId: Long): Flow<Condition?> {
+        return domainService.getCondition(conditionId).map {
+            it?.fromEntity()
+        }
     }
 
     override fun getConditionsFromElection(electionId: Long): Flow<List<Condition>> {

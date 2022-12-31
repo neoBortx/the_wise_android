@@ -14,7 +14,7 @@ class ConditionsDomainService @Inject constructor(private val conditionsReposito
         conditionsRepository.addCondition(condition)
     }
 
-    override suspend fun getCondition(conditionId: Long): IConditionEntity? {
+    override fun getCondition(conditionId: Long): Flow<IConditionEntity?> {
         return conditionsRepository.getCondition(conditionId)
     }
 

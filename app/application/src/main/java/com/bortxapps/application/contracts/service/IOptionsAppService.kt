@@ -10,7 +10,7 @@ interface IOptionsAppService {
 
     suspend fun addOption(option: Option)
 
-    suspend fun getOption(optionId: Long): Option?
+    fun getOption(optionId: Long): Flow<Option?>
 
     suspend fun deleteOption(option: Option)
 

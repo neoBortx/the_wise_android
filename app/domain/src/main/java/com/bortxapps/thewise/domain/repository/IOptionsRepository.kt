@@ -12,7 +12,7 @@ interface IOptionsRepository {
 
     suspend fun addOption(option: IOptionWithConditionsEntity)
 
-    suspend fun getOption(optionId: Long): IOptionWithConditionsEntity?
+    fun getOption(optionId: Long): Flow<IOptionWithConditionsEntity?>
 
     suspend fun deleteOption(option: IOptionEntity)
 

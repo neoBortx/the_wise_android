@@ -9,7 +9,7 @@ interface IConditionsAppService {
 
     suspend fun addCondition(condition: Condition)
 
-    suspend fun getCondition(conditionId: Long): Condition?
+    fun getCondition(conditionId: Long): Flow<Condition?>
 
     fun getConditionsFromElection(electionId: Long): Flow<List<Condition>>
 

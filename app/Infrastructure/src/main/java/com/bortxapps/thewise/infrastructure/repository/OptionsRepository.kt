@@ -49,7 +49,7 @@ class OptionsRepository @Inject constructor(private val optionDao: OptionDao) :
         }
     }
 
-    override suspend fun getOption(optionId: Long): IOptionWithConditionsEntity? {
+    override fun getOption(optionId: Long): Flow<IOptionWithConditionsEntity?> {
         try {
             return optionDao.getOption(optionId)
         } catch (ex: Exception) {

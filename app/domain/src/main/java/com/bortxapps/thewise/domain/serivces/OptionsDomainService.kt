@@ -17,7 +17,7 @@ class OptionsDomainService @Inject constructor(private val optionsRepository: IO
         optionsRepository.addOption(option)
     }
 
-    override suspend fun getOption(optionId: Long): IOptionWithConditionsEntity? {
+    override fun getOption(optionId: Long): Flow<IOptionWithConditionsEntity?> {
         return optionsRepository.getOption(optionId)
     }
 

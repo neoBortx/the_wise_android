@@ -21,7 +21,7 @@ interface ElectionDao {
     @Query("SELECT * FROM election WHERE electId like :electionId")
     fun getElection(electionId: Long): Flow<ElectionWithOptions?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addElection(election: ElectionEntity): Long
 
     @Update

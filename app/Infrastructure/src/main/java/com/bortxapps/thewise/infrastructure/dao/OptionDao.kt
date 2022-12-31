@@ -15,10 +15,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface OptionDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addOption(option: OptionEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertConditionInOption(crossRef: ConditionInOptionCrossRef): Long
 
     @Delete
@@ -35,7 +35,7 @@ interface OptionDao {
 
     @Transaction
     @Query("SELECT * FROM option WHERE optId LIKE :optionId")
-    fun getOption(optionId: Long): OptionWithConditionsEntity?
+    fun getOption(optionId: Long): Flow<OptionWithConditionsEntity?>
 
     @Transaction
     @Query("SELECT * FROM option WHERE electionId LIKE :electionId")

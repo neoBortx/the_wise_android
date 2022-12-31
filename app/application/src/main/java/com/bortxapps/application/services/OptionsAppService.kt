@@ -29,8 +29,8 @@ class OptionsAppService @Inject constructor(private val domainService: IOptionsD
         domainService.addOption(option.toEntity())
     }
 
-    override suspend fun getOption(optionId: Long): Option? {
-        return domainService.getOption(optionId)?.fromEntity()
+    override fun getOption(optionId: Long): Flow<Option?> {
+        return domainService.getOption(optionId).map { it?.fromEntity() }
     }
 
     override suspend fun deleteOption(option: Option) {

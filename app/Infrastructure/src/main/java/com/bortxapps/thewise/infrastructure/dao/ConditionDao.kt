@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ConditionDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addCondition(condition: ConditionEntity)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addCondition(condition: ConditionEntity): Long
 
     @Update
     suspend fun updateCondition(condition: ConditionEntity)
@@ -21,7 +21,7 @@ interface ConditionDao {
     suspend fun deleteCondition(condition: ConditionEntity)
 
     @Query("SELECT * FROM condition WHERE condId LIKE :conditionId")
-    suspend fun getCondition(conditionId: Long): ConditionEntity?
+    fun getCondition(conditionId: Long): Flow<ConditionEntity?>
 
     @Query("SELECT * FROM condition WHERE electionId LIKE :electionId")
     fun getConditionsFromElection(electionId: Long): Flow<List<ConditionEntity>>

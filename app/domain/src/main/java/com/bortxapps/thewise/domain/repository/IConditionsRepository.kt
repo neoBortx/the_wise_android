@@ -9,7 +9,7 @@ interface IConditionsRepository {
 
     suspend fun addCondition(condition: IConditionEntity)
 
-    suspend fun getCondition(conditionId: Long): IConditionEntity?
+    fun getCondition(conditionId: Long): Flow<IConditionEntity?>
 
     fun getConditionsFromElection(electionId: Long): Flow<List<IConditionEntity>>
 

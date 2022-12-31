@@ -23,7 +23,7 @@ class ConditionsRepository @Inject constructor(private val conditionDao: Conditi
         }
     }
 
-    override suspend fun getCondition(conditionId: Long): IConditionEntity? {
+    override fun getCondition(conditionId: Long): Flow<IConditionEntity?> {
         try {
             return conditionDao.getCondition(conditionId)
         } catch (ex: Exception) {
