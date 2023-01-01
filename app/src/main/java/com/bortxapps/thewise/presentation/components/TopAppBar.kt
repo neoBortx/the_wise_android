@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -83,7 +84,8 @@ object TopAppBar {
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Text(
-                            title,
+                            modifier = Modifier.testTag("top_bar_text_title"),
+                            text = title,
                             color = colorResource(id = R.color.light_text),
                             fontSize = 24.sp,
                             fontFamily = FontFamily(Font(R.font.washington_text))

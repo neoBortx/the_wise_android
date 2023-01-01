@@ -32,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -134,6 +135,7 @@ fun DrawFrontLayer(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier.testTag("home_floating_button"),
                 onClick = {
                     scope.launch {
                         openElectionForm()
@@ -169,7 +171,9 @@ fun DrawFrontLayer(
 @Composable
 fun NoQuestionsMessage() {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("home_col_no_questions"),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -188,7 +192,8 @@ fun NoQuestionsMessage() {
         Image(
             modifier = Modifier
                 .size(300.dp)
-                .padding(3.dp),
+                .padding(3.dp)
+                .testTag("home_img_no_questions"),
             painter = painterResource(id = R.drawable.ic_wating),
             contentDescription = "Waiting"
         )
@@ -204,7 +209,8 @@ fun PaintLazyColumn(elections: List<Election>, onNavigationToDetail: (Long) -> U
     LazyColumn(
         modifier = Modifier
             .wrapContentHeight()
-            .padding(10.dp),
+            .padding(10.dp)
+            .testTag("home_col_questions"),
         contentPadding = PaddingValues(bottom = 5.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         state = listState
