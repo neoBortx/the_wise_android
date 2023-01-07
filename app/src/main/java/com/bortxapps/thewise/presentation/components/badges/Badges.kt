@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -64,7 +65,8 @@ fun SimpleConditionBadge(label: String, weight: ConditionWeight) {
     Badge(
         modifier = Modifier
             .wrapContentHeight()
-            .wrapContentWidth(),
+            .wrapContentWidth()
+            .testTag("simple_badge_condition"),
         backgroundColor = getColor(weight)
     ) {
 
@@ -94,7 +96,8 @@ fun RemovableConditionBadge(
     Badge(
         modifier = Modifier
             .wrapContentHeight()
-            .wrapContentWidth(),
+            .wrapContentWidth()
+            .testTag("removable_badge_condition"),
         backgroundColor = getColor(weight)
     ) {
 
@@ -117,7 +120,8 @@ fun RemovableConditionBadge(
                 contentPadding = PaddingValues(0.dp),
                 modifier = Modifier
                     .height(15.dp)
-                    .width(15.dp),
+                    .width(15.dp)
+                    .testTag("conditions_form_badge_delete_condition"),
                 border = null,
                 elevation = null,
                 colors = ButtonDefaults.buttonColors(

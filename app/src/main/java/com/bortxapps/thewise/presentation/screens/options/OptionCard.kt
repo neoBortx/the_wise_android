@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -93,6 +94,7 @@ fun OptionCard(
                     modifier = Modifier
                         .size(35.dp)
                         .padding(start = 10.dp)
+                        .testTag("option_card_winning_icon")
                 )
             }
             Text(
@@ -100,14 +102,18 @@ fun OptionCard(
                 style = MaterialTheme.typography.h6,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Left,
-                modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
+                modifier = Modifier
+                    .padding(vertical = 5.dp, horizontal = 10.dp)
+                    .testTag("option_card_name_text"),
                 color = colTitle,
                 maxLines = 2
             )
 
             Spacer(Modifier.weight(1f))
 
-            IconButton(onClick = { expanded = !expanded }) {
+            IconButton(
+                modifier = Modifier.testTag("option_card_expand_button"),
+                onClick = { expanded = !expanded }) {
                 if (!expanded) {
                     Icon(
                         Icons.Default.KeyboardArrowDown,
@@ -148,7 +154,8 @@ fun OptionCard(
                     start = 10.dp,
                     end = 6.dp,
                     bottom = if (showBottomMargin) 0.dp else 10.dp
-                ),
+                )
+                .testTag("option_card_matching_conditions_row"),
             mainAxisAlignment = MainAxisAlignment.Start,
             mainAxisSize = SizeMode.Expand,
             crossAxisSpacing = 5.dp,

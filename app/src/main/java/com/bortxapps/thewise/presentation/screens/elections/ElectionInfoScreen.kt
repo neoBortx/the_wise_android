@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -57,10 +57,10 @@ import com.bortxapps.thewise.presentation.components.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.components.badges.SimpleConditionBadge
 import com.bortxapps.thewise.presentation.components.dialog.DeleteAlertDialog
 import com.bortxapps.thewise.presentation.components.text.TextHeader
+import com.bortxapps.thewise.presentation.screens.common.NoOptionsMessage
 import com.bortxapps.thewise.presentation.screens.common.ScreenState
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionInfoViewModel
-import com.bortxapps.thewise.presentation.screens.options.NoOptionsMessage
 import com.bortxapps.thewise.presentation.screens.options.OptionCard
 import com.bortxapps.thewise.ui.theme.TheWiseTheme
 import com.google.accompanist.flowlayout.FlowRow
@@ -83,11 +83,8 @@ fun ElectionInfoScreen(
 ) {
     infoViewModel.configure(electionId)
 
-    val conditions by infoViewModel.conditions.collectAsState(initial = listOf())
-
     DrawElectionInfoScreenBackdropScaffold(
         electionId = electionId,
-        conditions = conditions,
         onPrepareElectionData = electionFormViewModel::prepareElectionData,
         onNewElectionToConfigure = infoViewModel::configure,
         onBackToHome = onBackToHome,
@@ -103,7 +100,6 @@ fun ElectionInfoScreen(
 @Composable
 private fun DrawElectionInfoScreenBackdropScaffold(
     electionId: Long,
-    conditions: List<Condition>,
     onPrepareElectionData: (Long) -> Unit,
     onNewElectionToConfigure: (Long) -> Unit,
     onBackToHome: () -> Unit,
@@ -148,12 +144,18 @@ private fun DrawElectionInfoScreenBackdropScaffold(
 
     val actions = mutableListOf<MenuAction>().apply {
         add(
-            MenuAction(Icons.Default.Edit) {
+            MenuAction(
+                imageVector = Icons.Default.Edit,
+                testTag = "menu_button_edit"
+            ) {
                 coroutineScope.launch { openElectionForm() }
             }
         )
         add(
-            MenuAction(Icons.Default.Delete) {
+            MenuAction(
+                imageVector = Icons.Default.Delete,
+                testTag = "menu_button_delete"
+            ) {
                 screenState.showDeleteDialog()
             }
         )
@@ -189,12 +191,13 @@ private fun DrawElectionInfoScreenBackdropScaffold(
                         .padding(it)
                         .fillMaxHeight()
                         .fillMaxWidth()
-                        .background(color = colorResource(id = R.color.white)),
+                        .background(color = colorResource(id = R.color.white))
+                        .testTag("election_info_main_column"),
                     verticalArrangement = Arrangement.Top
                 ) {
                     DrawElectionInfoScreenFrontLayer(
                         election = screenState.election,
-                        conditions = conditions,
+                        conditions = screenState.election.conditions,
                         onBackToHome = onBackToHome,
                         onDeleteElection = { elect -> screenState.deleteElection(elect) })
                 }
@@ -251,7 +254,8 @@ private fun Description(description: String) {
                 .padding(horizontal = 15.dp)
                 .padding(top = 5.dp, bottom = 5.dp)
                 .wrapContentWidth()
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .testTag("election_info_description_label"),
             color = colorResource(id = R.color.light_text),
             overflow = TextOverflow.Ellipsis,
             maxLines = 3
@@ -289,6 +293,7 @@ private fun WinningOption(option: Option) {
                     .fillMaxWidth()
                     .height(200.dp)
                     .padding(horizontal = 5.dp)
+                    .testTag("election_info_winning_option_col")
                     .clickable {
                         flipController.flip()
                     },
@@ -299,14 +304,17 @@ private fun WinningOption(option: Option) {
                     modifier = Modifier.background(color = colorResource(id = R.color.white))
                 ) {
                     Text(
-                        text = "Touch here to reveal the wise's answer",
-                        modifier = Modifier.padding(10.dp),
+                        text = stringResource(R.string.touch_here_to_reveal_the_wise_s_answer),
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .testTag("election_info_winning_option_instructions_label"),
                         color = colorResource(id = R.color.light_text)
                     )
                     Image(
                         modifier = Modifier
                             .size(250.dp)
-                            .padding(bottom = 10.dp),
+                            .padding(bottom = 10.dp)
+                            .testTag("election_info_winning_option_instruction_icon"),
                         painter = painterResource(id = R.drawable.the_wise_sleeping),
                         contentDescription = "Waiting"
                     )

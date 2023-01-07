@@ -58,7 +58,12 @@ fun OptionFormFields(
     scope: CoroutineScope,
 ) {
     ImagePickerField(option.imageUrl, onImageChanged, snackBarHostState, scope)
-    NoEmptyTextField(stringResource(id = R.string.name_option), option.name, onNameChanged)
+    NoEmptyTextField(
+        stringResource(id = R.string.name_option),
+        option.name,
+        "option_form_name",
+        onNameChanged
+    )
 }
 
 @Composable

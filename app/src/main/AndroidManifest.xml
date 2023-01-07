@@ -36,6 +36,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".presentation.screens.utils.HiltActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TheWise"
+            android:windowSoftInputMode="adjustResize"></activity>
+
         <provider
             android:name=".presentation.components.form.ComposeFileProvider"
             android:authorities="com.bortxapps.thewise.fileprovider"

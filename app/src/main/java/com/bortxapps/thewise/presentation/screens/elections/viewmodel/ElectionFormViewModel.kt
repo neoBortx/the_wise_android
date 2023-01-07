@@ -23,7 +23,14 @@ class ElectionFormViewModel @Inject constructor(
     private val conditionsService: IConditionsAppService
 ) : ViewModel() {
 
-    var state by mutableStateOf(ElectionFormState(Election.getEmpty(), listOf(), false))
+    var state by mutableStateOf(
+        ElectionFormState(
+            election = Election.getEmpty(),
+            configuredConditions = listOf(),
+            isButtonEnabled = false
+        )
+    )
+        private set
 
     private var updateExistingElection = false
 

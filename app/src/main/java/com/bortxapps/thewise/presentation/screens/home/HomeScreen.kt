@@ -105,6 +105,8 @@ fun DrawHomeBackdropScaffold(
         }
     }
     BackdropScaffold(
+        modifier = Modifier
+            .testTag("home_backdropScaffold"),
         scaffoldState = scaffoldState,
         gesturesEnabled = true,
         peekHeight = 45.dp,

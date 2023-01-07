@@ -23,7 +23,11 @@ import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.components.TopAppBar.GetTopAppBar
 
 
-data class MenuAction(val imageVector: ImageVector, val actionCallBack: () -> Unit)
+data class MenuAction(
+    val imageVector: ImageVector,
+    val testTag: String,
+    val actionCallBack: () -> Unit,
+)
 
 object TopAppBar {
 
@@ -41,7 +45,10 @@ object TopAppBar {
     @Composable
     fun DrawMenu(menuActions: List<MenuAction> = listOf()) {
         menuActions.forEach {
-            IconButton(onClick = it.actionCallBack) {
+            IconButton(
+                modifier = Modifier.testTag(it.testTag),
+                onClick = it.actionCallBack
+            ) {
                 Icon(
                     it.imageVector,
                     contentDescription = null,
@@ -66,7 +73,8 @@ object TopAppBar {
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Text(
-                            title,
+                            modifier = Modifier.testTag("top_title_test"),
+                            text = title,
                             color = colorResource(id = R.color.light_text)
                         )
                     }
@@ -84,7 +92,7 @@ object TopAppBar {
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Text(
-                            modifier = Modifier.testTag("top_bar_text_title"),
+                            modifier = Modifier.testTag("top_title_test"),
                             text = title,
                             color = colorResource(id = R.color.light_text),
                             fontSize = 24.sp,

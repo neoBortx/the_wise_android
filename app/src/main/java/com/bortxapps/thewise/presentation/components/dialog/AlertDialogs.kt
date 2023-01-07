@@ -8,6 +8,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -18,6 +19,7 @@ import com.bortxapps.thewise.R
 @Composable
 fun DeleteAlertDialog(closeCallBack: () -> Unit, acceptCallBack: () -> Unit) {
     AlertDialog(
+        modifier = Modifier.testTag("delete_dialog"),
         onDismissRequest = closeCallBack,
         title = { Text(stringResource(id = R.string.delete_question)) },
         text = {
@@ -32,6 +34,7 @@ fun DeleteAlertDialog(closeCallBack: () -> Unit, acceptCallBack: () -> Unit) {
         },
         confirmButton = {
             Button(
+                modifier = Modifier.testTag("delete_dialog_forget"),
                 onClick = {
                     closeCallBack()
                     acceptCallBack()
@@ -40,7 +43,10 @@ fun DeleteAlertDialog(closeCallBack: () -> Unit, acceptCallBack: () -> Unit) {
             }
         },
         dismissButton = {
-            Button(onClick = closeCallBack) {
+            Button(
+                modifier = Modifier.testTag("delete_dialog_keep"),
+                onClick = closeCallBack
+            ) {
                 Text(stringResource(R.string.keep))
             }
         }

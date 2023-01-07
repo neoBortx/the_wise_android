@@ -14,6 +14,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -77,14 +78,23 @@ fun DrawElectionFormScreenScaffold(
             Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .padding(it),
+                .padding(it)
+                .testTag("election_form_col"),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             FormDragControl()
-            NoEmptyTextField(nameLabel, electionFormState.election.name) { name ->
+            NoEmptyTextField(
+                nameLabel,
+                electionFormState.election.name,
+                "election_form_name_text"
+            ) { name ->
                 onSetName(name)
             }
-            RegularTextField(descLabel, electionFormState.election.description) { desc ->
+            RegularTextField(
+                descLabel,
+                electionFormState.election.description,
+                "election_form_description_text"
+            ) { desc ->
                 onSetDescription(desc)
             }
             Text(

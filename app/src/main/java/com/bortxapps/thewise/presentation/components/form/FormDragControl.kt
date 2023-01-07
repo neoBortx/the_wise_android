@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.bortxapps.thewise.R
@@ -18,5 +19,6 @@ fun FormDragControl(
         modifier = Modifier
             .padding(start = 0.dp, top = 10.dp, end = 0.dp, bottom = 0.dp)
             .width(50.dp)
+            .testTag("form_drag_control")
     )
 }

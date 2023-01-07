@@ -7,6 +7,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -19,7 +20,8 @@ object BottomButton {
         Button(
             modifier = Modifier
                 .padding(horizontal = 10.dp, vertical = 20.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("bottom_button"),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = colorResource(id = R.color.yellow_800),
                 disabledBackgroundColor = colorResource(id = R.color.disabled_button)

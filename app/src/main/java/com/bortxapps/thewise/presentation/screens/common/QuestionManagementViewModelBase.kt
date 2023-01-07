@@ -6,21 +6,18 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bortxapps.application.contracts.service.IElectionsAppService
-import com.bortxapps.application.contracts.service.IOptionsAppService
 import com.bortxapps.application.pokos.Election
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 abstract class QuestionManagementViewModelBase(
-    private val electionsService: IElectionsAppService,
-    protected val optionsService: IOptionsAppService
+    private val electionsService: IElectionsAppService
 ) :
     ViewModel() {
 
     var screenState by mutableStateOf(
         ScreenState(
             election = Election.getEmpty(),
-            options = listOf(),
             isDeleteDialogVisible = false,
             showOptionForm = false,
             showDeleteDialog = ::showDeleteDialog,
@@ -37,7 +34,6 @@ abstract class QuestionManagementViewModelBase(
         viewModelScope.launch {
             screenState = screenState.copy(
                 election = electionsService.getElection(electionId).first(),
-                options = optionsService.getOptionsFromElection(electionId = electionId).first()
             )
         }
     }

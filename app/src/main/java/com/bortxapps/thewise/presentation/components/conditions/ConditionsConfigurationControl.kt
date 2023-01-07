@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -99,7 +100,8 @@ fun ConditionsConfigurationControl(
                 label = { Text(text = stringResource(id = R.string.requisite_name)) },
                 modifier = Modifier
                     .background(color = colorResource(id = R.color.white))
-                    .weight(1f),
+                    .weight(1f)
+                    .testTag("conditions_control_name_text_field"),
                 value = conditionName,
                 singleLine = true,
                 onValueChange = {
@@ -164,7 +166,10 @@ fun ConditionsConfigurationControl(
                 }
             }
 
-            Button(modifier = Modifier.size(50.dp),
+            Button(
+                modifier = Modifier
+                    .size(50.dp)
+                    .testTag("conditions_control_add_button"),
                 enabled = buttonEnabled,
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = colorResource(id = R.color.yellow_800),
@@ -197,7 +202,8 @@ fun ConditionsConfigurationControl(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(vertical = 13.dp, horizontal = 5.dp),
+                    .padding(vertical = 13.dp, horizontal = 5.dp)
+                    .testTag("conditions_form_control_list"),
                 mainAxisAlignment = MainAxisAlignment.Start,
                 mainAxisSize = SizeMode.Expand,
                 crossAxisSpacing = 12.dp,

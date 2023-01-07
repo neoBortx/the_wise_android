@@ -27,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,13 +35,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.bortxapps.application.pokos.Election
 import com.bortxapps.thewise.R
 import com.bortxapps.thewise.presentation.components.badges.SimpleConditionBadge
@@ -57,7 +56,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun PaintElectionRow(
     item: Election,
-    homeViewModel: HomeViewModel = hiltViewModel(),
     onNavigateToDetail: (Long) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -65,9 +63,6 @@ fun PaintElectionRow(
     var expanded by remember {
         mutableStateOf(false)
     }
-
-    val conditions by homeViewModel.getConditions(item.id).collectAsState(initial = listOf())
-
 
     fun openElectionInfo(item: Election) {
         Log.d("Elections", "Click in election card ${item.name}-${item.id}")
@@ -84,7 +79,8 @@ fun PaintElectionRow(
         shape = RoundedCornerShape(2.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
+            .wrapContentHeight()
+            .testTag("home_col_question_card"),
         onClick = { scope.launch { openElectionInfo(item) } },
     ) {
         Column(
@@ -107,7 +103,9 @@ fun PaintElectionRow(
                 style = MaterialTheme.typography.h6,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Left,
-                modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
+                modifier = Modifier
+                    .padding(vertical = 5.dp, horizontal = 10.dp)
+                    .testTag("home_col_question_card_election_name"),
                 color = colorResource(id = R.color.yellow_800),
                 maxLines = 2
             )
@@ -123,6 +121,7 @@ fun PaintElectionRow(
                         modifier = Modifier
                             .size(30.dp)
                             .padding(start = 10.dp)
+                            .testTag("home_col_question_card_winning_icon")
                     )
                 }
                 Text(
@@ -133,7 +132,8 @@ fun PaintElectionRow(
                         .padding(horizontal = 10.dp)
                         .padding(bottom = 5.dp, top = 5.dp)
                         .wrapContentWidth()
-                        .wrapContentHeight(),
+                        .wrapContentHeight()
+                        .testTag("home_col_question_card_winning_option_name"),
                     color = colorResource(id = R.color.light_text),
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3
@@ -141,7 +141,9 @@ fun PaintElectionRow(
 
                 Spacer(Modifier.weight(1f))
 
-                IconButton(onClick = { expanded = !expanded }) {
+                IconButton(
+                    modifier = Modifier.testTag("home_col_question_card_size_button"),
+                    onClick = { expanded = !expanded }) {
                     if (!expanded) {
                         Icon(
                             Icons.Default.KeyboardArrowDown,
@@ -164,7 +166,7 @@ fun PaintElectionRow(
                 exit = shrinkVertically()
             ) {
 
-                Column {
+                Column(modifier = Modifier.testTag("home_question_card_detail_col")) {
                     Divider(modifier = Modifier.padding(vertical = 0.dp, horizontal = 5.dp))
                     Text(
                         text = stringResource(id = R.string.question_conditions_label),
@@ -174,7 +176,8 @@ fun PaintElectionRow(
                             .padding(horizontal = 10.dp)
                             .padding(top = 5.dp)
                             .wrapContentWidth()
-                            .wrapContentHeight(),
+                            .wrapContentHeight()
+                            .testTag("home_question_card_requisites_text"),
                         color = colorResource(id = R.color.light_text),
                         overflow = TextOverflow.Ellipsis
                     )
@@ -182,13 +185,14 @@ fun PaintElectionRow(
                         modifier = Modifier
                             .wrapContentHeight()
                             .fillMaxWidth()
-                            .padding(horizontal = 10.dp, vertical = 8.dp),
+                            .padding(horizontal = 10.dp, vertical = 8.dp)
+                            .testTag("home_question_card_condition_list"),
                         mainAxisAlignment = MainAxisAlignment.Start,
                         mainAxisSize = SizeMode.Expand,
                         crossAxisSpacing = 5.dp,
                         mainAxisSpacing = 5.dp,
                     ) {
-                        conditions.sortedByDescending { condition -> condition.weight }
+                        item.conditions.sortedByDescending { condition -> condition.weight }
                             .forEach { condition ->
                                 SimpleConditionBadge(condition.name, condition.weight)
                             }

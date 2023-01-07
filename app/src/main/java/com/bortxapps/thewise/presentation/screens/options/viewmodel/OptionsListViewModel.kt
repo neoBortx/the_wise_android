@@ -13,10 +13,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OptionsViewModel @Inject constructor(
-    optionsService: IOptionsAppService,
+    private val optionsService: IOptionsAppService,
     electionsService: IElectionsAppService
 ) :
-    QuestionManagementViewModelBase(electionsService, optionsService) {
+    QuestionManagementViewModelBase(electionsService) {
 
     fun deleteOption(option: Option) {
         Log.i("Option", "Deleting option ${option.id}-${option.name}")

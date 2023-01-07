@@ -39,4 +39,5 @@
     <string name="rationale_message">The wise is asking permission to use your camera in order to allow you to take photos for your options</string>
     <string name="dismiss_permissions_message">The wise won\'t be able to take photos</string>
     <string name="check_permissions">Check permission</string>
+    <string name="touch_here_to_reveal_the_wise_s_answer">Touch here to reveal the wise\'s answer</string>
 </resources>

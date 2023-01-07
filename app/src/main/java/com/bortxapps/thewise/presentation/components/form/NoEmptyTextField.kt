@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -25,7 +26,12 @@ import com.bortxapps.thewise.R
 
 
 @Composable
-fun NoEmptyTextField(label: String, textValue: String, callbackMethod: (text: String) -> Unit) {
+fun NoEmptyTextField(
+    label: String,
+    textValue: String,
+    testTag: String,
+    callbackMethod: (text: String) -> Unit
+) {
     var value = textValue
     var isEmpty by remember { mutableStateOf(false) }
     val errorMessage = stringResource(id = R.string.cant_be_empty)
@@ -44,7 +50,8 @@ fun NoEmptyTextField(label: String, textValue: String, callbackMethod: (text: St
             value = value,
             modifier = Modifier
                 .padding(horizontal = 20.dp, vertical = 10.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag(testTag),
             label = { Text(text = label) },
             isError = isEmpty,
             onValueChange = { newValue ->
@@ -62,14 +69,21 @@ fun NoEmptyTextField(label: String, textValue: String, callbackMethod: (text: St
                 text = errorMessage,
                 color = MaterialTheme.colors.error,
                 style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(start = 30.dp)
+                modifier = Modifier
+                    .padding(start = 30.dp)
+                    .testTag("${testTag}_error_label")
             )
         }
     }
 }
 
 @Composable
-fun RegularTextField(label: String, defaultValue: String, callbackMethod: (text: String) -> Unit) {
+fun RegularTextField(
+    label: String,
+    defaultValue: String,
+    testTag: String,
+    callbackMethod: (text: String) -> Unit
+) {
     var value = defaultValue
     val focusManager = LocalFocusManager.current
 
@@ -86,7 +100,8 @@ fun RegularTextField(label: String, defaultValue: String, callbackMethod: (text:
             value = value,
             modifier = Modifier
                 .padding(horizontal = 20.dp, vertical = 10.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag(testTag),
             label = { Text(text = label) },
             onValueChange = { newValue ->
                 value = newValue
@@ -107,11 +122,11 @@ fun emptyCallBack(text: String) {
 @Preview
 @Composable
 fun PreviewNoEmptyTextField() {
-    NoEmptyTextField("label", "textValue", ::emptyCallBack)
+    NoEmptyTextField("label", "textValue", "tag", ::emptyCallBack)
 }
 
 @Preview
 @Composable
 fun PreviewRegularTextField() {
-    RegularTextField("label", "textValue", ::emptyCallBack)
+    RegularTextField("label", "textValue", "tag", ::emptyCallBack)
 }

@@ -3,18 +3,14 @@ package com.bortxapps.thewise.presentation.screens.options
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.BackdropScaffold
@@ -24,7 +20,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -32,17 +27,13 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.bortxapps.application.pokos.Option
@@ -51,6 +42,7 @@ import com.bortxapps.thewise.presentation.components.BottomNavigation.GetBottomN
 import com.bortxapps.thewise.presentation.components.MenuAction
 import com.bortxapps.thewise.presentation.components.TopAppBar.GetTopAppBar
 import com.bortxapps.thewise.presentation.components.dialog.DeleteAlertDialog
+import com.bortxapps.thewise.presentation.screens.common.NoOptionsMessage
 import com.bortxapps.thewise.presentation.screens.common.ScreenState
 import com.bortxapps.thewise.presentation.screens.elections.ElectionFormScreen
 import com.bortxapps.thewise.presentation.screens.elections.viewmodel.ElectionFormViewModel
@@ -156,6 +148,7 @@ fun PaintLazyColumn(
         modifier = Modifier
             .background(colorResource(id = R.color.white))
             .fillMaxHeight()
+            .testTag("election_info_winning_option")
     )
     {
         items(options) { option ->
@@ -175,38 +168,6 @@ fun PaintLazyColumn(
                 false
             )
         }
-    }
-}
-
-@Composable
-fun NoOptionsMessage() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = colorResource(id = R.color.white))
-            .padding(10.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(R.string.no_options_label),
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 10.dp)
-                .padding(top = 50.dp, bottom = 50.dp),
-            fontSize = 23.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            color = colorResource(id = R.color.light_text)
-        )
-        Image(
-            modifier = Modifier
-                .size(300.dp)
-                .padding(3.dp),
-            painter = painterResource(id = R.drawable.ic_thinking),
-            contentDescription = "Waiting"
-        )
     }
 }
 
@@ -340,7 +301,10 @@ private fun DrawOptionsListScreenBackdropScaffold(
 
 
     val actions = mutableListOf<MenuAction>().apply {
-        add(MenuAction(Icons.Default.Edit) {
+        add(MenuAction(
+            imageVector = Icons.Default.Edit,
+            testTag = "menu_button_delete"
+        ) {
             coroutineScope.launch {
                 openElectionForm(
                     electionId,
@@ -351,7 +315,11 @@ private fun DrawOptionsListScreenBackdropScaffold(
                 )
             }
         })
-        add(MenuAction(Icons.Default.Delete) { screenState.showDeleteDialog() })
+        add(
+            MenuAction(
+                imageVector = Icons.Default.Delete,
+                testTag = "menu_button_delete"
+            ) { screenState.showDeleteDialog() })
     }
 
     BackHandler {
@@ -396,7 +364,7 @@ private fun DrawOptionsListScreenBackdropScaffold(
                         .padding(innerPadding)
                 ) {
                     DrawFrontLayer(
-                        screenState.options,
+                        screenState.election.options,
                         onDeleteOption,
                         onPrepareOptionData,
                         screenState.configureOptionForm,
