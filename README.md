@@ -25,7 +25,7 @@ This is a simpele APP made using Jetpack compose with the main purpose of learn 
  
  - Jetpack compose for the view.
  - Room database.
- - Corutines with flows and states for the data binding and data transportation through the layers.
+ - Coroutines with flows and states for the data binding and data transportation through the layers.
  - DDD architecture distributed in serveral modules with their own resposabilities.
  - MVVM pattern.
  - Integration test for the Room data base.
