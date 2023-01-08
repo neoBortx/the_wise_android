@@ -20,6 +20,9 @@ class OptionsViewModel @Inject constructor(
 
     fun deleteOption(option: Option) {
         Log.i("Option", "Deleting option ${option.id}-${option.name}")
-        viewModelScope.launch { optionsService.deleteOption(option) }
+        viewModelScope.launch {
+            optionsService.deleteOption(option)
+            configure(option.electionId)
+        }
     }
 }
