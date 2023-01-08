@@ -148,7 +148,7 @@ fun PaintLazyColumn(
         modifier = Modifier
             .background(colorResource(id = R.color.white))
             .fillMaxHeight()
-            .testTag("election_info_winning_option")
+            .testTag("option_list_column")
     )
     {
         items(options) { option ->
@@ -181,6 +181,7 @@ fun GetFloatingActionButton(
     scaffoldState: BackdropScaffoldState
 ) {
     FloatingActionButton(
+        modifier = Modifier.testTag("option_list_floating_button"),
         onClick = {
             openOptionForm(
                 null,
@@ -303,7 +304,7 @@ private fun DrawOptionsListScreenBackdropScaffold(
     val actions = mutableListOf<MenuAction>().apply {
         add(MenuAction(
             imageVector = Icons.Default.Edit,
-            testTag = "menu_button_delete"
+            testTag = "menu_button_edit"
         ) {
             coroutineScope.launch {
                 openElectionForm(

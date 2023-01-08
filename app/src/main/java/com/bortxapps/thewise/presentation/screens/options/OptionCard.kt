@@ -175,6 +175,7 @@ fun OptionCard(
 
         deleteCallBack?.let {
             Button(
+                modifier = Modifier.testTag("option_card_delete_button"),
                 onClick = { deleteCallBack() },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Transparent

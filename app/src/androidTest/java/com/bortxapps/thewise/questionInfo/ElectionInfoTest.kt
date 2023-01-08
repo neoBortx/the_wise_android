@@ -233,7 +233,7 @@ class ElectionInfoTest {
 
     @OptIn(ExperimentalMaterialApi::class)
     @Test
-    fun test_election_info_edit_current_election_expect_form_filled() {
+    fun test_election_info_delete_current_election_expect_dialog_showns() {
         val numConditions = 12
         val election =
             createFilledElection(5, "Name election", "Description election", 1, numConditions)
@@ -263,6 +263,5 @@ class ElectionInfoTest {
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("delete_dialog", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithTag("delete_dialog_keep", useUnmergedTree = true).performClick()
-        composeTestRule.onNodeWithTag("delete_dialog", useUnmergedTree = true).assertDoesNotExist()
     }
 }

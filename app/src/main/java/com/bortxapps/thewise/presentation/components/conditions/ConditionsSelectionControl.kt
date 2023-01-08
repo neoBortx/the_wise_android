@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.bortxapps.application.pokos.Condition
 import com.bortxapps.thewise.presentation.components.badges.SelectableConditionBadge
@@ -23,7 +24,8 @@ fun ConditionsSelectionControl(
             .wrapContentHeight()
             .fillMaxWidth()
             .padding(top = 15.dp, bottom = 10.dp)
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp)
+            .testTag("option_form_condition_selection_row"),
         mainAxisAlignment = MainAxisAlignment.Start,
         mainAxisSize = SizeMode.Expand,
         crossAxisSpacing = 12.dp,
