@@ -57,7 +57,7 @@ object ImageFilePicker {
         val currentImageFullPath = getImagePath(currentImageUrl)
 
         val imageUri = Uri.parse(
-            if (imageExists(currentImageFullPath)) {
+            if (currentImageUrl.isNotEmpty() && imageExists(currentImageFullPath)) {
                 currentImageFullPath
             } else {
                 noImageUrl
