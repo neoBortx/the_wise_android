@@ -7,6 +7,7 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
@@ -16,10 +17,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bortxapps.thewise.R
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun DeleteAlertDialog(closeCallBack: () -> Unit, acceptCallBack: () -> Unit) {
     AlertDialog(
-        modifier = Modifier.testTag("delete_dialog"),
+        modifier = Modifier
+            .testTag("delete_dialog"),
         onDismissRequest = closeCallBack,
         title = { Text(stringResource(id = R.string.delete_question)) },
         text = {
@@ -49,7 +52,8 @@ fun DeleteAlertDialog(closeCallBack: () -> Unit, acceptCallBack: () -> Unit) {
             ) {
                 Text(stringResource(R.string.keep))
             }
-        }
+        },
+        backgroundColor = colorResource(id = R.color.white)
     )
 }
 
