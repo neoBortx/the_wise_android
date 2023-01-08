@@ -4,8 +4,8 @@
  
  The main keys of this project are:
  
- - Jetpack compose for view
- - Room data base
+ - Jetpack compose for the view
+ - Room database
  - DDD architecture distributed in serveral modules with their own resposabilities.
  - MVVM pattern
  - Integration test for the data base
