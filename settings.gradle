@@ -15,5 +15,5 @@ dependencyResolutionManagement {
 rootProject.name = "The Wise"
 include ':app'
 include ':app:domain'
-include ':app:Infraestructure'
+include ':app:Infrastructure'
 include ':app:application'
